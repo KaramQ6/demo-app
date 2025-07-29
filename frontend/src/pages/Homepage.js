@@ -12,6 +12,14 @@ const Homepage = () => {
   const { openChatbot } = useApp();
   const heroRef = useRef(null);
 
+  // Simulated current location data for the prototype
+  const currentLocationData = {
+    name: { ar: 'جرش', en: 'Jerash' },
+    temperature: 28,
+    congestion: { ar: 'متوسط', en: 'Moderate' },
+    congestionLevel: 'medium' // for styling
+  };
+
   // Hero parallax effect
   useEffect(() => {
     const handleMouseMove = (e) => {
