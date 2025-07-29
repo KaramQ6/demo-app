@@ -116,28 +116,49 @@ const Homepage = () => {
             )}
           </Button>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto">
-            <div className="text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
-              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">50+</div>
-              <div className="text-sm text-gray-300 font-['Open_Sans']">
-                {t({ ar: 'وجهة سياحية', en: 'Destinations' })}
-              </div>
-            </div>
-            <div className="text-center animate-fade-in-up" style={{ animationDelay: '1s' }}>
-              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">24/7</div>
-              <div className="text-sm text-gray-300 font-['Open_Sans']">
-                {t({ ar: 'مراقبة حية', en: 'Live Monitoring' })}
-              </div>
-            </div>
-            <div className="text-center animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
-              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">AI</div>
-              <div className="text-sm text-gray-300 font-['Open_Sans']">
-                {t({ ar: 'ذكاء اصطناعي', en: 'Powered' })}
-              </div>
-            </div>
-          </div>
-        </div>
+         import { Map, Clock, Bot } from 'lucide-react'; // <-- تأكد من استيراد الأيقونات في بداية الملف
+
+// ... داخل دالة return في Homepage.js ...
+
+{/* Stats Section (Improved) */}
+<div className="py-16 sm:py-24">
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-center">
+    
+    {/* Stat 1: Destinations */}
+    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+      <Map className="w-10 h-10 mb-3 text-purple-400" />
+      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+        50+
+      </div>
+      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+        {t({ ar: 'وجهة فريدة', en: 'Unique Destinations' })}
+      </div>
+    </div>
+    
+    {/* Stat 2: Live Monitoring */}
+    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+      <Clock className="w-10 h-10 mb-3 text-purple-400" />
+      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+        24/7
+      </div>
+      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+        {t({ ar: 'مراقبة حية', en: 'Live Monitoring' })}
+      </div>
+    </div>
+
+    {/* Stat 3: AI Powered */}
+    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+      <Bot className="w-10 h-10 mb-3 text-purple-400" />
+      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+        AI
+      </div>
+      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+        {t({ ar: 'مدعوم بالذكاء الاصطناعي', en: 'Powered' })}
+      </div>
+    </div>
+
+  </div>
+</div>
 
         {/* NEW: Location Status Bar */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-md px-6">
