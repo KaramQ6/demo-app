@@ -14,10 +14,8 @@ const Homepage = () => {
 
   // Simulated current location data for the prototype
   const currentLocationData = {
-    name: { ar: 'جرش', en: 'Jerash' },
-    temperature: 28,
-    congestion: { ar: 'متوسط', en: 'Moderate' },
-    congestionLevel: 'medium' // for styling
+    const [userLocation, setUserLocation] = useState(null); // { lat: 0, lon: 0 }
+    const [locationError, setLocationError] = useState(null);
   };
 
   // Hero parallax effect
@@ -28,7 +26,7 @@ const Homepage = () => {
         const { innerWidth, innerHeight } = window;
         const x = (clientX / innerWidth - 0.5) * 20;
         const y = (clientY / innerHeight - 0.5) * 20;
-        
+
         heroRef.current.style.transform = `translate(${x}px, ${y}px)`;
       }
     };
@@ -78,7 +76,7 @@ const Homepage = () => {
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background Video/Image */}
-        <div 
+        <div
           ref={heroRef}
           className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out"
         >
@@ -96,12 +94,12 @@ const Homepage = () => {
             {t({ ar: 'اكتشف الأردن الحقيقي، بعيداً عن الزحام', en: 'Discover the Real Jordan, Away from the Crowds' })}
           </h1>
           <p className="text-xl md:text-2xl text-gray-200 mb-8 font-['Open_Sans'] max-w-3xl mx-auto">
-            {t({ 
+            {t({
               ar: 'خطط لرحلتك بذكاء مع مرشدك الشخصي جواد واستمتع بتجربة سياحية فريدة مدعومة بالذكاء الاصطناعي',
               en: 'Plan your trip intelligently with your personal guide Jawad and enjoy a unique tourism experience powered by artificial intelligence'
             })}
           </p>
-          
+
           {/* CTA Button */}
           <Button
             onClick={handleCTAClick}
@@ -116,105 +114,103 @@ const Homepage = () => {
             )}
           </Button>
 
-         import { Map, Clock, Bot } from 'lucide-react'; // <-- تأكد من استيراد الأيقونات في بداية الملف
+          import {Map, Clock, Bot} from 'lucide-react'; // <-- تأكد من استيراد الأيقونات في بداية الملف
 
-// ... داخل دالة return في Homepage.js ...
+          // ... داخل دالة return في Homepage.js ...
 
-{/* Stats Section (Improved) */}
-<div className="py-16 sm:py-24">
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-center">
-    
-    {/* Stat 1: Destinations */}
-    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-      <Map className="w-10 h-10 mb-3 text-purple-400" />
-      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
-        50+
-      </div>
-      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
-        {t({ ar: 'وجهة فريدة', en: 'Unique Destinations' })}
-      </div>
-    </div>
-    
-    {/* Stat 2: Live Monitoring */}
-    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-      <Clock className="w-10 h-10 mb-3 text-purple-400" />
-      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
-        24/7
-      </div>
-      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
-        {t({ ar: 'مراقبة حية', en: 'Live Monitoring' })}
-      </div>
-    </div>
+          {/* Stats Section (Improved) */}
+          <div className="py-16 sm:py-24">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto text-center">
 
-    {/* Stat 3: AI Powered */}
-    <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
-      <Bot className="w-10 h-10 mb-3 text-purple-400" />
-      <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
-        AI
-      </div>
-      <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
-        {t({ ar: 'مدعوم بالذكاء الاصطناعي', en: 'Powered' })}
-      </div>
-    </div>
-
-  </div>
-</div>
-
-        {/* NEW: Location Status Bar */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-md px-6">
-          <button
-            onClick={handleLocationStatusClick}
-            className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
-            style={{ animationDelay: '1.4s' }}
-            aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
-          >
-            <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
-              {/* Location */}
-              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                <MapPin className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-medium font-['Open_Sans']">
-                  {t(currentLocationData.name)}
-                </span>
+              {/* Stat 1: Destinations */}
+              <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                <Map className="w-10 h-10 mb-3 text-purple-400" />
+                <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+                  50+
+                </div>
+                <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+                  {t({ ar: 'وجهة فريدة', en: 'Unique Destinations' })}
+                </div>
               </div>
-              
-              {/* Temperature */}
-              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                <Thermometer className="w-4 h-4 text-orange-400" />
-                <span className="text-sm font-medium font-['Open_Sans']">
-                  {currentLocationData.temperature}°{t({ ar: 'م', en: 'C' })}
-                </span>
+
+              {/* Stat 2: Live Monitoring */}
+              <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+                <Clock className="w-10 h-10 mb-3 text-purple-400" />
+                <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+                  24/7
+                </div>
+                <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+                  {t({ ar: 'مراقبة حية', en: 'Live Monitoring' })}
+                </div>
               </div>
-              
-              {/* Congestion */}
-              <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                <Activity className={`w-4 h-4 ${
-                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
-                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
-                  'text-red-400'
-                }`} />
-                <span className={`text-sm font-medium font-['Open_Sans'] ${
-                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
-                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
-                  'text-red-400'
-                }`}>
-                  {t({ ar: `الازدحام: ${currentLocationData.congestion.ar}`, en: `Crowd: ${currentLocationData.congestion.en}` })}
-                </span>
+
+              {/* Stat 3: AI Powered */}
+              <div className="flex flex-col items-center animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
+                <Bot className="w-10 h-10 mb-3 text-purple-400" />
+                <div className="text-5xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">
+                  AI
+                </div>
+                <div className="mt-2 text-lg text-gray-300 font-['Open_Sans']">
+                  {t({ ar: 'مدعوم بالذكاء الاصطناعي', en: 'Powered' })}
+                </div>
               </div>
+
             </div>
-            
-            {/* Subtle call-to-action hint */}
-            <div className="mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {t({ ar: 'اضغط للحصول على نصائح محلية من جواد', en: 'Tap for local insights from Jawad' })}
-            </div>
-          </button>
-        </div>
-
-        {/* Original Scroll Indicator - moved up */}
-        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
           </div>
-        </div>
+
+          {/* NEW: Location Status Bar */}
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-md px-6">
+            <button
+              onClick={handleLocationStatusClick}
+              className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
+              style={{ animationDelay: '1.4s' }}
+              aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
+            >
+              <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
+                {/* Location */}
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <MapPin className="w-4 h-4 text-blue-400" />
+                  <span className="text-sm font-medium font-['Open_Sans']">
+                    {t(currentLocationData.name)}
+                  </span>
+                </div>
+
+                {/* Temperature */}
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <Thermometer className="w-4 h-4 text-orange-400" />
+                  <span className="text-sm font-medium font-['Open_Sans']">
+                    {currentLocationData.temperature}°{t({ ar: 'م', en: 'C' })}
+                  </span>
+                </div>
+
+                {/* Congestion */}
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <Activity className={`w-4 h-4 ${currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                      currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                        'text-red-400'
+                    }`} />
+                  <span className={`text-sm font-medium font-['Open_Sans'] ${currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                      currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                        'text-red-400'
+                    }`}>
+                    {t({ ar: `الازدحام: ${currentLocationData.congestion.ar}`, en: `Crowd: ${currentLocationData.congestion.en}` })}
+                  </span>
+                </div>
+              </div>
+
+              {/* Subtle call-to-action hint */}
+              <div className="mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                {t({ ar: 'اضغط للحصول على نصائح محلية من جواد', en: 'Tap for local insights from Jawad' })}
+              </div>
+            </button>
+          </div>
+
+          {/* Original Scroll Indicator - moved up */}
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+              <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
+            </div>
+          </div>
       </section>
 
       {/* How It Works Section */}
@@ -225,7 +221,7 @@ const Homepage = () => {
               {t({ ar: 'كيف يعمل النظام؟', en: 'How It Works?' })}
             </h2>
             <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
-              {t({ 
+              {t({
                 ar: 'ثلاث خطوات بسيطة لتخطيط رحلة مثالية باستخدام أحدث التقنيات',
                 en: 'Three simple steps to plan the perfect trip using the latest technologies'
               })}
@@ -234,7 +230,7 @@ const Homepage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {howItWorksSteps.map((step, index) => (
-              <div 
+              <div
                 key={index}
                 className="text-center group animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.2}s` }}
@@ -262,7 +258,7 @@ const Homepage = () => {
               {t({ ar: 'وجهات مميزة', en: 'Featured Destinations' })}
             </h2>
             <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
-              {t({ 
+              {t({
                 ar: 'اكتشف أروع الوجهات السياحية في الأردن مع بيانات حية ونصائح ذكية',
                 en: 'Discover the most amazing tourist destinations in Jordan with live data and smart tips'
               })}
@@ -308,14 +304,13 @@ const Homepage = () => {
                           {t({ ar: 'الأردن', en: 'Jordan' })}
                         </span>
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
-                        destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-red-500/20 text-red-400'
-                      }`}>
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
+                          destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-red-500/20 text-red-400'
+                        }`}>
                         {destination.crowdLevel === 'low' ? t({ ar: 'هادئ', en: 'Quiet' }) :
-                         destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :
-                         t({ ar: 'مزدحم', en: 'Busy' })}
+                          destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :
+                            t({ ar: 'مزدحم', en: 'Busy' })}
                       </div>
                     </div>
                   </CardContent>
