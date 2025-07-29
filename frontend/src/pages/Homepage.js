@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { Play, ArrowRight, ArrowLeft, MapPin, Clock, Users, Brain, Zap, Star } from 'lucide-react';
+import { Play, ArrowRight, ArrowLeft, MapPin, Clock, Users, Brain, Zap, Star, Thermometer, Activity } from 'lucide-react';
 import { destinations } from '../mock';
 
 const Homepage = () => {
