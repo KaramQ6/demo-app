@@ -169,10 +169,40 @@ export const AppProvider = ({ children }) => {
     setIsChatbotOpen(false);
   };
 
-  // Enhanced intelligent chatbot response system
+  // Enhanced intelligent chatbot response system with specific keyword responses
   const getBotResponse = (userMessage) => {
     const message = userMessage.toLowerCase();
     const isArabic = language === 'ar';
+
+    // **PRIORITY RESPONSES - As specifically requested**
+    
+    // Check for planning keywords (خطة/plan)
+    if (message.includes('خطة') || message.includes('plan')) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? 'بالتأكيد! لتصميم خطة مثالية، هل تفضل الأماكن التاريخية أم الطبيعية؟'
+          : 'Certainly! To design a perfect plan, do you prefer historical places or natural ones?'
+      };
+    }
+
+    // Check for thanks keywords (شكرا/thanks)
+    if (message.includes('شكرا') || message.includes('شكراً') || message.includes('thanks') || message.includes('thank you')) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? 'على الرحب والسعة! أنا هنا للمساعدة في أي وقت.'
+          : 'You\'re welcome! I\'m here to help anytime.'
+      };
+    }
+
+    // Check for greeting keywords (مرحبا/hello) - Returns contextual greeting
+    if (message.includes('مرحبا') || message.includes('مرحباً') || message.includes('hello') || message.includes('hi')) {
+      return {
+        type: 'text',
+        text: getContextualGreeting()
+      };
+    }
 
     // Context-aware responses based on current page
     if (currentPage === '/iot-hub') {
@@ -186,25 +216,13 @@ export const AppProvider = ({ children }) => {
       }
     }
 
-    // Existing keyword matching logic
-    const planningKeywords = ['خطة', 'رحلة', 'تخطيط', 'ساعد', 'plan', 'trip', 'help', 'planning'];
+    // Extended keyword matching logic
     const destinationKeywords = ['وجهة', 'مكان', 'سياحة', 'زيارة', 'destination', 'place', 'visit', 'tourist'];
     const weatherKeywords = ['طقس', 'جو', 'حرارة', 'weather', 'temperature', 'climate'];
     const foodKeywords = ['طعام', 'أكل', 'مطعم', 'food', 'eat', 'restaurant'];
     const transportKeywords = ['مواصلات', 'سيارة', 'حافلة', 'transport', 'car', 'bus'];
-    const thanksKeywords = ['شكر', 'thanks', 'thank you', 'شكراً'];
     const crowdKeywords = ['ازدحام', 'زحمة', 'مزدحم', 'crowd', 'busy', 'crowded'];
     const iotKeywords = ['بيانات', 'استشعار', 'iot', 'sensor', 'data', 'live'];
-
-    // Check for planning intent
-    if (planningKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'ممتاز! لتصميم خطة رحلة مثالية لك، أحتاج لمعرفة تفضيلاتك. هل تفضل الأماكن التاريخية مثل البتراء وجرش، أم الطبيعة مثل وادي رم وعجلون؟ يمكنني أيضاً أن أتحقق من البيانات الحية لتجنب الازدحام!'
-          : 'Excellent! To design a perfect trip plan for you, I need to know your preferences. Do you prefer historical places like Petra and Jerash, or nature like Wadi Rum and Ajloun? I can also check live data to avoid crowds!'
-      };
-    }
 
     // Check for destination inquiry
     if (destinationKeywords.some(keyword => message.includes(keyword))) {
