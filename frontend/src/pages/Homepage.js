@@ -139,8 +139,57 @@ const Homepage = () => {
           </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+        {/* NEW: Location Status Bar */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 w-full max-w-md px-6">
+          <button
+            onClick={handleLocationStatusClick}
+            className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
+            style={{ animationDelay: '1.4s' }}
+            aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
+          >
+            <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
+              {/* Location */}
+              <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                <MapPin className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-medium font-['Open_Sans']">
+                  {t(currentLocationData.name)}
+                </span>
+              </div>
+              
+              {/* Temperature */}
+              <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                <Thermometer className="w-4 h-4 text-orange-400" />
+                <span className="text-sm font-medium font-['Open_Sans']">
+                  {currentLocationData.temperature}°{t({ ar: 'م', en: 'C' })}
+                </span>
+              </div>
+              
+              {/* Congestion */}
+              <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                <Activity className={`w-4 h-4 ${
+                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                  'text-red-400'
+                }`} />
+                <span className={`text-sm font-medium font-['Open_Sans'] ${
+                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                  'text-red-400'
+                }`}>
+                  {t({ ar: `الازدحام: ${currentLocationData.congestion.ar}`, en: `Crowd: ${currentLocationData.congestion.en}` })}
+                </span>
+              </div>
+            </div>
+            
+            {/* Subtle call-to-action hint */}
+            <div className="mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              {t({ ar: 'اضغط للحصول على نصائح محلية من جواد', en: 'Tap for local insights from Jawad' })}
+            </div>
+          </button>
+        </div>
+
+        {/* Original Scroll Indicator - moved up */}
+        <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
             <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
           </div>
