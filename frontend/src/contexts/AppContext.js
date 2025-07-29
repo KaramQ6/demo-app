@@ -1,295 +1,321 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useLanguage } from './LanguageContext';
+import React, { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
+import { useApp } from '../contexts/AppContext';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Activity } from 'lucide-react';
 
-const AppContext = createContext();
+const Chatbot = () => {
+  const { t, language, isRTL } = useLanguage();
+  const { 
+    isChatbotOpen, 
+    openChatbot,
+    closeChatbot, 
+    // sendMessage, // <-- لن نستخدم الدالة القديمة من الـ Context
+    chatMessages,
+    setChatMessages, // <-- سنحتاج للوصول المباشر لهذه الدالة
+    isTyping,
+    setIsTyping, // <-- سنحتاج للوصول المباشر لهذه الدالة
+    showChatbot,
+    toggleChatbotVisibility 
+  } = useApp();
+  
+  const [inputValue, setInputValue] = useState('');
+  const [copiedMessageId, setCopiedMessageId] = useState(null);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
-export const useApp = () => {
-  const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
-  }
-  return context;
-};
+  // --- START: إضافة حالات جديدة للبيانات الحية ---
+  const [liveData, setLiveData] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  // --- END: إضافة حالات جديدة للبيانات الحية ---
 
-export const AppProvider = ({ children }) => {
-  const location = useLocation();
-  const { language, t } = useLanguage();
-  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState([]);
-  const [showChatbot, setShowChatbot] = useState(true);
-  const [iotData, setIotData] = useState({});
-  const [isTyping, setIsTyping] = useState(false);
-
-  const currentPage = location.pathname;
-
-  // Simulated current location data for enhanced context awareness
-  const currentLocationData = {
-    name: { ar: 'جرش', en: 'Jerash' },
-    temperature: 28,
-    congestion: { ar: 'متوسط', en: 'Moderate' },
-    congestionLevel: 'medium'
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Check sessionStorage for chatbot visibility on mount
   useEffect(() => {
-    const chatbotHidden = sessionStorage.getItem('chatbotHidden');
-    if (chatbotHidden === 'true') {
-      setShowChatbot(false);
-    }
-  }, []);
+    scrollToBottom();
+  }, [chatMessages, isTyping]);
 
-  // Get contextual greeting based on current page
-  const getContextualGreeting = () => {
-    const isArabic = language === 'ar';
-    
-    // Enhanced contextual greetings with location awareness
-    if (currentPage.includes('/destinations/')) {
-      const destinationId = currentPage.split('/destinations/')[1];
-      const destinationNames = {
-        'jerash': { ar: 'جرش', en: 'Jerash' },
-        'petra': { ar: 'البتراء', en: 'Petra' },
-        'umm-qais': { ar: 'أم قيس', en: 'Umm Qais' },
-        'salt': { ar: 'السلط', en: 'As-Salt' },
-        'ajloun': { ar: 'عجلون', en: 'Ajloun' },
-        'wadi-rum': { ar: 'وادي رم', en: 'Wadi Rum' }
-      };
-      
-      const destinationName = destinationNames[destinationId];
-      if (destinationName) {
-        return isArabic 
-          ? `أهلاً بك في صفحة ${destinationName.ar}! هل لديك أي سؤال محدد عن هذه المدينة العريقة؟`
-          : `Welcome to the ${destinationName.en} page! Do you have any specific questions about this ancient city?`;
-      }
+  useEffect(() => {
+    if (isChatbotOpen && inputRef.current) {
+      inputRef.current.focus();
     }
-    
-    if (currentPage === '/data') {
-      return isArabic 
-        ? `أرى أنك مهتم بالبيانات الحية. بالمناسبة، أنت الآن في ${currentLocationData.name.ar} حيث الازدحام ${currentLocationData.congestion.ar}. هل أحلل لك وضع الازدحام اليوم؟`
-        : `I see you're interested in live data. By the way, you're currently in ${currentLocationData.name.en} where crowd level is ${currentLocationData.congestion.en}. Should I analyze today's crowd situation for you?`;
-    }
-    
-    if (currentPage === '/destinations') {
-      return isArabic 
-        ? 'مرحباً! أرى أنك تتصفح الوجهات السياحية. أي نوع من التجارب تبحث عنه؟ تاريخية، طبيعية، أم ثقافية؟'
-        : 'Hello! I see you\'re browsing tourist destinations. What kind of experiences are you looking for? Historical, natural, or cultural?';
-    }
-    
-    if (currentPage === '/demo') {
-      return isArabic 
-        ? `أهلاً بك في التجربة التفاعلية! هل تريد معرفة المزيد عن تقنياتنا المتطورة أم لديك أسئلة حول كيفية عمل النظام؟`
-        : `Welcome to the interactive experience! Would you like to know more about our advanced technologies or do you have questions about how the system works?`;
-    }
-    
-    if (currentPage === '/about') {
-      return isArabic 
-        ? `أهلاً بك! أرى أنك تتعرف على مشروعنا. هل لديك أسئلة حول رؤيتنا أو التقنيات التي نستخدمها؟`
-        : `Welcome! I see you're learning about our project. Do you have questions about our vision or the technologies we use?`;
-    }
-    
-    // Enhanced homepage greeting with location context
-    return isArabic 
-      ? `أهلاً بك في SmartTour.Jo! أرى أنك في ${currentLocationData.name.ar} الآن. كيف يمكنني مساعدتك في اكتشاف كنوز الأردن؟`
-      : `Welcome to SmartTour.Jo! I see you're currently in ${currentLocationData.name.en}. How can I help you discover Jordan's treasures?`;
-  };
+  }, [isChatbotOpen]);
 
-  // Enhanced intelligent chatbot response system
-  const getBotResponse = (userMessage) => {
-    // Ensure userMessage is a string
-    const messageText = typeof userMessage === 'string' ? userMessage : String(userMessage);
-    const message = messageText.toLowerCase();
-    const isArabic = language === 'ar';
+  // --- START: useEffect لجلب البيانات الحية عند فتح الشات بوت ---
+  useEffect(() => {
+    const fetchLiveData = async () => {
+        setIsLoadingData(true);
+        const city = 'Amman'; // يمكن تطويرها لاحقاً لتكون ديناميكية
+        const lang = language;
+        const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?city=${city}&lang=${lang}`;
 
-    // Priority keyword responses
-    if (message.includes('خطة') || message.includes('plan')) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'بالتأكيد! لتصميم خطة مثالية، هل تفضل الأماكن التاريخية أم الطبيعية؟'
-          : 'Certainly! To design a perfect plan, do you prefer historical places or natural ones?'
-      };
-    }
-
-    if (message.includes('شكرا') || message.includes('شكراً') || message.includes('thanks') || message.includes('thank you')) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'على الرحب والسعة! أنا هنا للمساعدة في أي وقت.'
-          : 'You\'re welcome! I\'m here to help anytime.'
-      };
-    }
-
-    if (message.includes('مرحبا') || message.includes('مرحباً') || message.includes('hello') || message.includes('hi')) {
-      return {
-        type: 'text',
-        text: getContextualGreeting()
-      };
-    }
-
-    // Context-aware responses based on current page
-    if (currentPage === '/data') {
-      if (message.includes('ازدحام') || message.includes('crowd') || message.includes('busy')) {
-        return {
-          type: 'text',
-          text: isArabic 
-            ? 'بناءً على البيانات الحية الحالية، أنصحك بزيارة أم قيس أو عجلون حيث مستوى الازدحام منخفض. البتراء وجرش مزدحمتان حالياً. هل تريد تفاصيل أكثر عن وجهة معينة؟'
-            : 'Based on current live data, I recommend visiting Umm Qais or Ajloun where crowd levels are low. Petra and Jerash are currently crowded. Would you like more details about a specific destination?'
-        };
-      }
-    }
-
-    // Extended keyword matching logic
-    const destinationKeywords = ['وجهة', 'مكان', 'سياحة', 'زيارة', 'destination', 'place', 'visit', 'tourist'];
-    const weatherKeywords = ['طقس', 'جو', 'حرارة', 'weather', 'temperature', 'climate'];
-    const foodKeywords = ['طعام', 'أكل', 'مطعم', 'food', 'eat', 'restaurant'];
-    const transportKeywords = ['مواصلات', 'سيارة', 'حافلة', 'transport', 'car', 'bus'];
-    const crowdKeywords = ['ازدحام', 'زحمة', 'مزدحم', 'crowd', 'busy', 'crowded'];
-    const iotKeywords = ['بيانات', 'استشعار', 'iot', 'sensor', 'data', 'live'];
-
-    // Check for destination inquiry
-    if (destinationKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'destinations',
-        text: isArabic 
-          ? 'إليك أفضل الوجهات السياحية في الأردن مع البيانات الحية:'
-          : 'Here are the best tourist destinations in Jordan with live data:',
-        showDestinations: true
-      };
-    }
-
-    // Check for weather inquiry
-    if (weatherKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? `الطقس حالياً في ${currentLocationData.name.ar} هو ${currentLocationData.temperature}°م. الجو مناسب للتنزه! هل تريد نصائح حول أفضل الأنشطة في هذا الطقس؟`
-          : `Current weather in ${currentLocationData.name.en} is ${currentLocationData.temperature}°C. Perfect for sightseeing! Would you like tips on the best activities for this weather?`
-      };
-    }
-
-    // Check for food inquiry
-    if (foodKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'يمكنني أن أنصحك بأفضل المطاعم المحلية! هل تفضل المأكولات التراثية الأردنية أم تبحث عن خيارات عالمية؟'
-          : 'I can recommend the best local restaurants! Do you prefer traditional Jordanian cuisine or are you looking for international options?'
-      };
-    }
-
-    // Check for transportation inquiry
-    if (transportKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'يمكنني مساعدتك في ترتيب المواصلات! هل تفضل استئجار سيارة، أم تريد معلومات عن الحافلات السياحية، أم تبحث عن خدمات النقل الخاص؟'
-          : 'I can help you arrange transportation! Do you prefer car rental, tourist bus information, or private transport services?'
-      };
-    }
-
-    // Check for crowd information
-    if (crowdKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'يمكنك مراجعة البيانات الحية للازدحام في صفحة "مركز البيانات الحية". نستخدم أجهزة استشعار IoT لتقديم معلومات فورية عن مستوى الازدحام في كل موقع! هل تريد مني تحليل الوضع الحالي؟'
-          : 'You can check live crowd data in the "Live Data Hub" page. We use IoT sensors to provide real-time information about crowd levels at each location! Would you like me to analyze the current situation?'
-      };
-    }
-
-    // Default response with context awareness - as specifically requested fallback
-    return {
-      type: 'text',
-      text: isArabic 
-        ? 'عفواً، لم أفهم طلبك. يمكنك أن تطلب مني \'خطة رحلة\' أو تسألني عن \'وجهة سياحية\'.'
-        : 'Sorry, I didn\'t understand your request. You can ask me for a \'trip plan\' or ask about a \'tourist destination\'.'
+        try {
+            const response = await fetch(liveDataUrl);
+            if (!response.ok) throw new Error('Failed to fetch live data');
+            const data = await response.json();
+            setLiveData(data);
+        } catch (error) {
+            console.error("Live Data Fetch Error:", error);
+            setLiveData(null);
+        } finally {
+            setIsLoadingData(false);
+        }
     };
-  };
 
-  // Chatbot functions
-  const openChatbot = (initialMessage = null) => {
-    setIsChatbotOpen(true);
-    
-    if (chatMessages.length === 0) {
-      const greeting = getContextualGreeting();
-      const welcomeMessage = {
-        id: Date.now(),
-        type: 'bot',
-        text: greeting,
-        timestamp: new Date()
-      };
-      setChatMessages([welcomeMessage]);
+    if (isChatbotOpen) {
+        fetchLiveData();
     }
+  }, [isChatbotOpen, language]);
+  // --- END: useEffect لجلب البيانات الحية ---
 
-    if (initialMessage) {
-      setTimeout(() => {
-        sendMessage(initialMessage);
-      }, 500);
-    }
-  };
+  // --- START: تعديل دالة handleSubmit لترسل الطلب إلى n8n ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const userInput = inputValue.trim();
+    if (!userInput) return;
 
-  const closeChatbot = () => {
-    setIsChatbotOpen(false);
-  };
-
-  const toggleChatbotVisibility = () => {
-    const newVisibility = !showChatbot;
-    setShowChatbot(newVisibility);
-    sessionStorage.setItem('chatbotHidden', (!newVisibility).toString());
-    if (!newVisibility) {
-      setIsChatbotOpen(false);
-    }
-  };
-
-  const sendMessage = (messageText) => {
+    // 1. إضافة رسالة المستخدم فوراً للواجهة
     const userMessage = {
       id: Date.now(),
+      text: userInput,
       type: 'user',
-      text: messageText,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-
     setChatMessages(prev => [...prev, userMessage]);
+    setInputValue('');
     setIsTyping(true);
 
-    // Simulate bot response delay
-    setTimeout(() => {
-      const botResponse = getBotResponse(messageText);
-      const botMessage = {
-        id: Date.now() + 1,
-        type: 'bot',
-        text: botResponse.text,
-        timestamp: new Date()
-      };
+    // 2. تجهيز وإرسال الطلب لـ n8n
+    let sessionId = localStorage.getItem('chatSessionId');
+    if (!sessionId) {
+        sessionId = `session_${Date.now()}`;
+        localStorage.setItem('chatSessionId', sessionId);
+    }
+    const chatbotUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
 
-      setChatMessages(prev => [...prev, botMessage]);
-      setIsTyping(false);
-    }, 1500);
+    try {
+        const response = await fetch(chatbotUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userInput, sessionId: sessionId })
+        });
+
+        if (!response.ok) throw new Error(`Network error: ${response.status}`);
+        
+        const data = await response.json();
+        const botResponseText = data.reply || "عذرًا، حدث خطأ ما.";
+
+        // 3. إضافة رد البوت الحقيقي للواجهة
+        const botMessage = {
+          id: Date.now() + 1,
+          text: botResponseText,
+          type: 'bot',
+          timestamp: new Date(),
+        };
+        setChatMessages(prev => [...prev, botMessage]);
+
+    } catch (error) {
+        console.error("Chat API Error:", error);
+        const errorMessage = {
+            id: Date.now() + 1,
+            text: "❌ فشل الاتصال بالخادم.",
+            type: 'bot',
+            timestamp: new Date(),
+        };
+        setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsTyping(false);
+    }
+  };
+  // --- END: تعديل دالة handleSubmit ---
+
+  const handleCopyMessage = async (messageText, messageId) => {
+    try {
+      await navigator.clipboard.writeText(messageText);
+      setCopiedMessageId(messageId);
+      
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy message:', err);
+    }
   };
 
-  const value = {
-    currentPage,
-    isChatbotOpen,
-    setIsChatbotOpen,
-    chatMessages,
-    setChatMessages,
-    showChatbot,
-    setShowChatbot,
-    toggleChatbotVisibility,
-    openChatbot,
-    closeChatbot,
-    sendMessage,
-    isTyping,
-    iotData,
-    setIotData,
-    getBotResponse,
-    getContextualGreeting,
-    currentLocationData
-  };
+  if (!showChatbot) {
+    return null;
+  }
 
   return (
-    <AppContext.Provider value={value}>
-      {children}
-    </AppContext.Provider>
+    <>
+      {/* ... (الجزء الخاص بـ Floating Action Button يبقى كما هو) ... */}
+      {!isChatbotOpen && (
+        <button
+          onClick={openChatbot}
+          className="fixed bottom-6 right-6 w-16 h-16 gradient-purple rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 interactive-button z-50"
+          aria-label={t({ ar: 'فتح المحادثة مع جواد', en: 'Open chat with Jawad' })}
+        >
+          <MessageCircle className="w-7 h-7" />
+        </button>
+      )}
+
+      {isChatbotOpen && (
+        <div className="fixed bottom-6 right-6 w-96 h-[32rem] glass-card rounded-2xl shadow-2xl flex flex-col z-50 animate-slide-up border border-white/20">
+          {/* ... (الجزء الخاص بـ Header يبقى كما هو) ... */}
+          <div className="flex items-center justify-between p-4 border-b border-white/10">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+              <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center">
+                <Bot className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white font-['Montserrat']">
+                  {t({ ar: 'جواد', en: 'Jawad' })}
+                </h3>
+                <p className="text-xs text-muted-foreground font-['Open_Sans']">
+                  {t({ ar: 'مرشدك الذكي', en: 'Your Smart Guide' })}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2 rtl:space-x-reverse">
+              <button
+                onClick={toggleChatbotVisibility}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors interactive-button"
+                aria-label={t({ ar: 'إخفاء المساعد', en: 'Hide Assistant' })}
+              >
+                <Power className="w-4 h-4 text-muted-foreground hover:text-white" />
+              </button>
+              <button
+                onClick={closeChatbot}
+                className="p-2 rounded-lg hover:bg-white/10 transition-colors interactive-button"
+                aria-label={t({ ar: 'إغلاق المحادثة', en: 'Close chat' })}
+              >
+                <X className="w-4 h-4 text-muted-foreground hover:text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* --- START: تحديث شريط البيانات الحية --- */}
+          <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
+            {isLoadingData ? (
+              <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+              </div>
+            ) : liveData ? (
+              <div className="flex items-center justify-between text-sm animate-fade-in">
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <MapPin className="w-4 h-4 text-blue-400" />
+                      <span className="text-white font-medium">
+                          {isRTL ? liveData.locationName.ar : liveData.locationName.en}
+                      </span>
+                  </div>
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <Thermometer className="w-4 h-4 text-orange-400" />
+                      <span className="text-white font-medium">
+                          {liveData.temperature}°م
+                      </span>
+                  </div>
+                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                    <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
+                    <span className="text-white font-medium text-xs">
+                        {liveData.weather.description}
+                    </span>
+                  </div>
+              </div>
+            ) : (
+              <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
+            )}
+          </div>
+          {/* --- END: تحديث شريط البيانات الحية --- */}
+
+          {/* ... (الجزء الخاص بـ Messages Area و Input Form يبقى كما هو) ... */}
+           {/* Messages Area */}
+           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/20">
+            {chatMessages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
+              >
+                <div className="relative group">
+                  <div
+                    className={`max-w-xs px-4 py-3 rounded-xl font-['Open_Sans'] ${
+                      message.type === 'user'
+                        ? 'gradient-purple text-white ml-4'
+                        : 'glass text-white mr-4'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-line">{message.text}</p>
+                    
+                    {/* Timestamp */}
+                    <div className="text-xs opacity-60 mt-2">
+                      {new Date(message.timestamp).toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </div>
+                  </div>
+                  
+                  {/* Copy Button - Only for bot messages */}
+                  {message.type === 'bot' && (
+                    <button
+                      onClick={() => handleCopyMessage(message.text, message.id)}
+                      className={`absolute ${isRTL ? 'left-1' : 'right-1'} top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded-md hover:bg-white/10 interactive-button`}
+                      aria-label={t({ ar: 'نسخ الرسالة', en: 'Copy message' })}
+                    >
+                      {copiedMessageId === message.id ? (
+                        <Check className="w-3 h-3 text-green-400" />
+                      ) : (
+                        <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {/* Typing Indicator */}
+            {isTyping && (
+              <div className="flex justify-start animate-fade-in">
+                <div className="glass text-white mr-4 px-4 py-3 rounded-xl">
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm font-['Open_Sans']">
+                      {t({ ar: 'جواد يكتب...', en: 'Jawad is typing...' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Form */}
+          <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
+            <div className="flex space-x-2 rtl:space-x-reverse">
+              <input
+                ref={inputRef}
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder={t({ ar: 'اسأل جواد...', en: 'Ask Jawad...' })}
+                className="flex-1 px-4 py-2 glass rounded-lg text-white placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary font-['Open_Sans']"
+                disabled={isTyping}
+              />
+              <button
+                type="submit"
+                disabled={!inputValue.trim() || isTyping}
+                className="px-4 py-2 gradient-purple rounded-lg text-white hover:opacity-90 transition-opacity interactive-button disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-label={t({ ar: 'إرسال', en: 'Send' })}
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+    </>
   );
 };
+
+export default Chatbot;
