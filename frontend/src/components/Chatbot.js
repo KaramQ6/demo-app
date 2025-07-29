@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Activity } from 'lucide-react';
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
@@ -9,21 +9,19 @@ const Chatbot = () => {
     isChatbotOpen, 
     openChatbot,
     closeChatbot, 
-    sendMessage, // <-- الدالة الحقيقية من Context
+    sendMessage, 
     chatMessages, 
     isTyping,
     showChatbot,
-    toggleChatbotVisibility 
+    toggleChatbotVisibility,
+    liveData,        // <-- استقبال البيانات الحية
+    isLoadingData,   // <-- استقبال حالة التحميل
   } = useApp();
   
   const [inputValue, setInputValue] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-
-  // --- حالات لتخزين البيانات الحية ---
-  const [liveData, setLiveData] = useState(null);
-  const [isLoadingData, setIsLoadingData] = useState(true);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -39,33 +37,6 @@ const Chatbot = () => {
     }
   }, [isChatbotOpen]);
 
-  // --- useEffect لجلب البيانات الحية من n8n ---
-  useEffect(() => {
-    const fetchLiveData = async () => {
-        setIsLoadingData(true);
-        const city = 'Amman'; // يمكن تطويرها لاحقاً
-        const lang = language;
-        const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?city=${city}&lang=${lang}`;
-
-        try {
-            const response = await fetch(liveDataUrl);
-            if (!response.ok) throw new Error('Failed to fetch live data');
-            const data = await response.json();
-            setLiveData(data);
-        } catch (error) {
-            console.error("Live Data Fetch Error:", error);
-            setLiveData(null);
-        } finally {
-            setIsLoadingData(false);
-        }
-    };
-
-    if (isChatbotOpen) {
-        fetchLiveData();
-    }
-  }, [isChatbotOpen, language]);
-
-  // --- دالة بسيطة لاستدعاء sendMessage من الـ Context ---
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim()) {
@@ -169,7 +140,7 @@ const Chatbot = () => {
               </div>
             ))}
             {isTyping && (
-              <div className="flex justify-start"><div className="glass text-white mr-4 px-4 py-3 rounded-xl"><Loader2 className="w-4 h-4 animate-spin" /></div></div>
+              <div className="flex justify-start"><div className="glass text-white mr-4 px-4 py-3 rounded-xl"><div className="flex items-center space-x-2 rtl:space-x-reverse"><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">{t({ ar: 'جواد يكتب...', en: 'Jawad is typing...' })}</span></div></div></div>
             )}
             <div ref={messagesEndRef} />
           </div>

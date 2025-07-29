@@ -1,0 +1,4 @@
+# أبسط ملف إعدادات ممكن لـ Netlify
+[build]
+  command = "npm run build"
+  publish = "build" # إذا كنت تستخدم Vite، غيرها إلى "dist"
