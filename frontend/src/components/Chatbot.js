@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Activity } from 'lucide-react';
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
