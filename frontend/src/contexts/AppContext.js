@@ -210,7 +210,8 @@ export const AppProvider = ({ children }) => {
     iotData,
     setIotData,
     getBotResponse,
-    getContextualGreeting
+    getContextualGreeting,
+    currentLocationData
   };
 
   return (
