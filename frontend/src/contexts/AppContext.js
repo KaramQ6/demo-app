@@ -74,7 +74,19 @@ export const AppProvider = ({ children }) => {
         : 'Hello! I see you\'re browsing tourist destinations. What kind of experiences are you looking for? Historical, natural, or cultural?';
     }
     
-    // Default homepage greeting
+    if (currentPage === '/demo') {
+      return isArabic 
+        ? `أهلاً بك في التجربة التفاعلية! هل تريد معرفة المزيد عن تقنياتنا المتطورة أم لديك أسئلة حول كيفية عمل النظام؟`
+        : `Welcome to the interactive experience! Would you like to know more about our advanced technologies or do you have questions about how the system works?`;
+    }
+    
+    if (currentPage === '/about') {
+      return isArabic 
+        ? `أهلاً بك! أرى أنك تتعرف على مشروعنا. هل لديك أسئلة حول رؤيتنا أو التقنيات التي نستخدمها؟`
+        : `Welcome! I see you're learning about our project. Do you have questions about our vision or the technologies we use?`;
+    }
+    
+    // Enhanced homepage greeting with location context
     return isArabic 
       ? 'أهلاً بك في SmartTour.Jo! كيف يمكنني مساعدتك في اكتشاف كنوز الأردن؟'
       : 'Welcome to SmartTour.Jo! How can I help you discover Jordan\'s treasures?';
