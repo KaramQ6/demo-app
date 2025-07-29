@@ -52,6 +52,54 @@ const Destinations = () => {
     return { level, percentage: Math.round(percentage) };
   };
 
+  // Skeleton Card Component for loading state
+  const SkeletonCard = ({ index }) => (
+    <Card className="glass-card h-full overflow-hidden border-white/10 animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
+      <div className="relative h-72 overflow-hidden">
+        {/* Image skeleton with shimmer effect */}
+        <div className="w-full h-full bg-gray-700/50 animate-pulse flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-r from-gray-700/50 via-gray-600/50 to-gray-700/50 animate-shimmer"></div>
+        </div>
+        
+        {/* Badge skeletons */}
+        <div className="absolute top-4 left-4 right-4 flex justify-between">
+          <div className="bg-gray-600/50 rounded-full px-4 py-2 animate-pulse">
+            <div className="w-12 h-4 bg-gray-500/50 rounded"></div>
+          </div>
+          <div className="bg-gray-600/50 rounded-full px-4 py-2 animate-pulse">
+            <div className="w-8 h-4 bg-gray-500/50 rounded"></div>
+          </div>
+        </div>
+        
+        {/* Title skeleton */}
+        <div className="absolute bottom-4 left-4 right-4">
+          <div className="bg-gray-600/50 rounded h-6 mb-3 animate-pulse"></div>
+          <div className="flex items-center justify-between">
+            <div className="bg-gray-600/50 rounded h-4 w-16 animate-pulse"></div>
+            <div className="bg-gray-600/50 rounded-full h-6 w-12 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
+      
+      <CardContent className="p-8">
+        {/* Description skeleton */}
+        <div className="space-y-2 mb-6">
+          <div className="bg-gray-600/50 rounded h-4 animate-pulse"></div>
+          <div className="bg-gray-600/50 rounded h-4 w-4/5 animate-pulse"></div>
+        </div>
+        
+        {/* Features skeleton */}
+        <div className="grid grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="bg-gray-700/50 rounded-lg p-3 animate-pulse">
+              <div className="bg-gray-600/50 rounded h-4 w-16"></div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   const getCrowdColor = (level) => {
     switch (level) {
       case 'low': return 'text-green-400';
