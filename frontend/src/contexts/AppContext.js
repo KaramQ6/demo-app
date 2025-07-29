@@ -23,6 +23,14 @@ export const AppProvider = ({ children }) => {
 
   const currentPage = location.pathname;
 
+  // Simulated current location data for enhanced context awareness
+  const currentLocationData = {
+    name: { ar: 'جرش', en: 'Jerash' },
+    temperature: 28,
+    congestion: { ar: 'متوسط', en: 'Moderate' },
+    congestionLevel: 'medium'
+  };
+
   // Check sessionStorage for chatbot visibility on mount
   useEffect(() => {
     const chatbotHidden = sessionStorage.getItem('chatbotHidden');
