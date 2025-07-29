@@ -4,13 +4,13 @@ import { useApp } from '../contexts/AppContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { 
-  Activity, 
-  Users, 
-  Car, 
-  Thermometer, 
-  Cloud, 
-  CloudRain, 
+import {
+  Activity,
+  Users,
+  Car,
+  Thermometer,
+  Cloud,
+  CloudRain,
   Sun,
   Zap,
   Wifi,
@@ -18,42 +18,92 @@ import {
   TrendingUp,
   AlertCircle,
   CheckCircle,
-  Clock
+  Clock,
+  Loader2
 } from 'lucide-react';
 import { destinations, iotSensorData } from '../mock';
 
 const DataHub = () => {
   const { t, language } = useLanguage();
-  const { iotData, setIotData, openChatbot } = useApp();
+  const {
+    iotData,
+    setIotData,
+    openChatbot,
+    userLocation,
+    locationError,
+    liveData,
+    isLoadingData
+  } = useApp();
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [feedbackGiven, setFeedbackGiven] = useState({});
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
-  // Initialize IoT data if not present
+  // --- DEFENSIVE CHECKS: Ensure destinations exist ---
+  if (!destinations || !Array.isArray(destinations) || destinations.length === 0) {
+    return (
+      <div className="min-h-screen py-20 px-6 flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {t({ ar: 'خطأ في تحميل البيانات', en: 'Error Loading Data' })}
+          </h2>
+          <p className="text-muted-foreground">
+            {t({ ar: 'لا يمكن تحميل بيانات المواقع السياحية', en: 'Could not load destination data' })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Initialize IoT data if not present - DEFENSIVE APPROACH
   useEffect(() => {
-    if (Object.keys(iotData).length === 0) {
-      setIotData(iotSensorData);
-    }
+    const initializeData = () => {
+      setIsDataLoading(true);
+      try {
+        if (!iotData || Object.keys(iotData).length === 0) {
+          console.log("Initializing IoT data from mock data");
+          setIotData(iotSensorData);
+        }
+      } catch (error) {
+        console.error("Error initializing IoT data:", error);
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+
+    initializeData();
   }, [iotData, setIotData]);
 
-  // Simulate real-time data updates
+  // Simulate real-time data updates - WITH ERROR HANDLING
   useEffect(() => {
     const interval = setInterval(() => {
-      setIotData(prev => {
-        const updated = { ...prev };
-        Object.keys(updated).forEach(key => {
-          if (updated[key]) {
-            // Simulate small fluctuations in crowd level
-            const fluctuation = (Math.random() - 0.5) * 10;
-            updated[key] = {
-              ...updated[key],
-              crowdLevel: Math.max(0, Math.min(100, updated[key].crowdLevel + fluctuation)),
-              lastUpdated: new Date()
-            };
+      try {
+        setIotData(prev => {
+          // DEFENSIVE: Ensure prev exists and is an object
+          if (!prev || typeof prev !== 'object') {
+            console.warn("IoT data is invalid, reinitializing...");
+            return iotSensorData;
           }
+
+          const updated = { ...prev };
+          Object.keys(updated).forEach(key => {
+            if (updated[key] && typeof updated[key] === 'object') {
+              // Simulate small fluctuations in crowd level
+              const fluctuation = (Math.random() - 0.5) * 10;
+              const newCrowdLevel = Math.max(0, Math.min(100, updated[key].crowdLevel + fluctuation));
+              updated[key] = {
+                ...updated[key],
+                crowdLevel: newCrowdLevel,
+                lastUpdated: new Date()
+              };
+            }
+          });
+          return updated;
         });
-        return updated;
-      });
-      setLastUpdated(new Date());
+        setLastUpdated(new Date());
+      } catch (error) {
+        console.error("Error updating IoT data:", error);
+      }
     }, 30000); // Update every 30 seconds
 
     return () => clearInterval(interval);
@@ -61,16 +111,24 @@ const DataHub = () => {
 
   const handleFeedbackClick = (destinationId) => {
     setFeedbackGiven(prev => ({ ...prev, [destinationId]: true }));
-    
+
     // Simulate animated confirmation
     setTimeout(() => {
       setFeedbackGiven(prev => ({ ...prev, [destinationId]: false }));
     }, 3000);
-    
-    openChatbot(t({
-      ar: `شكراً لك! هل تريد المزيد من المعلومات حول الوضع الحالي في المواقع السياحية؟`,
-      en: `Thank you! Would you like more information about the current situation at tourist sites?`
-    }));
+
+    // Include location context in chatbot message
+    const locationContext = userLocation
+      ? t({
+        ar: `شكراً لك! موقعك الحالي: ${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}. هل تريد المزيد من المعلومات حول الوضع الحالي في المواقع السياحية؟`,
+        en: `Thank you! Your current location: ${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}. Would you like more information about the current situation at tourist sites?`
+      })
+      : t({
+        ar: `شكراً لك! هل تريد المزيد من المعلومات حول الوضع الحالي في المواقع السياحية؟`,
+        en: `Thank you! Would you like more information about the current situation at tourist sites?`
+      });
+
+    openChatbot(locationContext);
   };
 
   const getWeatherIcon = (condition) => {
@@ -130,6 +188,23 @@ const DataHub = () => {
     );
   };
 
+  // --- LOADING STATE ---
+  if (isDataLoading) {
+    return (
+      <div className="min-h-screen py-20 px-6 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-16 h-16 text-primary animate-spin mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {t({ ar: 'جاري تحميل البيانات...', en: 'Loading Data...' })}
+          </h2>
+          <p className="text-muted-foreground">
+            {t({ ar: 'يرجى الانتظار بينما نحضر أحدث البيانات', en: 'Please wait while we fetch the latest data' })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen py-20 px-6">
       <div className="container mx-auto max-w-7xl">
@@ -145,20 +220,60 @@ const DataHub = () => {
             <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
           </div>
           <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-3xl mx-auto">
-            {t({ 
+            {t({
               ar: 'قراءات مباشرة من أجهزة الاستشعار IoT في المواقع السياحية الأردنية لمساعدتك في اتخاذ قرارات ذكية',
               en: 'Live readings from IoT sensors at Jordanian tourist sites to help you make smart decisions'
             })}
           </p>
-          
-          {/* Status Indicators */}
-          <div className="flex items-center justify-center space-x-6 rtl:space-x-reverse mt-8">
+
+          {/* Status Indicators - Enhanced with GPS */}
+          <div className="flex flex-wrap items-center justify-center gap-4 mt-8">
+            {/* Connection Status */}
             <div className="flex items-center space-x-2 rtl:space-x-reverse glass px-4 py-2 rounded-full">
               <Wifi className="w-4 h-4 text-green-400" />
               <span className="text-sm font-['Open_Sans'] text-green-400">
                 {t({ ar: 'متصل مباشرة', en: 'Live Connected' })}
               </span>
             </div>
+
+            {/* GPS Status */}
+            <div className={`flex items-center space-x-2 rtl:space-x-reverse glass px-4 py-2 rounded-full ${userLocation ? 'border-green-400/30' : locationError ? 'border-red-400/30' : 'border-yellow-400/30'
+              }`}>
+              <div className={`w-2 h-2 rounded-full ${userLocation ? 'bg-green-400' : locationError ? 'bg-red-400' : 'bg-yellow-400'
+                } ${!userLocation && !locationError ? 'animate-pulse' : ''}`}></div>
+              <span className={`text-sm font-['Open_Sans'] ${userLocation ? 'text-green-400' : locationError ? 'text-red-400' : 'text-yellow-400'
+                }`}>
+                {userLocation
+                  ? t({ ar: 'الموقع محدد', en: 'GPS Located' })
+                  : locationError
+                    ? t({ ar: 'خطأ في الموقع', en: 'GPS Error' })
+                    : t({ ar: 'جاري تحديد الموقع...', en: 'Locating...' })
+                }
+              </span>
+            </div>
+
+            {/* Live Data Status */}
+            <div className={`flex items-center space-x-2 rtl:space-x-reverse glass px-4 py-2 rounded-full ${liveData ? 'border-green-400/30' : isLoadingData ? 'border-yellow-400/30' : 'border-gray-400/30'
+              }`}>
+              {isLoadingData ? (
+                <Loader2 className="w-4 h-4 text-yellow-400 animate-spin" />
+              ) : liveData ? (
+                <CheckCircle className="w-4 h-4 text-green-400" />
+              ) : (
+                <AlertCircle className="w-4 h-4 text-gray-400" />
+              )}
+              <span className={`text-sm font-['Open_Sans'] ${liveData ? 'text-green-400' : isLoadingData ? 'text-yellow-400' : 'text-gray-400'
+                }`}>
+                {liveData
+                  ? t({ ar: 'بيانات حية', en: 'Live Data' })
+                  : isLoadingData
+                    ? t({ ar: 'جاري التحميل...', en: 'Loading...' })
+                    : t({ ar: 'لا توجد بيانات حية', en: 'No Live Data' })
+                }
+              </span>
+            </div>
+
+            {/* Last Updated */}
             <div className="flex items-center space-x-2 rtl:space-x-reverse glass px-4 py-2 rounded-full">
               <Clock className="w-4 h-4 text-blue-400" />
               <span className="text-sm font-['Open_Sans'] text-blue-400">
@@ -171,16 +286,33 @@ const DataHub = () => {
         {/* Live Dashboard Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {destinations.map((destination, index) => {
-            const data = iotData[destination.id] || iotSensorData[destination.id];
-            if (!data) return null;
+            // DEFENSIVE: Ensure destination object exists and has required properties
+            if (!destination || !destination.id || !destination.name) {
+              console.warn("Invalid destination object:", destination);
+              return null;
+            }
 
-            const { crowdLevel, parkingAvailable, temperature, weatherCondition } = data;
+            // DEFENSIVE: Ensure data exists, fallback to mock data
+            const data = (iotData && iotData[destination.id]) || iotSensorData[destination.id];
+            if (!data) {
+              console.warn(`No IoT data found for destination: ${destination.id}`);
+              return null;
+            }
+
+            // DEFENSIVE: Ensure all required data properties exist
+            const {
+              crowdLevel = 0,
+              parkingAvailable = 0,
+              temperature = 20,
+              weatherCondition = 'sunny'
+            } = data;
+
             const crowdInfo = getCrowdColor(crowdLevel);
             const WeatherIcon = getWeatherIcon(weatherCondition);
-            
+
             return (
-              <Card 
-                key={destination.id} 
+              <Card
+                key={destination.id}
                 className="glass-card interactive-card border-white/10 animate-scale-in overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -189,7 +321,11 @@ const DataHub = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-xl font-bold font-['Montserrat'] text-white mb-1">
-                        {t(destination.name)}
+                        {/* DEFENSIVE: Handle destination name safely */}
+                        {destination.name && typeof destination.name === 'object'
+                          ? t(destination.name)
+                          : destination.name || destination.id || t({ ar: 'موقع غير معروف', en: 'Unknown Location' })
+                        }
                       </h3>
                       <div className="flex items-center space-x-2 rtl:space-x-reverse">
                         <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
@@ -206,8 +342,8 @@ const DataHub = () => {
                   {/* Crowd Level Gauge */}
                   <div className="text-center mb-6">
                     <div className="mb-3">
-                      <CircularProgress 
-                        value={crowdLevel} 
+                      <CircularProgress
+                        value={crowdLevel}
                         color={crowdInfo.stroke}
                         size={100}
                         strokeWidth={8}
@@ -218,8 +354,8 @@ const DataHub = () => {
                     </h4>
                     <span className={`text-sm font-semibold ${crowdInfo.color}`}>
                       {crowdLevel < 30 ? t({ ar: 'هادئ', en: 'Quiet' }) :
-                       crowdLevel < 70 ? t({ ar: 'متوسط', en: 'Moderate' }) :
-                       t({ ar: 'مزدحم', en: 'Busy' })}
+                        crowdLevel < 70 ? t({ ar: 'متوسط', en: 'Moderate' }) :
+                          t({ ar: 'مزدحم', en: 'Busy' })}
                     </span>
                   </div>
 
@@ -247,11 +383,10 @@ const DataHub = () => {
                   {/* Action Button */}
                   <Button
                     onClick={() => handleFeedbackClick(destination.id)}
-                    className={`w-full transition-all duration-300 font-['Open_Sans'] ${
-                      feedbackGiven[destination.id]
+                    className={`w-full transition-all duration-300 font-['Open_Sans'] ${feedbackGiven[destination.id]
                         ? 'bg-green-500 hover:bg-green-600 text-white'
                         : 'gradient-purple hover:opacity-90'
-                    }`}
+                      }`}
                     disabled={feedbackGiven[destination.id]}
                   >
                     {feedbackGiven[destination.id] ? (
@@ -270,7 +405,11 @@ const DataHub = () => {
                   {/* Last Updated */}
                   <div className="mt-4 text-center">
                     <span className="text-xs text-muted-foreground font-['Open_Sans']">
-                      {t({ ar: 'آخر تحديث', en: 'Updated' })}: {data.lastUpdated.toLocaleTimeString()}
+                      {t({ ar: 'آخر تحديث', en: 'Updated' })}: {
+                        data.lastUpdated instanceof Date
+                          ? data.lastUpdated.toLocaleTimeString()
+                          : new Date().toLocaleTimeString()
+                      }
                     </span>
                   </div>
                 </CardContent>
@@ -320,17 +459,26 @@ const DataHub = () => {
                 {t({ ar: 'تحتاج تحليل أعمق للبيانات؟', en: 'Need Deeper Data Analysis?' })}
               </h2>
               <p className="text-muted-foreground font-['Open_Sans'] text-lg">
-                {t({ 
+                {t({
                   ar: 'دع جواد يحلل البيانات الحية ويقدم لك التوصيات المناسبة لرحلتك',
                   en: 'Let Jawad analyze the live data and provide you with appropriate recommendations for your trip'
                 })}
               </p>
             </div>
             <Button
-              onClick={() => openChatbot(t({ 
-                ar: 'حلل لي البيانات الحية وأخبرني عن أفضل الأوقات لزيارة المواقع السياحية',
-                en: 'Analyze the live data for me and tell me about the best times to visit tourist sites'
-              }))}
+              onClick={() => {
+                // Create context-aware message for Jawad
+                const analysisRequest = userLocation
+                  ? t({
+                    ar: `حلل لي البيانات الحية من موقعي الحالي (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}) وأخبرني عن أفضل الأوقات لزيارة المواقع السياحية`,
+                    en: `Analyze the live data from my current location (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}) and tell me about the best times to visit tourist sites`
+                  })
+                  : t({
+                    ar: 'حلل لي البيانات الحية وأخبرني عن أفضل الأوقات لزيارة المواقع السياحية',
+                    en: 'Analyze the live data for me and tell me about the best times to visit tourist sites'
+                  });
+                openChatbot(analysisRequest);
+              }}
               size="lg"
               className="gradient-purple text-white px-8 py-4 text-lg font-semibold font-['Open_Sans'] hover:scale-105 transition-all duration-300 interactive-button shadow-2xl"
             >

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
+import { iotSensorData } from '../mock';
 
 const AppContext = createContext();
 
@@ -14,14 +15,16 @@ export const AppProvider = ({ children }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [showChatbot, setShowChatbot] = useState(true);
   
-  // --- START: تعديلات حالات البيانات الحية ---
+  // --- GPS and Live Data States ---
+  const [userLocation, setUserLocation] = useState(null); // Store GPS coordinates
+  const [locationError, setLocationError] = useState(null); // Store location errors
   const [liveData, setLiveData] = useState(null);
-  const [isLoadingData, setIsLoadingData] = useState(false); // تبدأ false
-  const [userLocation, setUserLocation] = useState(null); // لتخزين إحداثيات المستخدم
-  const [locationError, setLocationError] = useState(null); // لتخزين أخطاء تحديد الموقع
-  // --- END: تعديلات حالات البيانات الحية ---
+  const [isLoadingData, setIsLoadingData] = useState(false);
+  
+  // --- IoT Data State (missing from previous implementation) ---
+  const [iotData, setIotData] = useState({});
 
-  // --- START: useEffect لطلب الموقع الجغرافي مرة واحدة عند تحميل التطبيق ---
+  // --- GPS Location Setup (runs once on app load) ---
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocationError("Geolocation is not supported by your browser.");
@@ -33,57 +36,66 @@ export const AppProvider = ({ children }) => {
         const { latitude, longitude } = position.coords;
         setUserLocation({ lat: latitude, lon: longitude });
         setLocationError(null);
+        console.log(`GPS Location acquired: ${latitude}, ${longitude}`);
       },
       (error) => {
+        console.error("Geolocation error:", error);
         if (error.code === error.PERMISSION_DENIED) {
-          console.error("User denied Geolocation.");
-          setLocationError("User denied location access.");
+          setLocationError("User denied location access. Please enable location to see live data.");
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          setLocationError("Location information is unavailable.");
+        } else if (error.code === error.TIMEOUT) {
+          setLocationError("Location request timed out.");
         } else {
-          console.error("Geolocation error:", error);
-          setLocationError("Could not get location.");
+          setLocationError("An unknown error occurred while retrieving location.");
         }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
       }
     );
-  }, []); // القوس الفارغ يضمن تشغيله مرة واحدة فقط
-  // --- END: useEffect لطلب الموقع الجغرافي ---
+  }, []);
 
 
-  // --- START: useEffect لجلب البيانات الحية عند فتح الشات بوت (يعتمد الآن على userLocation) ---
+  // --- Live Data Fetching (GPS-based, runs when chatbot opens) ---
   useEffect(() => {
     const fetchLiveData = async () => {
-        // لا تفعل شيئاً إذا لم يكن الموقع متاحاً
-        if (!userLocation) {
-          console.log("Waiting for user location...");
-          return;
-        }
+      // Don't fetch if we don't have user location yet
+      if (!userLocation) {
+        console.log("Waiting for user location before fetching live data...");
+        return;
+      }
 
-        setIsLoadingData(true);
-        const { lat, lon } = userLocation;
-        const lang = language;
-        // الرابط الجديد يستخدم الإحداثيات
-        const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?lat=${lat}&lon=${lon}&lang=${lang}`;
+      setIsLoadingData(true);
+      const { lat, lon } = userLocation;
+      const lang = language;
+      // Updated URL to use real GPS coordinates
+      const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?lat=${lat}&lon=${lon}&lang=${lang}`;
 
-        try {
-            const response = await fetch(liveDataUrl);
-            if (!response.ok) throw new Error('Failed to fetch live data');
-            const data = await response.json();
-            setLiveData(data);
-        } catch (error) {
-            console.error("Live Data Fetch Error:", error);
-            setLiveData(null);
-        } finally {
-            setIsLoadingData(false);
-        }
+      try {
+        console.log(`Fetching live data for coordinates: ${lat}, ${lon}`);
+        const response = await fetch(liveDataUrl);
+        if (!response.ok) throw new Error(`Failed to fetch live data: ${response.status}`);
+        const data = await response.json();
+        setLiveData(data);
+        console.log("Live data fetched successfully:", data);
+      } catch (error) {
+        console.error("Live Data Fetch Error:", error);
+        setLiveData(null);
+      } finally {
+        setIsLoadingData(false);
+      }
     };
 
     if (isChatbotOpen) {
-        fetchLiveData();
+      fetchLiveData();
     }
-  }, [isChatbotOpen, language, userLocation]); // يتم إعادة الجلب إذا تغير الموقع أيضاً
-  // --- END: useEffect لجلب البيانات الحية ---
+  }, [isChatbotOpen, language, userLocation]);
 
 
-  // --- دالة إرسال الرسائل (تبقى كما هي) ---
+  // --- Chat Message Handling ---
   const sendMessage = async (userInput) => {
     const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
     setChatMessages(prev => [...prev, userMessage]);
@@ -114,22 +126,47 @@ export const AppProvider = ({ children }) => {
       setIsTyping(false);
     }
   };
+
+  // --- IoT Data Management Functions ---
+  const updateIotData = (destinationId, newData) => {
+    setIotData(prev => ({
+      ...prev,
+      [destinationId]: newData
+    }));
+  };
+
+  // --- Chatbot Control Functions ---
+  const openChatbot = (initialMessage = '') => {
+    setIsChatbotOpen(true);
+    if (initialMessage) {
+      // Add initial message from system
+      const systemMessage = {
+        id: Date.now(),
+        text: initialMessage,
+        type: 'system',
+        timestamp: new Date()
+      };
+      setChatMessages(prev => [...prev, systemMessage]);
+    }
+  };
   
-  // --- باقي الدوال (تبقى كما هي) ---
-  const openChatbot = () => setIsChatbotOpen(true);
   const closeChatbot = () => setIsChatbotOpen(false);
+  
   const toggleChatbotVisibility = () => {
     const isHidden = sessionStorage.getItem('isChatbotHidden') === 'true';
     sessionStorage.setItem('isChatbotHidden', !isHidden);
     setShowChatbot(isHidden);
     if (!isHidden) setIsChatbotOpen(false);
   };
+
+  // --- Initialize chatbot visibility on app load ---
   useEffect(() => {
     const isHidden = sessionStorage.getItem('isChatbotHidden') === 'true';
     setShowChatbot(!isHidden);
   }, []);
 
   const value = {
+    // Chatbot states
     isChatbotOpen,
     openChatbot,
     closeChatbot,
@@ -140,10 +177,20 @@ export const AppProvider = ({ children }) => {
     sendMessage,
     showChatbot,
     toggleChatbotVisibility,
+    
+    // GPS and live data states
+    userLocation,
+    locationError,
     liveData,
     isLoadingData,
-    location,
-    locationError // <-- تمرير خطأ تحديد الموقع للواجهة إذا أردت عرضه
+    
+    // IoT data states
+    iotData,
+    setIotData,
+    updateIotData,
+    
+    // Router location
+    location
   };
 
   return (

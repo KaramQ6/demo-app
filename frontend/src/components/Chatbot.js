@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, AlertCircle } from 'lucide-react';
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
@@ -14,6 +14,9 @@ const Chatbot = () => {
     isTyping,
     showChatbot,
     toggleChatbotVisibility,
+    // GPS and live data from enhanced context
+    userLocation,
+    locationError,
     liveData,
     isLoadingData,
   } = useApp();
@@ -96,29 +99,72 @@ const Chatbot = () => {
             </div>
           </div>
 
-          {/* Context Header - LIVE Data */}
+          {/* Enhanced Context Header - GPS-based Live Data */}
           <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
-            {isLoadingData ? (
+            {locationError ? (
+              <div className="flex items-center justify-center text-center h-full">
+                <AlertCircle className="w-4 h-4 text-red-400 mr-2" />
+                <span className="text-red-400 text-xs font-medium">
+                  {t({ ar: 'يرجى تفعيل الموقع لرؤية البيانات الحية', en: 'Please enable location for live data' })}
+                </span>
+              </div>
+            ) : isLoadingData ? (
               <div className="flex items-center justify-center h-full">
-                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+                <Loader2 className="w-4 h-4 text-white animate-spin mr-2" />
+                <span className="text-white text-xs font-medium">
+                  {t({ ar: 'جاري تحميل البيانات الحية...', en: 'Loading live data...' })}
+                </span>
               </div>
             ) : liveData ? (
               <div className="flex items-center justify-between text-sm animate-fade-in">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <MapPin className="w-4 h-4 text-blue-400" />
-                      <span className="text-white font-medium">{isRTL ? liveData.locationName.ar : liveData.locationName.en}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <Thermometer className="w-4 h-4 text-orange-400" />
-                      <span className="text-white font-medium">{liveData.temperature}°م</span>
-                  </div>
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <MapPin className="w-4 h-4 text-blue-400" />
+                  <span className="text-white font-medium">
+                    {(liveData.locationName && typeof liveData.locationName === 'object') 
+                      ? (isRTL ? liveData.locationName.ar : liveData.locationName.en)
+                      : liveData.locationName || t({ ar: 'موقعك الحالي', en: 'Your Location' })
+                    }
+                  </span>
+                </div>
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Thermometer className="w-4 h-4 text-orange-400" />
+                  <span className="text-white font-medium">
+                    {liveData.temperature || '--'}°C
+                  </span>
+                </div>
+                {liveData.weather && (
                   <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                    <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
-                    <span className="text-white font-medium text-xs">{liveData.weather.description}</span>
+                    {liveData.weather.iconUrl && (
+                      <img 
+                        src={liveData.weather.iconUrl} 
+                        alt={liveData.weather.description || 'Weather'} 
+                        className="w-6 h-6" 
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    )}
+                    <span className="text-white font-medium text-xs">
+                      {liveData.weather.description || t({ ar: 'طقس معتدل', en: 'Fair weather' })}
+                    </span>
                   </div>
+                )}
+              </div>
+            ) : userLocation ? (
+              <div className="flex items-center justify-center text-center h-full">
+                <MapPin className="w-4 h-4 text-green-400 mr-2" />
+                <span className="text-green-400 text-xs font-medium">
+                  {t({ 
+                    ar: `موقعك: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`, 
+                    en: `Location: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}` 
+                  })}
+                </span>
               </div>
             ) : (
-              <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
+              <div className="flex items-center justify-center text-center h-full">
+                <Loader2 className="w-4 h-4 text-yellow-400 animate-spin mr-2" />
+                <span className="text-yellow-400 text-xs font-medium">
+                  {t({ ar: 'جاري تحديد موقعك...', en: 'Getting your location...' })}
+                </span>
+              </div>
             )}
           </div>
 
