@@ -13,45 +13,45 @@ module.exports = {
   			sm: 'calc(var(--radius) - 4px)'
   		},
   		colors: {
-  			background: 'hsl(var(--background))',
-  			foreground: 'hsl(var(--foreground))',
+  			background: '#121212',
+  			foreground: '#EAEAEA',
   			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
+  				DEFAULT: 'rgba(255, 255, 255, 0.03)',
+  				foreground: '#EAEAEA'
   			},
   			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
+  				DEFAULT: 'rgba(255, 255, 255, 0.05)',
+  				foreground: '#EAEAEA'
   			},
   			primary: {
-  				DEFAULT: 'hsl(var(--primary))',
-  				foreground: 'hsl(var(--primary-foreground))'
+  				DEFAULT: '#8A2BE2',
+  				foreground: '#FFFFFF'
   			},
   			secondary: {
-  				DEFAULT: 'hsl(var(--secondary))',
-  				foreground: 'hsl(var(--secondary-foreground))'
+  				DEFAULT: '#4B0082',
+  				foreground: '#EAEAEA'
   			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
+  				DEFAULT: 'rgba(255, 255, 255, 0.05)',
+  				foreground: 'rgba(234, 234, 234, 0.7)'
   			},
   			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
+  				DEFAULT: '#8A2BE2',
+  				foreground: '#FFFFFF'
   			},
   			destructive: {
-  				DEFAULT: 'hsl(var(--destructive))',
-  				foreground: 'hsl(var(--destructive-foreground))'
+  				DEFAULT: '#EF4444',
+  				foreground: '#FFFFFF'
   			},
-  			border: 'hsl(var(--border))',
-  			input: 'hsl(var(--input))',
-  			ring: 'hsl(var(--ring))',
+  			border: 'rgba(255, 255, 255, 0.1)',
+  			input: 'rgba(255, 255, 255, 0.05)',
+  			ring: '#8A2BE2',
   			chart: {
-  				'1': 'hsl(var(--chart-1))',
-  				'2': 'hsl(var(--chart-2))',
-  				'3': 'hsl(var(--chart-3))',
-  				'4': 'hsl(var(--chart-4))',
-  				'5': 'hsl(var(--chart-5))'
+  				'1': '#8A2BE2',
+  				'2': '#4B0082',
+  				'3': '#9932CC',
+  				'4': '#6A0DAD',
+  				'5': '#7B68EE'
   			}
   		},
   		keyframes: {
