@@ -236,7 +236,8 @@ const Destinations = () => {
                 </Card>
               </Link>
             );
-          })}
+          })
+          )}
         </div>
 
         {/* Call to Action */}
