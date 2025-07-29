@@ -45,6 +45,14 @@ const Homepage = () => {
     openChatbot(message);
   };
 
+  const handleLocationStatusClick = () => {
+    const message = t({
+      ar: `أرى أنني الآن في ${currentLocationData.name.ar}. ما الأنشطة والمعالم التي يمكنني زيارتها هنا؟`,
+      en: `I see I'm currently in ${currentLocationData.name.en}. What activities and attractions can I visit here?`
+    });
+    openChatbot(message);
+  };
+
   const howItWorksSteps = [
     {
       icon: Brain,
