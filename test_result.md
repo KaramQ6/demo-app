@@ -231,17 +231,12 @@ metadata:
   test_sequence: 1
 
 test_plan:
-  current_focus:
-    - "Homepage Navigation and Hero Section"
-    - "Language Switching (Arabic/English)"
-    - "Navigation Header Links"
-    - "Chatbot Functionality"
-    - "Destinations Page and Cards"
-    - "Destination Detail Tabbed Interface"
-  stuck_tasks: []
+  current_focus: []
+  stuck_tasks:
+    - "IoT Hub Live Data"
   test_all: false
   test_priority: "high_first"
 
 agent_communication:
     -agent: "testing"
-    -message: "Starting comprehensive testing of SmartTour.Jo application. Will test core functionality first, then UI/UX elements. Frontend URL configured at https://5f6ee79f-b26a-469b-a4a8-cc3146f61b3b.preview.emergentagent.com"
+    -message: "COMPREHENSIVE TESTING COMPLETED: SmartTour.Jo application tested successfully. 9/10 tasks PASSED, 1 task FAILED. Core functionality including homepage, language switching, navigation, destinations, chatbot, demo features, and responsive design all work excellently. Only IoT Hub has React component import errors that need main agent attention. Application is ready for production with minor fix needed."
