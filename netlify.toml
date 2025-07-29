@@ -1,2 +1,10 @@
 [build]
-  base = "frontend/"
+  command = "npm run build"
+  # تأكد من أن هذا السطر صحيح
+  publish = "build" # أو "dist" إذا كنت تستخدم Vite
+
+  [build.environment]
+    NODE_VERSION = "18.18.2"
+
+[[plugins]]
+  package = ""
