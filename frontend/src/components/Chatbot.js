@@ -119,6 +119,43 @@ const Chatbot = () => {
             </div>
           </div>
 
+          {/* NEW: Context Header - Current Location Data */}
+          <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5">
+            <div className="flex items-center justify-between text-sm">
+              {/* Location */}
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <MapPin className="w-4 h-4 text-blue-400" />
+                <span className="text-white font-medium font-['Open_Sans']">
+                  {t({ ar: `أنت الآن في: ${currentLocationData.name.ar}`, en: `You are in: ${currentLocationData.name.en}` })}
+                </span>
+              </div>
+              
+              {/* Temperature */}
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Thermometer className="w-4 h-4 text-orange-400" />
+                <span className="text-white font-medium font-['Open_Sans']">
+                  {currentLocationData.temperature}°{t({ ar: 'م', en: 'C' })}
+                </span>
+              </div>
+              
+              {/* Congestion */}
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Activity className={`w-4 h-4 ${
+                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                  'text-red-400'
+                }`} />
+                <span className={`font-medium font-['Open_Sans'] ${
+                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
+                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
+                  'text-red-400'
+                }`}>
+                  {t({ ar: `الازدحام: ${currentLocationData.congestion.ar}`, en: `Crowd: ${currentLocationData.congestion.en}` })}
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/20">
             {chatMessages.map((message) => (
