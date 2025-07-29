@@ -5,154 +5,101 @@ import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Therm
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
-  const { 
-    isChatbotOpen, 
-    openChatbot,
-    closeChatbot, 
-    sendMessage, 
-    chatMessages, 
-    isTyping,
-    showChatbot,
-    toggleChatbotVisibility,
-    liveData,
-    isLoadingData,
-  } = useApp();
-  
+  const { isChatbotOpen, openChatbot, closeChatbot, sendMessage, chatMessages, isTyping, showChatbot, toggleChatbotVisibility, liveData, isLoadingData } = useApp();
   const [inputValue, setInputValue] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatMessages, isTyping]);
+  useEffect(() => { scrollToBottom(); }, [chatMessages, isTyping]);
+  useEffect(() => { if (isChatbotOpen) inputRef.current?.focus(); }, [isChatbotOpen]);
 
-  useEffect(() => {
-    if (isChatbotOpen && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isChatbotOpen]);
-
-  // --- START: This is the CORRECTLY implemented handleSubmit function ---
   const handleSubmit = (e) => {
     e.preventDefault();
     const userInput = inputValue.trim();
-
     if (userInput) {
-      sendMessage(userInput); // <-- We are now passing ONLY the string
+      sendMessage(userInput);
       setInputValue('');
     }
   };
-  // --- END: Corrected function ---
 
-  const handleCopyMessage = async (messageText, messageId) => {
+  const handleCopyMessage = async (text, id) => {
     try {
-      await navigator.clipboard.writeText(messageText);
-      setCopiedMessageId(messageId);
+      await navigator.clipboard.writeText(text);
+      setCopiedMessageId(id);
       setTimeout(() => setCopiedMessageId(null), 2000);
     } catch (err) {
       console.error('Failed to copy message:', err);
     }
   };
 
-  if (!showChatbot) {
-    return null;
-  }
+  if (!showChatbot) return null;
 
   return (
     <>
-      {/* Floating Action Button */}
       {!isChatbotOpen && (
-        <button
-          onClick={openChatbot}
-          className="fixed bottom-6 right-6 w-16 h-16 gradient-purple rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 interactive-button z-50"
-          aria-label={t({ ar: 'فتح المحادثة مع جواد', en: 'Open chat with Jawad' })}
-        >
+        <button onClick={openChatbot} className="fixed bottom-6 right-6 w-16 h-16 gradient-purple rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-all z-50">
           <MessageCircle className="w-7 h-7" />
         </button>
       )}
-
-      {/* Chat Window */}
       {isChatbotOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[32rem] glass-card rounded-2xl shadow-2xl flex flex-col z-50 animate-slide-up border border-white/20">
-          {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center">
-                <Bot className="w-5 h-5 text-white" />
-              </div>
+              <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center"><Bot className="w-5 h-5 text-white" /></div>
               <div>
-                <h3 className="font-semibold text-white font-['Montserrat']">{t({ ar: 'جواد', en: 'Jawad' })}</h3>
-                <p className="text-xs text-muted-foreground font-['Open_Sans']">{t({ ar: 'مرشدك الذكي', en: 'Your Smart Guide' })}</p>
+                <h3 className="font-semibold text-white">{t({ ar: 'جواد', en: 'Jawad' })}</h3>
+                <p className="text-xs text-muted-foreground">{t({ ar: 'مرشدك الذكي', en: 'Your Smart Guide' })}</p>
               </div>
             </div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              <button onClick={toggleChatbotVisibility} className="p-2 rounded-lg hover:bg-white/10" aria-label={t({ ar: 'إخفاء المساعد', en: 'Hide Assistant' })}>
-                <Power className="w-4 h-4 text-muted-foreground hover:text-white" />
-              </button>
-              <button onClick={closeChatbot} className="p-2 rounded-lg hover:bg-white/10" aria-label={t({ ar: 'إغلاق المحادثة', en: 'Close chat' })}>
-                <X className="w-4 h-4 text-muted-foreground hover:text-white" />
-              </button>
+              <button onClick={toggleChatbotVisibility} className="p-2 rounded-lg hover:bg-white/10"><Power className="w-4 h-4 text-muted-foreground" /></button>
+              <button onClick={closeChatbot} className="p-2 rounded-lg hover:bg-white/10"><X className="w-4 h-4 text-muted-foreground" /></button>
             </div>
           </div>
 
-          {/* Context Header - LIVE Data */}
           <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
             {isLoadingData ? (
-              <div className="flex items-center justify-center h-full">
-                  <Loader2 className="w-4 h-4 text-white animate-spin" />
-              </div>
-            ) : liveData ? (
+              <div className="flex items-center justify-center h-full"><Loader2 className="w-4 h-4 text-white animate-spin" /></div>
+            ) : liveData && liveData.weather ? ( // <-- Defensive check added here
               <div className="flex items-center justify-between text-sm animate-fade-in">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <MapPin className="w-4 h-4 text-blue-400" />
-                      <span className="text-white font-medium">{liveData.cityName}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <Thermometer className="w-4 h-4 text-orange-400" />
-                      <span className="text-white font-medium">{liveData.temperature}°م</span>
-                  </div>
-                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                    <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
-                    <span className="text-white font-medium text-xs">{liveData.weather.description}</span>
-                  </div>
+                <div className="flex items-center space-x-2 rtl:space-x-reverse"><MapPin className="w-4 h-4 text-blue-400" /><span className="text-white font-medium">{liveData.cityName}</span></div>
+                <div className="flex items-center space-x-2 rtl:space-x-reverse"><Thermometer className="w-4 h-4 text-orange-400" /><span className="text-white font-medium">{liveData.temperature}°م</span></div>
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
+                  <span className="text-white font-medium text-xs">{liveData.weather.description}</span>
+                </div>
               </div>
             ) : (
-              <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
+              <div className="text-center text-xs text-red-400">فشل تحميل البيانات</div>
             )}
           </div>
 
-          {/* Messages Area */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/20">
-            {chatMessages.map((message) => (
-              <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+            {chatMessages.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className="relative group">
-                  <div className={`max-w-xs px-4 py-3 rounded-xl ${message.type === 'user' ? 'gradient-purple text-white ml-4' : 'glass text-white mr-4'}`}>
-                    <p className="text-sm whitespace-pre-line">{message.text}</p>
-                    <div className="text-xs opacity-60 mt-2">{new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                  <div className={`max-w-xs px-4 py-3 rounded-xl ${msg.type === 'user' ? 'gradient-purple' : 'glass'}`}>
+                    <p className="text-sm text-white whitespace-pre-line">{msg.text}</p>
+                    <div className="text-xs text-white/60 mt-2">{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                   </div>
-                  {message.type === 'bot' && (
-                    <button onClick={() => handleCopyMessage(message.text, message.id)} className={`absolute ${isRTL ? 'left-1' : 'right-1'} top-1 opacity-0 group-hover:opacity-100 p-1`}>
-                      {copiedMessageId === message.id ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
+                  {msg.type === 'bot' && (
+                    <button onClick={() => handleCopyMessage(msg.text, msg.id)} className={`absolute ${isRTL ? 'left-1' : 'right-1'} top-1 opacity-0 group-hover:opacity-100 p-1`}>
+                      {copiedMessageId === msg.id ? <Check className="w-3 h-3 text-green-400" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
                     </button>
                   )}
                 </div>
               </div>
             ))}
-            {isTyping && (
-              <div className="flex justify-start"><div className="glass text-white mr-4 px-4 py-3 rounded-xl"><div className="flex items-center space-x-2 rtl:space-x-reverse"><Loader2 className="w-4 h-4 animate-spin" /><span className="text-sm">{t({ ar: 'جواد يكتب...', en: 'Jawad is typing...' })}</span></div></div></div>
-            )}
+            {isTyping && <div className="flex justify-start"><div className="glass px-4 py-3 rounded-xl"><Loader2 className="w-5 h-5 text-white animate-spin" /></div></div>}
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Form */}
           <form onSubmit={handleSubmit} className="p-4 border-t border-white/10">
             <div className="flex space-x-2 rtl:space-x-reverse">
-              <input ref={inputRef} type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder={t({ ar: 'اسأل جواد...', en: 'Ask Jawad...' })} className="flex-1 px-4 py-2 glass rounded-lg" disabled={isTyping} />
+              <input ref={inputRef} type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} placeholder={t({ar: "اسأل جواد...", en: "Ask Jawad..."})} className="flex-1 px-4 py-2 glass rounded-lg" disabled={isTyping} />
               <button type="submit" disabled={!inputValue.trim() || isTyping} className="px-4 py-2 gradient-purple rounded-lg"><Send className="w-4 h-4" /></button>
             </div>
           </form>

@@ -6,7 +6,7 @@ const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-  const { language, t } = useLanguage(); // Correctly initialized here
+  const { language, t } = useLanguage();
   const location = useLocation();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
@@ -26,21 +26,21 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     const fetchLiveData = async () => {
-        if (!userLocation) return;
-        setIsLoadingData(true);
-        const { lat, lon } = userLocation;
-        const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?lat=${lat}&lon=${lon}&lang=${language}`;
-        try {
-            const response = await fetch(liveDataUrl);
-            if (!response.ok) throw new Error('Failed to fetch');
-            const data = await response.json();
-            setLiveData(data);
-        } catch (error) {
-            console.error("Live Data Fetch Error:", error);
-            setLiveData(null);
-        } finally {
-            setIsLoadingData(false);
-        }
+      if (!userLocation) return;
+      setIsLoadingData(true);
+      const { lat, lon } = userLocation;
+      const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?lat=${lat}&lon=${lon}&lang=${language}`;
+      try {
+        const response = await fetch(liveDataUrl);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setLiveData(data);
+      } catch (error) {
+        console.error("Live Data Fetch Error:", error);
+        setLiveData(null);
+      } finally {
+        setIsLoadingData(false);
+      }
     };
     if (isChatbotOpen) fetchLiveData();
   }, [isChatbotOpen, language, userLocation]);
@@ -71,20 +71,8 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const getContextualGreeting = () => {
-    return t({ ar: `أهلاً بك في SmartTour.Jo! كيف يمكنني مساعدتك اليوم؟`, en: `Welcome to SmartTour.Jo! How can I help you today?` });
-  };
-  
-  const openChatbot = (initialMessage = null) => {
+  const openChatbot = () => {
     setIsChatbotOpen(true);
-    if (chatMessages.length === 0) {
-      const greeting = getContextualGreeting();
-      const welcomeMessage = { id: Date.now(), type: 'bot', text: greeting, timestamp: new Date() };
-      setChatMessages([welcomeMessage]);
-    }
-    if (initialMessage) {
-      setTimeout(() => sendMessage(initialMessage), 500);
-    }
   };
   
   const closeChatbot = () => setIsChatbotOpen(false);
@@ -100,6 +88,6 @@ export const AppProvider = ({ children }) => {
     setShowChatbot(!isHidden);
   }, []);
 
-  const value = { isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError };
+  const value = { isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError, setChatMessages, setIsTyping };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
