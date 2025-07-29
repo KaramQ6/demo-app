@@ -143,7 +143,19 @@ const IoTHub = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
           {destinations.map((destination, index) => {
             const data = iotData[destination.id] || generateInitialIoTData(destination.id);
-            const { crowdLevel, parkingAvailable, WeatherIcon, temperature, airQuality, visitors } = data;
+            const { crowdLevel, parkingAvailable, weatherIcon, temperature, airQuality, visitors } = data;
+            
+            // Get the appropriate weather icon component
+            const getWeatherIcon = (iconName) => {
+              switch(iconName) {
+                case 'Sun': return Sun;
+                case 'Cloud': return Cloud;
+                case 'CloudRain': return CloudRain;
+                default: return Sun;
+              }
+            };
+            
+            const WeatherIconComponent = getWeatherIcon(weatherIcon);
             
             return (
               <Card 
