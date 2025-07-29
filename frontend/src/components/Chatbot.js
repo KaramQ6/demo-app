@@ -5,12 +5,12 @@ import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Therm
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
-  const { 
-    isChatbotOpen, 
+  const {
+    isChatbotOpen,
     openChatbot,
-    closeChatbot, 
-    sendMessage, 
-    chatMessages, 
+    closeChatbot,
+    sendMessage,
+    chatMessages,
     isTyping,
     showChatbot,
     toggleChatbotVisibility,
@@ -20,7 +20,7 @@ const Chatbot = () => {
     liveData,
     isLoadingData,
   } = useApp();
-  
+
   const [inputValue, setInputValue] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const messagesEndRef = useRef(null);
@@ -120,10 +120,7 @@ const Chatbot = () => {
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <MapPin className="w-4 h-4 text-blue-400" />
                   <span className="text-white font-medium">
-                    {(liveData.locationName && typeof liveData.locationName === 'object') 
-                      ? (isRTL ? liveData.locationName.ar : liveData.locationName.en)
-                      : liveData.locationName || t({ ar: 'موقعك الحالي', en: 'Your Location' })
-                    }
+                    {liveData.cityName}
                   </span>
                 </div>
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -135,10 +132,10 @@ const Chatbot = () => {
                 {liveData.weather && (
                   <div className="flex items-center space-x-1 rtl:space-x-reverse">
                     {liveData.weather.iconUrl && (
-                      <img 
-                        src={liveData.weather.iconUrl} 
-                        alt={liveData.weather.description || 'Weather'} 
-                        className="w-6 h-6" 
+                      <img
+                        src={liveData.weather.iconUrl}
+                        alt={liveData.weather.description || 'Weather'}
+                        className="w-6 h-6"
                         onError={(e) => { e.target.style.display = 'none'; }}
                       />
                     )}
@@ -152,9 +149,9 @@ const Chatbot = () => {
               <div className="flex items-center justify-center text-center h-full">
                 <MapPin className="w-4 h-4 text-green-400 mr-2" />
                 <span className="text-green-400 text-xs font-medium">
-                  {t({ 
-                    ar: `موقعك: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`, 
-                    en: `Location: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}` 
+                  {t({
+                    ar: `موقعك: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`,
+                    en: `Location: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`
                   })}
                 </span>
               </div>

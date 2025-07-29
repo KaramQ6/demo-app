@@ -9,12 +9,12 @@ import { destinations } from '../mock';
 
 const Homepage = () => {
   const { t, language, isRTL } = useLanguage();
-  const { 
-    openChatbot, 
-    userLocation, 
-    locationError, 
-    liveData, 
-    isLoadingData 
+  const {
+    openChatbot,
+    userLocation,
+    locationError,
+    liveData,
+    isLoadingData
   } = useApp();
   const heroRef = useRef(null);
 
@@ -50,16 +50,14 @@ const Homepage = () => {
       });
     } else if (userLocation && liveData) {
       message = t({
-        ar: `أراك في ${
-          (liveData.locationName && typeof liveData.locationName === 'object') 
-            ? liveData.locationName.ar 
+        ar: `أراك في ${(liveData.locationName && typeof liveData.locationName === 'object')
+            ? liveData.locationName.ar
             : liveData.locationName || 'منطقتك الحالية'
-        } (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}). الطقس الآن ${liveData.temperature || '--'}°م. كيف يمكنني مساعدتك في استكشاف الأردن اليوم؟`,
-        en: `I see you're in ${
-          (liveData.locationName && typeof liveData.locationName === 'object') 
-            ? liveData.locationName.en 
+          } (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}). الطقس الآن ${liveData.temperature || '--'}°م. كيف يمكنني مساعدتك في استكشاف الأردن اليوم؟`,
+        en: `I see you're in ${(liveData.locationName && typeof liveData.locationName === 'object')
+            ? liveData.locationName.en
             : liveData.locationName || 'your current area'
-        } (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}). Current temperature is ${liveData.temperature || '--'}°C. How can I help you explore Jordan today?`
+          } (${userLocation.lat.toFixed(4)}, ${userLocation.lon.toFixed(4)}). Current temperature is ${liveData.temperature || '--'}°C. How can I help you explore Jordan today?`
       });
     } else if (userLocation) {
       message = t({
@@ -105,11 +103,11 @@ const Homepage = () => {
           </Button>
 
           {/* Enhanced Location Status Bar with GPS handling */}
-          <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 w-full max-w-lg px-6">
-            <button 
-              onClick={handleLocationStatusClick} 
-              className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group" 
-              style={{ animationDelay: '1.4s' }} 
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-sm px-6">
+            <button
+              onClick={handleLocationStatusClick}
+              className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
+              style={{ animationDelay: '1.4s' }}
               aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
             >
               {locationError ? (
@@ -133,10 +131,7 @@ const Homepage = () => {
                     <div className="flex items-center space-x-1 rtl:space-x-reverse">
                       <MapPin className="w-4 h-4 text-blue-400" />
                       <span className="text-sm font-medium">
-                        {(liveData.locationName && typeof liveData.locationName === 'object') 
-                          ? (isRTL ? liveData.locationName.ar : liveData.locationName.en)
-                          : liveData.locationName || t({ ar: 'موقعك الحالي', en: 'Your Location' })
-                        }
+                        {liveData.cityName}
                       </span>
                     </div>
                     <div className="flex items-center space-x-1 rtl:space-x-reverse">
@@ -146,10 +141,10 @@ const Homepage = () => {
                     {liveData.weather && (
                       <div className="flex items-center space-x-1 rtl:space-x-reverse">
                         {liveData.weather.iconUrl && (
-                          <img 
-                            src={liveData.weather.iconUrl} 
-                            alt={liveData.weather.description || 'Weather'} 
-                            className="w-5 h-5" 
+                          <img
+                            src={liveData.weather.iconUrl}
+                            alt={liveData.weather.description || 'Weather'}
+                            className="w-5 h-5"
                             onError={(e) => { e.target.style.display = 'none'; }}
                           />
                         )}
@@ -168,9 +163,9 @@ const Homepage = () => {
                   <div className="flex items-center justify-center text-green-400 mb-2">
                     <MapPin className="w-4 h-4 mr-2" />
                     <span className="text-sm">
-                      {t({ 
-                        ar: `موقع محدد: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`, 
-                        en: `Located: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}` 
+                      {t({
+                        ar: `موقع محدد: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`,
+                        en: `Located: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`
                       })}
                     </span>
                   </div>
@@ -209,7 +204,7 @@ const Homepage = () => {
           </div>
         </div>
       </section>
-      
+
       {/* Stats Section */}
       <section className="py-16 sm:py-24 px-6 bg-black/20">
         <div className="container mx-auto max-w-4xl">

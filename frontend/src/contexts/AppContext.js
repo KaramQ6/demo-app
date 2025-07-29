@@ -8,19 +8,36 @@ const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-  const { language } = useLanguage();
+  const getContextualGreeting = () => {
+    if (liveData && liveData.cityName) {
+      return t({
+        ar: `أهلاً بك في ${liveData.cityName}! درجة الحرارة هنا ${liveData.temperature}°م. كيف يمكنني مساعدتك في استكشاف هذه المنطقة؟`,
+        en: `Welcome to ${liveData.cityName}! The temperature is ${liveData.temperature}°C. How can I help you explore the area?`
+      });
+    } else if (userLocation) {
+      return t({
+        ar: `أهلاً بك! تم تحديد موقعك. كيف يمكنني أن أكون مرشدك السياحي في الأردن اليوم؟`,
+        en: `Welcome! I've detected your location. How can I be your tour guide in Jordan today?`
+      });
+    } else {
+      return t({
+        ar: 'أهلاً بك في SmartTour.Jo! كيف يمكنني مساعدتك في التخطيط لمغامرتك القادمة في الأردن؟',
+        en: 'Welcome to SmartTour.Jo! How can I help you plan your next adventure in Jordan?'
+      });
+    }
+  };
   const location = useLocation();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showChatbot, setShowChatbot] = useState(true);
-  
+
   // --- GPS and Live Data States ---
   const [userLocation, setUserLocation] = useState(null); // Store GPS coordinates
   const [locationError, setLocationError] = useState(null); // Store location errors
   const [liveData, setLiveData] = useState(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
-  
+
   // --- IoT Data State (missing from previous implementation) ---
   const [iotData, setIotData] = useState({});
 
@@ -136,22 +153,27 @@ export const AppProvider = ({ children }) => {
   };
 
   // --- Chatbot Control Functions ---
-  const openChatbot = (initialMessage = '') => {
+  const openChatbot = (initialMessage = null) => {
     setIsChatbotOpen(true);
-    if (initialMessage) {
-      // Add initial message from system
-      const systemMessage = {
+
+    if (chatMessages.length === 0) {
+      const greeting = getContextualGreeting();
+      const welcomeMessage = {
         id: Date.now(),
-        text: initialMessage,
-        type: 'system',
+        type: 'bot',
+        text: greeting,
         timestamp: new Date()
       };
-      setChatMessages(prev => [...prev, systemMessage]);
+      setChatMessages([welcomeMessage]);
+    }
+
+    if (initialMessage) {
+      setTimeout(() => sendMessage(initialMessage), 500);
     }
   };
-  
+
   const closeChatbot = () => setIsChatbotOpen(false);
-  
+
   const toggleChatbotVisibility = () => {
     const isHidden = sessionStorage.getItem('isChatbotHidden') === 'true';
     sessionStorage.setItem('isChatbotHidden', !isHidden);
@@ -177,18 +199,18 @@ export const AppProvider = ({ children }) => {
     sendMessage,
     showChatbot,
     toggleChatbotVisibility,
-    
+
     // GPS and live data states
     userLocation,
     locationError,
     liveData,
     isLoadingData,
-    
+
     // IoT data states
     iotData,
     setIotData,
     updateIotData,
-    
+
     // Router location
     location
   };
