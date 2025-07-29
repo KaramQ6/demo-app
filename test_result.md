@@ -235,8 +235,7 @@ metadata:
 
 test_plan:
   current_focus: []
-  stuck_tasks:
-    - "IoT Hub Live Data"
+  stuck_tasks: []
   test_all: false
   test_priority: "high_first"
 
