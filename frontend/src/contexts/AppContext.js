@@ -77,6 +77,7 @@ export const AppProvider = ({ children }) => {
   const getContextualGreeting = () => {
     const isArabic = language === 'ar';
     
+    // Enhanced contextual greetings - specific as requested
     if (currentPage.includes('/destinations/')) {
       const destinationId = currentPage.split('/destinations/')[1];
       const destinationNames = {
@@ -91,15 +92,15 @@ export const AppProvider = ({ children }) => {
       const destinationName = destinationNames[destinationId];
       if (destinationName) {
         return isArabic 
-          ? `أهلاً بك في صفحة ${destinationName.ar}! هل لديك أي سؤال محدد عن هذه الوجهة العريقة؟`
-          : `Welcome to the ${destinationName.en} page! Do you have any specific questions about this amazing destination?`;
+          ? `أهلاً بك في صفحة ${destinationName.ar}! هل لديك أي سؤال محدد عن هذه المدينة العريقة؟`
+          : `Welcome to the ${destinationName.en} page! Do you have any specific questions about this ancient city?`;
       }
     }
     
     if (currentPage === '/iot-hub') {
       return isArabic 
-        ? 'أرى أنك مهتم بالبيانات الحية. هل أحلل لك وضع الازدحام اليوم وأساعدك في اختيار أفضل وقت للزيارة؟'
-        : 'I see you\'re interested in live data. Should I analyze today\'s crowd situation and help you choose the best time to visit?';
+        ? 'أرى أنك مهتم بالبيانات الحية. هل أحلل لك وضع الازدحام اليوم؟'
+        : 'I see you\'re interested in live data. Should I analyze today\'s crowd situation for you?';
     }
     
     if (currentPage === '/destinations') {
@@ -120,10 +121,10 @@ export const AppProvider = ({ children }) => {
         : 'Welcome! I see you\'re learning about our project. Do you have questions about our vision or the technologies we use?';
     }
     
-    // Default homepage greeting
+    // Default homepage greeting - as specifically requested  
     return isArabic 
-      ? 'مرحباً! أنا جواد، مرشدك الذكي في الأردن. كيف يمكنني مساعدتك في التخطيط لرحلتك؟'
-      : 'Hello! I\'m Jawad, your smart guide in Jordan. How can I help you plan your trip?';
+      ? 'أهلاً بك في SmartTour.Jo! كيف يمكنني مساعدتك في اكتشاف كنوز الأردن؟'
+      : 'Welcome to SmartTour.Jo! How can I help you discover Jordan\'s treasures?';
   };
 
   // Chatbot functions
