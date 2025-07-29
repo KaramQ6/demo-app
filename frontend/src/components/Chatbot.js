@@ -88,6 +88,35 @@ const Chatbot = () => {
     openChatbot(message);
   };
 
+  // Copy to clipboard functionality
+  const handleCopyMessage = async (messageText, messageId) => {
+    try {
+      await navigator.clipboard.writeText(messageText);
+      setCopiedMessageId(messageId);
+      
+      // Reset copy indicator after 2 seconds
+      setTimeout(() => {
+        setCopiedMessageId(null);
+      }, 2000);
+      
+      // Optional: Show toast notification
+      if (showNotification) {
+        showNotification(
+          t({ ar: 'تم نسخ الرسالة!', en: 'Message copied!' }),
+          'success'
+        );
+      }
+    } catch (err) {
+      console.error('Failed to copy message:', err);
+      if (showNotification) {
+        showNotification(
+          t({ ar: 'فشل في نسخ الرسالة', en: 'Failed to copy message' }),
+          'error'
+        );
+      }
+    }
+  };
+
   const TypingIndicator = () => (
     <div className="flex items-center space-x-2 rtl:space-x-reverse text-muted-foreground text-sm animate-fade-in">
       <Bot className="w-4 h-4 text-primary" />
