@@ -5,19 +5,19 @@ import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Therm
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
-  const { 
-    isChatbotOpen, 
+  const {
+    isChatbotOpen,
     openChatbot,
-    closeChatbot, 
-    sendMessage, 
-    chatMessages, 
+    closeChatbot,
+    sendMessage,
+    chatMessages,
     isTyping,
     showChatbot,
     toggleChatbotVisibility,
     liveData,        // <-- استقبال البيانات الحية
     isLoadingData,   // <-- استقبال حالة التحميل
   } = useApp();
-  
+
   const [inputValue, setInputValue] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const messagesEndRef = useRef(null);
@@ -96,26 +96,63 @@ const Chatbot = () => {
             </div>
           </div>
 
-          {/* Context Header - LIVE Data */}
+          {/* Context Header - LIVE Data (Corrected & Improved) */}
           <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
-            {isLoadingData ? (
-              <div className="flex items-center justify-center h-full">
-                  <Loader2 className="w-4 h-4 text-white animate-spin" />
-              </div>
+                      {isLoadingData ? (
+                        <div className="flex items-center justify-center h-full">
+                          <Loader2 className="w-4 h-4 text-white animate-spin" />
+                        </div>
             ) : liveData ? (
               <div className="flex items-center justify-between text-sm animate-fade-in">
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <MapPin className="w-4 h-4 text-blue-400" />
-                      <span className="text-white font-medium">{isRTL ? liveData.locationName.ar : liveData.locationName.en}</span>
-                  </div>
-                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                      <Thermometer className="w-4 h-4 text-orange-400" />
-                      <span className="text-white font-medium">{liveData.temperature}°م</span>
-                  </div>
-                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                    <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
-                    <span className="text-white font-medium text-xs">{liveData.weather.description}</span>
-                  </div>
+                {/* Location */}
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <MapPin className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                  <span className="text-white font-medium">
+                    {isRTL ? liveData.locationName.ar : liveData.locationName.en}
+                  </span>
+                </div>
+
+                {/* Temperature & Weather Icon */}
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Thermometer className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                  <span className="text-white font-medium">
+                    {liveData.temperature}°م
+                  </span>
+                  {/* Weather Icon from URL */}
+                  <img
+                    src={liveData.weather.iconUrl}
+                    alt={liveData.weather.description}
+                    className="w-6 h-6"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
+            )}
+          </div>
+            ) : liveData ? (
+              <div className="flex items-center justify-between text-sm animate-fade-in">
+                {/* Location */}
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <MapPin className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                  <span className="text-white font-medium">
+                    {isRTL ? liveData.locationName.ar : liveData.locationName.en}
+                  </span>
+                </div>
+
+                {/* Temperature & Weather Icon */}
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                  <Thermometer className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                  <span className="text-white font-medium">
+                    {liveData.temperature}°م
+                  </span>
+                  {/* Weather Icon from URL */}
+                  <img
+                    src={liveData.weather.iconUrl}
+                    alt={liveData.weather.description}
+                    className="w-6 h-6"
+                  />
+                </div>
               </div>
             ) : (
               <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
