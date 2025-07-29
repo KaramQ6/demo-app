@@ -1,104 +1,130 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Facebook, Instagram, Twitter, Activity } from 'lucide-react';
+import { useApp } from '../contexts/AppContext';
+import { Facebook, Instagram, Twitter, MapPin, Mail, Phone } from 'lucide-react';
 
 const Footer = () => {
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
+  const { setShowChatbot, showChatbot } = useApp();
+
+  const restoreChatbot = () => {
+    setShowChatbot(true);
+    sessionStorage.removeItem('chatbotHidden');
+  };
 
   const quickLinks = [
-    { name: { ar: 'الرئيسية', en: 'Home' }, href: '/' },
-    { name: { ar: 'وجهاتنا', en: 'Destinations' }, href: '/destinations' },
-    { name: { ar: 'البيانات الحية', en: 'Live Data Hub' }, href: '/iot-hub' },
-    { name: { ar: 'التجربة التفاعلية', en: 'Demo' }, href: '/demo' },
-    { name: { ar: 'عن المشروع', en: 'About' }, href: '/about' }
+    { path: '/', label: { ar: 'الرئيسية', en: 'Home' } },
+    { path: '/destinations', label: { ar: 'الوجهات', en: 'Destinations' } },
+    { path: '/data', label: { ar: 'البيانات الحية', en: 'Live Data' } }
   ];
 
-  const aboutText = {
-    ar: 'منصة ذكية تقودها التكنولوجيا لاستكشاف الأردن بطريقة مبتكرة، تجمع بين الذكاء الاصطناعي وإنترنت الأشياء لتقديم تجربة سياحية فريدة.',
-    en: 'A cutting-edge technology-driven platform for exploring Jordan innovatively, combining AI and IoT to provide a unique tourism experience.'
-  };
+  const socialLinks = [
+    { icon: Facebook, href: '#', label: 'Facebook' },
+    { icon: Instagram, href: '#', label: 'Instagram' },
+    { icon: Twitter, href: '#', label: 'Twitter' }
+  ];
 
   return (
     <footer className="glass-card border-t border-white/10 mt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          
-          {/* Quick Links */}
-          <div className="animate-fade-in">
-            <h3 className="text-lg font-semibold mb-4 font-['Montserrat'] text-primary flex items-center space-x-2 rtl:space-x-reverse">
-              <Activity className="w-5 h-5" />
-              <span>{t({ ar: 'روابط سريعة', en: 'Quick Links' })}</span>
-            </h3>
-            <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-muted-foreground hover:text-primary transition-colors duration-200 font-['Open_Sans'] flex items-center space-x-2 rtl:space-x-reverse group"
-                  >
-                    <span className="w-2 h-2 bg-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"></span>
-                    <span>{t(link.name)}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Social Media */}
-          <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <h3 className="text-lg font-semibold mb-4 font-['Montserrat'] text-primary">
-              {t({ ar: 'تابعنا', en: 'Follow Us' })}
-            </h3>
-            <div className="flex space-x-4 rtl:space-x-reverse">
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary transition-all duration-200 p-2 rounded-lg hover:bg-white/5 interactive-button"
-                aria-label="Facebook"
-              >
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary transition-all duration-200 p-2 rounded-lg hover:bg-white/5 interactive-button"
-                aria-label="Instagram"
-              >
-                <Instagram className="w-5 h-5" />
-              </a>
-              <a
-                href="#"
-                className="text-muted-foreground hover:text-primary transition-all duration-200 p-2 rounded-lg hover:bg-white/5 interactive-button"
-                aria-label="Twitter"
-              >
-                <Twitter className="w-5 h-5" />
-              </a>
+          {/* Company Info */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+              <div className="w-8 h-8 gradient-purple rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold font-['Montserrat']">S</span>
+              </div>
+              <h3 className="text-lg font-bold font-['Montserrat'] text-white">SmartTour.Jo</h3>
+            </div>
+            <p className="text-muted-foreground font-['Open_Sans'] leading-relaxed">
+              {t({
+                ar: 'منصة ذكية تجمع بين التكنولوجيا الحديثة والتراث الأردني لاستكشاف كنوز الأردن بطريقة مبتكرة وذكية.',
+                en: 'A smart platform that combines modern technology with Jordanian heritage to explore Jordan\'s treasures in an innovative and intelligent way.'
+              })}
+            </p>
+            
+            {/* Contact Info */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-3 rtl:space-x-reverse text-sm text-muted-foreground">
+                <MapPin className="w-4 h-4 text-primary" />
+                <span className="font-['Open_Sans']">
+                  {t({ ar: 'عمّان، الأردن', en: 'Amman, Jordan' })}
+                </span>
+              </div>
+              <div className="flex items-center space-x-3 rtl:space-x-reverse text-sm text-muted-foreground">
+                <Mail className="w-4 h-4 text-primary" />
+                <span className="font-['Open_Sans']">info@smarttour.jo</span>
+              </div>
+              <div className="flex items-center space-x-3 rtl:space-x-reverse text-sm text-muted-foreground">
+                <Phone className="w-4 h-4 text-primary" />
+                <span className="font-['Open_Sans']">+962 6 123 4567</span>
+              </div>
             </div>
           </div>
 
-          {/* About */}
-          <div className="animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <h3 className="text-lg font-semibold mb-4 font-['Montserrat'] text-primary">
-              {t({ ar: 'من نحن', en: 'About Us' })}
+          {/* Quick Links */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold font-['Montserrat'] text-white">
+              {t({ ar: 'روابط سريعة', en: 'Quick Links' })}
             </h3>
-            <p className="text-muted-foreground text-sm leading-relaxed font-['Open_Sans']">
-              {t(aboutText)}
-            </p>
+            <div className="space-y-2">
+              {quickLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="block text-muted-foreground hover:text-primary transition-colors duration-200 font-['Open_Sans']"
+                >
+                  {t(link.label)}
+                </Link>
+              ))}
+            </div>
+
+            {/* Chatbot Restore Link - only show if chatbot is hidden */}
+            {!showChatbot && (
+              <button
+                onClick={restoreChatbot}
+                className="block text-primary hover:text-purple-400 transition-colors duration-200 font-['Open_Sans'] text-sm underline"
+              >
+                {t({ ar: 'إظهار مساعد جواد', en: 'Show Jawad Assistant' })}
+              </button>
+            )}
+          </div>
+
+          {/* Social Media */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold font-['Montserrat'] text-white">
+              {t({ ar: 'تابعنا', en: 'Follow Us' })}
+            </h3>
+            <div className="flex space-x-4 rtl:space-x-reverse">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  className="w-10 h-10 glass rounded-lg flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-200 interactive-button"
+                  aria-label={social.label}
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-white/10">
+              <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                {t({ 
+                  ar: 'مدعوم بأحدث تقنيات الذكاء الاصطناعي وإنترنت الأشياء', 
+                  en: 'Powered by the latest AI and IoT technologies' 
+                })}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Copyright */}
-        <div className="border-t border-white/10 mt-8 pt-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-center md:text-left text-muted-foreground text-sm font-['Open_Sans']">
-              © 2024 SmartTour.Jo - {t({ ar: 'جميع الحقوق محفوظة', en: 'All Rights Reserved' })}
-            </p>
-            <div className="flex items-center space-x-2 rtl:space-x-reverse mt-4 md:mt-0">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse-glow"></div>
-              <span className="text-xs text-muted-foreground font-['Open_Sans']">
-                {t({ ar: 'مدعوم بالذكاء الاصطناعي', en: 'Powered by AI' })}
-              </span>
-            </div>
-          </div>
+        <div className="mt-8 pt-8 border-t border-white/10 text-center">
+          <p className="text-sm text-muted-foreground font-['Open_Sans']">
+            © 2024 SmartTour.Jo - {t({ ar: 'جميع الحقوق محفوظة', en: 'All Rights Reserved' })}
+          </p>
         </div>
       </div>
     </footer>
