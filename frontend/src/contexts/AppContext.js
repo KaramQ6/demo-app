@@ -8,6 +8,7 @@ const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
+  const { language } = useLanguage();
   const getContextualGreeting = () => {
     if (liveData && liveData.cityName) {
       return t({
