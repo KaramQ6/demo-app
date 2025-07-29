@@ -22,9 +22,9 @@ import About from "./pages/About";
 function App() {
   return (
     <LanguageProvider>
-      <AppProvider>
-        <div className="App min-h-screen bg-background text-foreground">
-          <BrowserRouter>
+      <div className="App min-h-screen bg-background text-foreground">
+        <BrowserRouter>
+          <AppProvider>
             <Header />
             <main>
               <Routes>
@@ -40,11 +40,13 @@ function App() {
             <Chatbot />
             <NotificationSystem />
             <Toaster />
-          </BrowserRouter>
-        </div>
-      </AppProvider>
+          </AppProvider>
+        </BrowserRouter>
+      </div>
     </LanguageProvider>
   );
 }
+
+export default App;
 
 export default App;
