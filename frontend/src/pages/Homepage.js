@@ -1,237 +1,235 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { useParallaxEffect, useScrollAnimation } from '../hooks/useScrollAnimation';
-import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { ArrowRight, ArrowLeft, MessageCircle, Search, MapPin, Activity, Zap, Brain } from 'lucide-react';
-import { destinations, heroImages } from '../mock';
+import { Button } from '../components/ui/button';
+import { Play, ArrowRight, ArrowLeft, MapPin, Clock, Users, Brain, Zap, Star } from 'lucide-react';
+import { destinations } from '../mock';
 
 const Homepage = () => {
-  const { t, isRTL, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
   const { openChatbot } = useApp();
-  const parallaxRef = useParallaxEffect();
-  const howItWorksRef = useScrollAnimation();
-  const destinationsRef = useScrollAnimation();
+  const heroRef = useRef(null);
 
-  const heroTitle = {
-    ar: 'اكتشف الأردن الحقيقي، بعيداً عن الزحام',
-    en: 'Discover the Real Jordan, Away from the Crowds'
+  // Hero parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (heroRef.current) {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        const x = (clientX / innerWidth - 0.5) * 20;
+        const y = (clientY / innerHeight - 0.5) * 20;
+        
+        heroRef.current.style.transform = `translate(${x}px, ${y}px)`;
+      }
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  const handleCTAClick = () => {
+    const message = t({
+      ar: 'أهلاً! أريد التخطيط لرحلة استكشافية في الأردن. ما الذي تنصحني به؟',
+      en: 'Hello! I want to plan an exploratory trip in Jordan. What do you recommend?'
+    });
+    openChatbot(message);
   };
 
-  const heroSubtitle = {
-    ar: 'خطط لرحلتك بذكاء مع مرشدك الشخصي جواد المدعوم بالذكاء الاصطناعي',
-    en: 'Plan your trip smartly with your AI-powered personal guide Jawad'
-  };
-
-  const ctaText = {
-    ar: 'خطط لرحلتك الآن',
-    en: 'Plan Your Trip Now'
-  };
-
-  const howItWorksTitle = {
-    ar: 'كيف يعمل النظام الذكي',
-    en: 'How Our Smart System Works'
-  };
-
-  const featuredDestinationsTitle = {
-    ar: 'وجهات مميزة',
-    en: 'Featured Destinations'
-  };
-
-  const steps = [
-    {
-      icon: MessageCircle,
-      title: { ar: 'تحدث مع جواد', en: 'Talk to Jawad' },
-      description: { ar: 'أخبرنا عن اهتماماتك وتفضيلاتك بالذكاء الاصطناعي', en: 'Tell us about your interests and preferences with AI' }
-    },
+  const howItWorksSteps = [
     {
       icon: Brain,
-      title: { ar: 'احصل على خطة ذكية', en: 'Get AI-Powered Plan' },
-      description: { ar: 'استلم خطة مخصصة تتجنب الازدحام مع البيانات الحية', en: 'Receive a custom plan that avoids crowds with live data' }
+      title: { ar: 'تحدث مع جواد', en: 'Talk to Jawad' },
+      description: { ar: 'أخبرنا عن اهتماماتك وتفضيلاتك', en: 'Tell us about your interests and preferences' }
     },
     {
-      icon: Activity,
-      title: { ar: 'استكشف بالتقنية', en: 'Explore with Technology' },
-      description: { ar: 'استخدم أدواتنا التفاعلية وإنترنت الأشياء لتجربة فريدة', en: 'Use our interactive tools and IoT for a unique experience' }
+      icon: Zap,
+      title: { ar: 'احصل على خطة ذكية', en: 'Get Smart Plan' },
+      description: { ar: 'استلم خطة مخصصة تتجنب الازدحام', en: 'Receive a customized plan that avoids crowds' }
+    },
+    {
+      icon: Star,
+      title: { ar: 'استكشف كالمحترفين', en: 'Explore Like Pros' },
+      description: { ar: 'استخدم أدواتنا التفاعلية لتجربة فريدة', en: 'Use our interactive tools for a unique experience' }
     }
   ];
 
-  // Main CTA function - opens chatbot with initial planning message
-  const handleMainCTA = () => {
-    const initialMessage = language === 'ar' 
-      ? 'أريد المساعدة في تخطيط رحلتي إلى الأردن'
-      : 'I need help planning my trip to Jordan';
-    
-    openChatbot(initialMessage);
-  };
+  const featuredDestinations = destinations.slice(0, 3);
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Parallax Background */}
-      <section className="relative h-screen flex items-center justify-center text-white overflow-hidden">
-        {/* Parallax Background Image */}
-        <div className="absolute inset-0 z-0">
-          <div ref={parallaxRef} className="parallax-element w-full h-full">
-            <img
-              src={heroImages.main}
-              alt={t({ ar: 'منظر طبيعي أردني', en: 'Jordan Landscape' })}
-              className="w-full h-full object-cover scale-110"
-            />
-          </div>
-          <div className="absolute inset-0 gradient-overlay"></div>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Video/Image */}
+        <div 
+          ref={heroRef}
+          className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out"
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
+          <img
+            src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8"
+            alt="Wadi Rum Desert"
+            className="w-full h-full object-cover"
+          />
         </div>
 
         {/* Hero Content */}
-        <div className="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-8 font-['Montserrat'] leading-tight animate-slide-up">
-            {t(heroTitle)}
+        <div className="relative z-20 text-center px-6 max-w-5xl mx-auto">
+          <h1 className="text-5xl md:text-7xl font-bold font-['Montserrat'] text-white mb-6 animate-text-glow">
+            {t({ ar: 'اكتشف الأردن الحقيقي، بعيداً عن الزحام', en: 'Discover the Real Jordan, Away from the Crowds' })}
           </h1>
-          <p className="text-xl md:text-2xl mb-12 font-['Open_Sans'] opacity-90 leading-relaxed animate-fade-in max-w-3xl mx-auto" style={{ animationDelay: '0.3s' }}>
-            {t(heroSubtitle)}
-          </p>
-          <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <Button
-              onClick={handleMainCTA}
-              size="lg"
-              className="gradient-purple hover:scale-105 text-white px-12 py-6 text-xl font-semibold rounded-2xl interactive-button shadow-2xl font-['Open_Sans']"
-              aria-label={t({ ar: 'ابدأ التخطيط لرحلتك مع جواد', en: 'Start planning your trip with Jawad' })}
-            >
-              <Zap className="mr-3 rtl:mr-0 rtl:ml-3 h-6 w-6" />
-              {t(ctaText)}
-              {isRTL ? <ArrowLeft className="mr-3 h-6 w-6" /> : <ArrowRight className="ml-3 h-6 w-6" />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Floating Elements with Enhanced Animations */}
-        <div className="absolute bottom-12 left-12 glass-card p-6 rounded-xl animate-pulse-glow">
-          <div className="flex items-center space-x-3 rtl:space-x-reverse text-sm">
-            <Activity className="w-5 h-5 text-primary" />
-            <span className="text-white font-['Open_Sans'] font-medium">
-              {t({ ar: 'بيانات حية', en: 'Live Data' })}
-            </span>
-          </div>
-        </div>
-
-        <div className="absolute bottom-12 right-12 glass-card p-6 rounded-xl animate-pulse-glow" style={{ animationDelay: '0.5s' }}>
-          <div className="flex items-center space-x-3 rtl:space-x-reverse text-sm">
-            <Brain className="w-5 h-5 text-primary" />
-            <span className="text-white font-['Open_Sans'] font-medium">
-              {t({ ar: 'ذكاء اصطناعي', en: 'AI Powered' })}
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section with Scroll Animation */}
-      <section ref={howItWorksRef} className="py-24 px-6 scroll-animate">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-['Montserrat']">
-              {t(howItWorksTitle)}
-            </h2>
-            <div className="w-24 h-1 gradient-purple mx-auto rounded-full mb-6"></div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-['Open_Sans']">
-              {t({ 
-                ar: 'نظام متكامل يجمع بين الذكاء الاصطناعي وإنترنت الأشياء لتجربة سياحية فريدة',
-                en: 'An integrated system combining AI and IoT for a unique tourism experience'
-              })}
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <div key={index} className="text-center group animate-scale-in" style={{ animationDelay: `${index * 0.2}s` }}>
-                  <div className="mb-8 flex justify-center">
-                    <div className="w-24 h-24 glass-card rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-2xl interactive-card">
-                      <Icon className="w-12 h-12 text-primary" />
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-semibold text-white mb-4 font-['Montserrat']">
-                    {t(step.title)}
-                  </h3>
-                  <p className="text-muted-foreground leading-relaxed font-['Open_Sans'] text-lg">
-                    {t(step.description)}
-                  </p>
-                </div>
-              );
+          <p className="text-xl md:text-2xl text-gray-200 mb-8 font-['Open_Sans'] max-w-3xl mx-auto">
+            {t({ 
+              ar: 'خطط لرحلتك بذكاء مع مرشدك الشخصي جواد واستمتع بتجربة سياحية فريدة مدعومة بالذكاء الاصطناعي',
+              en: 'Plan your trip intelligently with your personal guide Jawad and enjoy a unique tourism experience powered by artificial intelligence'
             })}
+          </p>
+          
+          {/* CTA Button */}
+          <Button
+            onClick={handleCTAClick}
+            size="lg"
+            className="gradient-purple text-white px-8 py-4 text-lg font-semibold font-['Open_Sans'] hover:scale-105 transition-all duration-300 interactive-button shadow-2xl"
+          >
+            {t({ ar: 'خطط لرحلتك الآن', en: 'Plan Your Trip Now' })}
+            {isRTL ? (
+              <ArrowLeft className="ml-2 h-5 w-5" />
+            ) : (
+              <ArrowRight className="ml-2 h-5 w-5" />
+            )}
+          </Button>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto">
+            <div className="text-center animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
+              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">50+</div>
+              <div className="text-sm text-gray-300 font-['Open_Sans']">
+                {t({ ar: 'وجهة سياحية', en: 'Destinations' })}
+              </div>
+            </div>
+            <div className="text-center animate-fade-in-up" style={{ animationDelay: '1s' }}>
+              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">24/7</div>
+              <div className="text-sm text-gray-300 font-['Open_Sans']">
+                {t({ ar: 'مراقبة حية', en: 'Live Monitoring' })}
+              </div>
+            </div>
+            <div className="text-center animate-fade-in-up" style={{ animationDelay: '1.2s' }}>
+              <div className="text-3xl font-bold font-['Montserrat'] gradient-purple bg-clip-text text-transparent">AI</div>
+              <div className="text-sm text-gray-300 font-['Open_Sans']">
+                {t({ ar: 'ذكاء اصطناعي', en: 'Powered' })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+            <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-pulse"></div>
           </div>
         </div>
       </section>
 
-      {/* Featured Destinations Section with Scroll Animation */}
-      <section ref={destinationsRef} className="py-24 px-6 scroll-animate">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 font-['Montserrat']">
-              {t(featuredDestinationsTitle)}
+      {/* How It Works Section */}
+      <section className="py-20 px-6">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold font-['Montserrat'] text-white mb-6">
+              {t({ ar: 'كيف يعمل النظام؟', en: 'How It Works?' })}
             </h2>
-            <div className="w-24 h-1 gradient-purple mx-auto rounded-full mb-6"></div>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto font-['Open_Sans']">
+            <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
               {t({ 
-                ar: 'اكتشف أجمل الوجهات في الأردن مع البيانات الحية والتوصيات الذكية',
-                en: 'Discover Jordan\'s most beautiful destinations with live data and smart recommendations'
+                ar: 'ثلاث خطوات بسيطة لتخطيط رحلة مثالية باستخدام أحدث التقنيات',
+                en: 'Three simple steps to plan the perfect trip using the latest technologies'
               })}
             </p>
           </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {destinations.slice(0, 6).map((destination, index) => (
-              <Link key={destination.id} to={`/destinations/${destination.id}`}>
-                <Card className="glass-card interactive-card h-full overflow-hidden border-white/10 animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="relative h-56 overflow-hidden">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {howItWorksSteps.map((step, index) => (
+              <div 
+                key={index}
+                className="text-center group animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <div className="w-20 h-20 mx-auto mb-6 gradient-purple rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <step.icon className="w-10 h-10 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold font-['Montserrat'] text-white mb-4">
+                  {t(step.title)}
+                </h3>
+                <p className="text-muted-foreground font-['Open_Sans'] leading-relaxed">
+                  {t(step.description)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Destinations */}
+      <section className="py-20 px-6 bg-gradient-to-br from-purple-900/10 to-indigo-900/10">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-16 animate-fade-in-up">
+            <h2 className="text-4xl md:text-5xl font-bold font-['Montserrat'] text-white mb-6">
+              {t({ ar: 'وجهات مميزة', en: 'Featured Destinations' })}
+            </h2>
+            <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
+              {t({ 
+                ar: 'اكتشف أروع الوجهات السياحية في الأردن مع بيانات حية ونصائح ذكية',
+                en: 'Discover the most amazing tourist destinations in Jordan with live data and smart tips'
+              })}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {featuredDestinations.map((destination, index) => (
+              <Link
+                key={destination.id}
+                to={`/destinations/${destination.id}`}
+                className="group animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.2}s` }}
+              >
+                <Card className="glass-card interactive-card h-full overflow-hidden border-white/10">
+                  <div className="relative h-48 overflow-hidden">
                     <img
                       src={destination.image}
                       alt={t(destination.name)}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 gradient-overlay" />
-                    
-                    {/* Live Status Indicator */}
-                    <div className="absolute top-4 right-4 glass px-3 py-2 rounded-full flex items-center space-x-2 rtl:space-x-reverse text-xs">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse-glow"></div>
-                      <span className="text-white font-['Open_Sans'] font-medium">
-                        {t({ ar: 'مباشر', en: 'Live' })}
-                      </span>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute top-4 right-4">
+                      <div className="flex items-center space-x-1 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-white text-sm font-semibold">{destination.rating}</span>
+                      </div>
                     </div>
-                    
-                    {/* Destination Name Overlay */}
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-white text-xl font-semibold font-['Montserrat'] mb-2">
+                      <h3 className="text-xl font-bold font-['Montserrat'] text-white mb-2">
                         {t(destination.name)}
                       </h3>
-                      <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                        <MapPin className="w-4 h-4 text-primary" />
-                        <span className="text-sm text-white/80 font-['Open_Sans']">
+                    </div>
+                  </div>
+                  <CardContent className="p-6">
+                    <p className="text-muted-foreground font-['Open_Sans'] mb-4 leading-relaxed">
+                      {t(destination.shortDescription)}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4" />
+                        <span className="font-['Open_Sans']">
                           {t({ ar: 'الأردن', en: 'Jordan' })}
                         </span>
                       </div>
-                    </div>
-                  </div>
-                  
-                  <CardContent className="p-6">
-                    <p className="text-muted-foreground leading-relaxed mb-4 font-['Open_Sans']">
-                      {t(destination.shortDescription)}
-                    </p>
-                    
-                    {/* Features */}
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center space-x-2 rtl:space-x-reverse glass px-3 py-2 rounded-full">
-                        <Activity className="w-3 h-3 text-primary" />
-                        <span className="text-white font-['Open_Sans']">
-                          {t({ ar: 'IoT', en: 'IoT Enabled' })}
-                        </span>
-                      </div>
-                      <div className="flex items-center space-x-2 rtl:space-x-reverse glass px-3 py-2 rounded-full">
-                        <Brain className="w-3 h-3 text-primary" />
-                        <span className="text-white font-['Open_Sans']">
-                          {t({ ar: 'ذكي', en: 'AI Ready' })}
-                        </span>
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
+                        destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>
+                        {destination.crowdLevel === 'low' ? t({ ar: 'هادئ', en: 'Quiet' }) :
+                         destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :
+                         t({ ar: 'مزدحم', en: 'Busy' })}
                       </div>
                     </div>
                   </CardContent>
@@ -240,12 +238,20 @@ const Homepage = () => {
             ))}
           </div>
 
-          {/* View All Button */}
-          <div className="text-center mt-16 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          {/* View All Destinations Button */}
+          <div className="text-center mt-12 animate-fade-in-up" style={{ animationDelay: '0.8s' }}>
             <Link to="/destinations">
-              <Button className="gradient-purple hover:scale-105 px-12 py-4 text-lg font-semibold rounded-2xl interactive-button shadow-xl font-['Open_Sans']">
+              <Button
+                variant="outline"
+                size="lg"
+                className="glass border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 interactive-button font-['Open_Sans']"
+              >
                 {t({ ar: 'استكشف جميع الوجهات', en: 'Explore All Destinations' })}
-                {isRTL ? <ArrowLeft className="mr-3 h-5 w-5" /> : <ArrowRight className="ml-3 h-5 w-5" />}
+                {isRTL ? (
+                  <ArrowLeft className="ml-2 h-5 w-5" />
+                ) : (
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                )}
               </Button>
             </Link>
           </div>
