@@ -227,7 +227,7 @@ const DataHub = () => {
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     {/* Parking */}
                     <div className="glass p-3 rounded-lg text-center">
-                      <Parking className="w-5 h-5 text-blue-400 mx-auto mb-2" />
+                      <Car className="w-5 h-5 text-blue-400 mx-auto mb-2" />
                       <div className="text-lg font-bold text-white">{parkingAvailable}%</div>
                       <div className="text-xs text-muted-foreground font-['Open_Sans']">
                         {t({ ar: 'مواقف متاحة', en: 'Parking' })}
