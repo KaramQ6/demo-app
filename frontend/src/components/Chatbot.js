@@ -20,6 +20,7 @@ const Chatbot = () => {
   
   const [inputValue, setInputValue] = useState('');
   const [showDataHelper, setShowDataHelper] = useState(false);
+  const [copiedMessageId, setCopiedMessageId] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
