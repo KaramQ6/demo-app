@@ -11,6 +11,16 @@ import { destinations } from '../mock';
 const Destinations = () => {
   const { t, language } = useLanguage();
   const { openChatbot, iotData } = useApp();
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate loading delay for skeleton implementation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500); // 1.5 second delay as requested
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const pageTitle = {
     ar: 'جميع الوجهات السياحية',
