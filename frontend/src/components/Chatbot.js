@@ -247,35 +247,52 @@ const Chatbot = () => {
                 key={message.id}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
               >
-                <div
-                  className={`max-w-xs px-4 py-3 rounded-xl font-['Open_Sans'] ${
-                    message.type === 'user'
-                      ? 'gradient-purple text-white ml-4'
-                      : 'glass text-white mr-4'
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-line">{message.text}</p>
-                  
-                  {/* Destination Cards */}
-                  {message.showDestinations && (
-                    <div className="mt-3 space-y-2">
-                      {destinations.slice(0, 3).map((dest) => (
-                        <DestinationCard
-                          key={dest.id}
-                          destination={dest}
-                          onClick={handleDestinationClick}
-                        />
-                      ))}
+                <div className="relative group">
+                  <div
+                    className={`max-w-xs px-4 py-3 rounded-xl font-['Open_Sans'] ${
+                      message.type === 'user'
+                        ? 'gradient-purple text-white ml-4'
+                        : 'glass text-white mr-4'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-line">{message.text}</p>
+                    
+                    {/* Destination Cards */}
+                    {message.showDestinations && (
+                      <div className="mt-3 space-y-2">
+                        {destinations.slice(0, 3).map((dest) => (
+                          <DestinationCard
+                            key={dest.id}
+                            destination={dest}
+                            onClick={handleDestinationClick}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    
+                    {/* Timestamp */}
+                    <div className="text-xs opacity-60 mt-2">
+                      {message.timestamp.toLocaleTimeString([], { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
                     </div>
-                  )}
-                  
-                  {/* Timestamp */}
-                  <div className="text-xs opacity-60 mt-2">
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
                   </div>
+                  
+                  {/* Copy Button - Only for bot messages */}
+                  {message.type === 'bot' && (
+                    <button
+                      onClick={() => handleCopyMessage(message.text, message.id)}
+                      className={`absolute ${isRTL ? 'left-1' : 'right-1'} top-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 rounded-md hover:bg-white/10 interactive-button`}
+                      aria-label={t({ ar: 'نسخ الرسالة', en: 'Copy message' })}
+                    >
+                      {copiedMessageId === message.id ? (
+                        <Check className="w-3 h-3 text-green-400" />
+                      ) : (
+                        <Copy className="w-3 h-3 text-muted-foreground hover:text-white" />
+                      )}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
