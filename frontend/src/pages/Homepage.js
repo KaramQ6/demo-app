@@ -101,86 +101,86 @@ const Homepage = () => {
             {t({ ar: 'خطط لرحلتك الآن', en: 'Plan Your Trip Now' })}
             {isRTL ? <ArrowLeft className="ml-2 h-5 w-5" /> : <ArrowRight className="ml-2 h-5 w-5" />}
           </Button>
+        </div>
 
-          {/* Enhanced Location Status Bar with GPS handling */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-sm px-6">
-            <button
-              onClick={handleLocationStatusClick}
-              className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
-              style={{ animationDelay: '1.4s' }}
-              aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
-            >
-              {locationError ? (
-                <div className="text-center">
-                  <div className="flex items-center justify-center text-red-400 mb-2">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">{t({ ar: 'خطأ في تحديد الموقع', en: 'Location Error' })}</span>
-                  </div>
-                  <div className="text-xs text-muted-foreground opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-                    {t({ ar: 'اضغط للحصول على المساعدة', en: 'Tap for help' })}
-                  </div>
+        {/* Enhanced Location Status Bar with GPS handling */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 w-full max-w-sm px-6">
+          <button
+            onClick={handleLocationStatusClick}
+            className="w-full glass-card hover:bg-white/10 transition-all duration-300 interactive-button rounded-2xl p-4 border border-white/20 animate-fade-in-up group"
+            style={{ animationDelay: '1.4s' }}
+            aria-label={t({ ar: 'عرض معلومات الموقع الحالي', en: 'View current location information' })}
+          >
+            {locationError ? (
+              <div className="text-center">
+                <div className="flex items-center justify-center text-red-400 mb-2">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{t({ ar: 'خطأ في تحديد الموقع', en: 'Location Error' })}</span>
                 </div>
-              ) : isLoadingData ? (
-                <div className="flex items-center justify-center text-white">
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  <span className="text-sm">{t({ ar: 'جاري تحديد الموقع...', en: 'Detecting location...' })}</span>
+                <div className="text-xs text-muted-foreground opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                  {t({ ar: 'اضغط للحصول على المساعدة', en: 'Tap for help' })}
                 </div>
-              ) : liveData ? (
-                <>
-                  <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
-                    <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                      <MapPin className="w-4 h-4 text-blue-400" />
-                      <span className="text-sm font-medium">
-                        {liveData.cityName}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                      <Thermometer className="w-4 h-4 text-orange-400" />
-                      <span className="text-sm font-medium">{liveData.temperature || '--'}°C</span>
-                    </div>
-                    {liveData.weather && (
-                      <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                        {liveData.weather.iconUrl && (
-                          <img
-                            src={liveData.weather.iconUrl}
-                            alt={liveData.weather.description || 'Weather'}
-                            className="w-5 h-5"
-                            onError={(e) => { e.target.style.display = 'none'; }}
-                          />
-                        )}
-                        <span className="text-sm font-medium">
-                          {liveData.weather.description || t({ ar: 'طقس معتدل', en: 'Fair weather' })}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {t({ ar: 'اضغط للحصول على نصائح محلية من جواد', en: 'Tap for local insights from Jawad' })}
-                  </div>
-                </>
-              ) : userLocation ? (
-                <div className="text-center">
-                  <div className="flex items-center justify-center text-green-400 mb-2">
-                    <MapPin className="w-4 h-4 mr-2" />
-                    <span className="text-sm">
-                      {t({
-                        ar: `موقع محدد: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`,
-                        en: `Located: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`
-                      })}
+              </div>
+            ) : isLoadingData ? (
+              <div className="flex items-center justify-center text-white">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span className="text-sm">{t({ ar: 'جاري تحديد الموقع...', en: 'Detecting location...' })}</span>
+              </div>
+            ) : liveData ? (
+              <>
+                <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
+                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                    <MapPin className="w-4 h-4 text-blue-400" />
+                    <span className="text-sm font-medium">
+                      {liveData.cityName}
                     </span>
                   </div>
-                  <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {t({ ar: 'اضغط للحصول على معلومات المنطقة', en: 'Tap for area information' })}
+                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                    <Thermometer className="w-4 h-4 text-orange-400" />
+                    <span className="text-sm font-medium">{liveData.temperature || '--'}°C</span>
                   </div>
+                  {liveData.weather && (
+                    <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                      {liveData.weather.iconUrl && (
+                        <img
+                          src={liveData.weather.iconUrl}
+                          alt={liveData.weather.description || 'Weather'}
+                          className="w-5 h-5"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      )}
+                      <span className="text-sm font-medium">
+                        {liveData.weather.description || t({ ar: 'طقس معتدل', en: 'Fair weather' })}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="flex items-center justify-center text-yellow-400">
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  <span className="text-sm">{t({ ar: 'جاري تحديد موقعك...', en: 'Getting your location...' })}</span>
+                <div className="mt-2 text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {t({ ar: 'اضغط للحصول على نصائح محلية من جواد', en: 'Tap for local insights from Jawad' })}
                 </div>
-              )}
-            </button>
-          </div>
+              </>
+            ) : userLocation ? (
+              <div className="text-center">
+                <div className="flex items-center justify-center text-green-400 mb-2">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span className="text-sm">
+                    {t({
+                      ar: `موقع محدد: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`,
+                      en: `Located: ${userLocation.lat.toFixed(2)}, ${userLocation.lon.toFixed(2)}`
+                    })}
+                  </span>
+                </div>
+                <div className="text-xs text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {t({ ar: 'اضغط للحصول على معلومات المنطقة', en: 'Tap for area information' })}
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center text-yellow-400">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span className="text-sm">{t({ ar: 'جاري تحديد موقعك...', en: 'Getting your location...' })}</span>
+              </div>
+            )}
+          </button>
         </div>
       </section>
 
