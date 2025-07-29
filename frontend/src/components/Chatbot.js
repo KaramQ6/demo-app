@@ -5,7 +5,7 @@ import { MessageCircle, X, Send, Bot, MapPin, Star, Clock, Loader2, HelpCircle, 
 import { destinations } from '../mock';
 
 const Chatbot = () => {
-  const { t, language } = useLanguage();
+  const { t, language, isRTL } = useLanguage();
   const { 
     isChatbotOpen, 
     chatMessages, 
