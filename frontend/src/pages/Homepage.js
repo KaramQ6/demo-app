@@ -12,11 +12,7 @@ const Homepage = () => {
   const { openChatbot } = useApp();
   const heroRef = useRef(null);
 
-  // Simulated current location data for the prototype
-  const currentLocationData = {
-    const [userLocation, setUserLocation] = useState(null); // { lat: 0, lon: 0 }
-    const [locationError, setLocationError] = useState(null);
-  };
+
 
   // Hero parallax effect
   useEffect(() => {
