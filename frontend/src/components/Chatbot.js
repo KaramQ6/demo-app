@@ -66,9 +66,7 @@ const Chatbot = () => {
         <button
           onClick={() => {
             const { openChatbot } = require('../contexts/AppContext');
-            // Get the context properly
-            const appContext = React.useContext(require('../contexts/AppContext').default);
-            appContext.openChatbot();
+            openChatbot();
           }}
           className="fixed bottom-6 right-6 w-16 h-16 gradient-purple rounded-full shadow-2xl flex items-center justify-center text-white hover:scale-110 transition-all duration-300 interactive-button z-50"
           aria-label={t({ ar: 'فتح المحادثة مع جواد', en: 'Open chat with Jawad' })}
