@@ -144,11 +144,18 @@ const Destinations = () => {
 
         {/* Destinations Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {destinations.map((destination, index) => {
-            const crowdData = getCrowdLevel(destination.id);
-            
-            return (
-              <Link key={destination.id} to={`/destinations/${destination.id}`}>
+          {isLoading ? (
+            // Show skeleton cards during loading
+            Array.from({ length: 6 }, (_, index) => (
+              <SkeletonCard key={`skeleton-${index}`} index={index} />
+            ))
+          ) : (
+            // Show actual destination cards
+            destinations.map((destination, index) => {
+              const crowdData = getCrowdLevel(destination.id);
+              
+              return (
+                <Link key={destination.id} to={`/destinations/${destination.id}`}>
                 <Card className="glass-card interactive-card h-full overflow-hidden border-white/10 animate-scale-in" style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="relative h-72 overflow-hidden">
                     <img
