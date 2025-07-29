@@ -1,15 +1,21 @@
-# Netlify Build Settings for a standard React app
+# Netlify Build Settings for React app
 
 [build]
   # This is the build command for React apps
   command = "npm run build"
 
   # This is the directory that gets published
-  publish = "build" # Or "dist" if you are using Vite
+  publish = "build"
 
   # Specify the Node.js version to use
   [build.environment]
-    NODE_VERSION = "18.18.2"
+    NODE_VERSION = "18"
+
+# Handle client-side routing for React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 # By including an empty plugins table, we tell Netlify
 # NOT to install any default or unexpected extensions like 'neon'.
