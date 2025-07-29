@@ -43,6 +43,7 @@ export const AppProvider = ({ children }) => {
   const getContextualGreeting = () => {
     const isArabic = language === 'ar';
     
+    // Enhanced contextual greetings with location awareness
     if (currentPage.includes('/destinations/')) {
       const destinationId = currentPage.split('/destinations/')[1];
       const destinationNames = {
