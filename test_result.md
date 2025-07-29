@@ -101,3 +101,147 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+user_problem_statement: "Test the SmartTour.Jo application comprehensively including core functionality, UI/UX testing, and interactive elements"
+
+frontend:
+  - task: "Homepage Navigation and Hero Section"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Homepage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Initial testing required for homepage hero section, navigation, and main CTA functionality"
+
+  - task: "Language Switching (Arabic/English)"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/contexts/LanguageContext.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Need to test EN/ع language toggle and verify content changes between Arabic and English with RTL support"
+
+  - task: "Navigation Header Links"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Header.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Test all navigation links in header (الرئيسية، وجهاتنا، البيانات الحية، التجربة التفاعلية، عن المشروع)"
+
+  - task: "Destinations Page and Cards"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Destinations.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Navigate to destinations page and verify destination cards load properly with live data indicators"
+
+  - task: "Destination Detail Tabbed Interface"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/DestinationDetail.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Click on destination card and test tabbed interface (Overview, Smart Tip, Crowd Level) with feedback functionality"
+
+  - task: "Chatbot Functionality"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/components/Chatbot.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Test floating chat button, open chatbot, send messages, and verify bot responses work properly"
+
+  - task: "IoT Hub Live Data"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/IoTHub.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Test live data hub page with interactive elements and real-time data updates"
+
+  - task: "Demo Page Interactive Features"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/Demo.js"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Test interactive demo features including AR guide and smart booking system"
+
+  - task: "About Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/About.js"
+    stuck_count: 0
+    priority: "low"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Verify about page loads correctly with all content sections"
+
+  - task: "Responsive Design and UI/UX"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/App.css"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: true
+    status_history:
+        -working: "NA"
+        -agent: "testing"
+        -comment: "Test glassmorphism effects, purple gradient styling, responsive behavior, hover effects, and RTL support"
+
+metadata:
+  created_by: "testing_agent"
+  version: "1.0"
+  test_sequence: 1
+
+test_plan:
+  current_focus:
+    - "Homepage Navigation and Hero Section"
+    - "Language Switching (Arabic/English)"
+    - "Navigation Header Links"
+    - "Chatbot Functionality"
+    - "Destinations Page and Cards"
+    - "Destination Detail Tabbed Interface"
+  stuck_tasks: []
+  test_all: false
+  test_priority: "high_first"
+
+agent_communication:
+    -agent: "testing"
+    -message: "Starting comprehensive testing of SmartTour.Jo application. Will test core functionality first, then UI/UX elements. Frontend URL configured at https://5f6ee79f-b26a-469b-a4a8-cc3146f61b3b.preview.emergentagent.com"
