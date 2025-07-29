@@ -17,15 +17,15 @@ const SimpleTest = () => {
 const TestWithContexts = () => {
   return (
     <LanguageProvider>
-      <AppProvider>
-        <div style={{ backgroundColor: '#121212', color: '#fff', minHeight: '100vh' }}>
-          <BrowserRouter>
+      <div style={{ backgroundColor: '#121212', color: '#fff', minHeight: '100vh' }}>
+        <BrowserRouter>
+          <AppProvider>
             <Routes>
               <Route path="/" element={<SimpleTest />} />
             </Routes>
-          </BrowserRouter>
-        </div>
-      </AppProvider>
+          </AppProvider>
+        </BrowserRouter>
+      </div>
     </LanguageProvider>
   );
 };
