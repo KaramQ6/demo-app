@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, MapPin, Star, Clock, Loader2, HelpCircle } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, MapPin, Star, Clock, Loader2, HelpCircle, Copy, Check } from 'lucide-react';
 import { destinations } from '../mock';
 
 const Chatbot = () => {
