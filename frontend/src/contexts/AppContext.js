@@ -95,7 +95,9 @@ export const AppProvider = ({ children }) => {
 
   // Enhanced intelligent chatbot response system
   const getBotResponse = (userMessage) => {
-    const message = userMessage.toLowerCase();
+    // Ensure userMessage is a string
+    const messageText = typeof userMessage === 'string' ? userMessage : String(userMessage);
+    const message = messageText.toLowerCase();
     const isArabic = language === 'ar';
 
     // Priority keyword responses
@@ -124,7 +126,78 @@ export const AppProvider = ({ children }) => {
       };
     }
 
-    // Default fallback response
+    // Context-aware responses based on current page
+    if (currentPage === '/data') {
+      if (message.includes('ازدحام') || message.includes('crowd') || message.includes('busy')) {
+        return {
+          type: 'text',
+          text: isArabic 
+            ? 'بناءً على البيانات الحية الحالية، أنصحك بزيارة أم قيس أو عجلون حيث مستوى الازدحام منخفض. البتراء وجرش مزدحمتان حالياً. هل تريد تفاصيل أكثر عن وجهة معينة؟'
+            : 'Based on current live data, I recommend visiting Umm Qais or Ajloun where crowd levels are low. Petra and Jerash are currently crowded. Would you like more details about a specific destination?'
+        };
+      }
+    }
+
+    // Extended keyword matching logic
+    const destinationKeywords = ['وجهة', 'مكان', 'سياحة', 'زيارة', 'destination', 'place', 'visit', 'tourist'];
+    const weatherKeywords = ['طقس', 'جو', 'حرارة', 'weather', 'temperature', 'climate'];
+    const foodKeywords = ['طعام', 'أكل', 'مطعم', 'food', 'eat', 'restaurant'];
+    const transportKeywords = ['مواصلات', 'سيارة', 'حافلة', 'transport', 'car', 'bus'];
+    const crowdKeywords = ['ازدحام', 'زحمة', 'مزدحم', 'crowd', 'busy', 'crowded'];
+    const iotKeywords = ['بيانات', 'استشعار', 'iot', 'sensor', 'data', 'live'];
+
+    // Check for destination inquiry
+    if (destinationKeywords.some(keyword => message.includes(keyword))) {
+      return {
+        type: 'destinations',
+        text: isArabic 
+          ? 'إليك أفضل الوجهات السياحية في الأردن مع البيانات الحية:'
+          : 'Here are the best tourist destinations in Jordan with live data:',
+        showDestinations: true
+      };
+    }
+
+    // Check for weather inquiry
+    if (weatherKeywords.some(keyword => message.includes(keyword))) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? `الطقس حالياً في ${currentLocationData.name.ar} هو ${currentLocationData.temperature}°م. الجو مناسب للتنزه! هل تريد نصائح حول أفضل الأنشطة في هذا الطقس؟`
+          : `Current weather in ${currentLocationData.name.en} is ${currentLocationData.temperature}°C. Perfect for sightseeing! Would you like tips on the best activities for this weather?`
+      };
+    }
+
+    // Check for food inquiry
+    if (foodKeywords.some(keyword => message.includes(keyword))) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? 'يمكنني أن أنصحك بأفضل المطاعم المحلية! هل تفضل المأكولات التراثية الأردنية أم تبحث عن خيارات عالمية؟'
+          : 'I can recommend the best local restaurants! Do you prefer traditional Jordanian cuisine or are you looking for international options?'
+      };
+    }
+
+    // Check for transportation inquiry
+    if (transportKeywords.some(keyword => message.includes(keyword))) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? 'يمكنني مساعدتك في ترتيب المواصلات! هل تفضل استئجار سيارة، أم تريد معلومات عن الحافلات السياحية، أم تبحث عن خدمات النقل الخاص؟'
+          : 'I can help you arrange transportation! Do you prefer car rental, tourist bus information, or private transport services?'
+      };
+    }
+
+    // Check for crowd information
+    if (crowdKeywords.some(keyword => message.includes(keyword))) {
+      return {
+        type: 'text',
+        text: isArabic 
+          ? 'يمكنك مراجعة البيانات الحية للازدحام في صفحة "مركز البيانات الحية". نستخدم أجهزة استشعار IoT لتقديم معلومات فورية عن مستوى الازدحام في كل موقع! هل تريد مني تحليل الوضع الحالي؟'
+          : 'You can check live crowd data in the "Live Data Hub" page. We use IoT sensors to provide real-time information about crowd levels at each location! Would you like me to analyze the current situation?'
+      };
+    }
+
+    // Default response with context awareness - as specifically requested fallback
     return {
       type: 'text',
       text: isArabic 
