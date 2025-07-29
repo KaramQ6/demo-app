@@ -7,7 +7,7 @@ import { Badge } from '../components/ui/badge';
 import { 
   Activity, 
   Users, 
-  Parking, 
+  Car, 
   Thermometer, 
   Cloud, 
   CloudRain, 
