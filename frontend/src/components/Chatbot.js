@@ -7,6 +7,7 @@ const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
   const { 
     isChatbotOpen, 
+    openChatbot,
     closeChatbot, 
     sendMessage, 
     chatMessages, 
