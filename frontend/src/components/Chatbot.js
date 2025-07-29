@@ -21,6 +21,14 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
+  // Simulated current location data for the prototype
+  const currentLocationData = {
+    name: { ar: 'جرش', en: 'Jerash' },
+    temperature: 28,
+    congestion: { ar: 'متوسط', en: 'Moderate' },
+    congestionLevel: 'medium' // for styling
+  };
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
