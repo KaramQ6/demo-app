@@ -64,8 +64,8 @@ export const AppProvider = ({ children }) => {
     
     if (currentPage === '/data') {
       return isArabic 
-        ? 'أرى أنك مهتم بالبيانات الحية. هل أحلل لك وضع الازدحام اليوم؟'
-        : 'I see you\'re interested in live data. Should I analyze today\'s crowd situation for you?';
+        ? `أرى أنك مهتم بالبيانات الحية. بالمناسبة، أنت الآن في ${currentLocationData.name.ar} حيث الازدحام ${currentLocationData.congestion.ar}. هل أحلل لك وضع الازدحام اليوم؟`
+        : `I see you're interested in live data. By the way, you're currently in ${currentLocationData.name.en} where crowd level is ${currentLocationData.congestion.en}. Should I analyze today's crowd situation for you?`;
     }
     
     if (currentPage === '/destinations') {
