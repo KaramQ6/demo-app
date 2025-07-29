@@ -275,16 +275,6 @@ export const AppProvider = ({ children }) => {
       };
     }
 
-    // Check for thanks
-    if (thanksKeywords.some(keyword => message.includes(keyword))) {
-      return {
-        type: 'text',
-        text: isArabic 
-          ? 'على الرحب والسعة! أنا هنا للمساعدة في أي وقت. هل تحتاج لمساعدة أخرى في تخطيط رحلتك أو تريد معلومات عن البيانات الحية؟'
-          : 'You\'re very welcome! I\'m here to help anytime. Do you need any other help planning your trip or want information about live data?'
-      };
-    }
-
     // Check for crowd information
     if (crowdKeywords.some(keyword => message.includes(keyword))) {
       return {
@@ -295,12 +285,12 @@ export const AppProvider = ({ children }) => {
       };
     }
 
-    // Default response with context awareness
+    // Default response with context awareness - as specifically requested fallback
     return {
       type: 'text',
       text: isArabic 
-        ? 'عذراً، لم أفهم طلبك بوضوح. يمكنك أن تسألني عن:\n• تخطيط رحلة\n• الوجهات السياحية\n• البيانات الحية\n• الطقس\n• الطعام والمطاعم\n• المواصلات\n\nكيف يمكنني مساعدتك؟'
-        : 'Sorry, I didn\'t understand your request clearly. You can ask me about:\n• Trip planning\n• Tourist destinations\n• Live data\n• Weather\n• Food and restaurants\n• Transportation\n\nHow can I help you?'
+        ? 'عفواً، لم أفهم طلبك. يمكنك أن تطلب مني \'خطة رحلة\' أو تسألني عن \'وجهة سياحية\'.'
+        : 'Sorry, I didn\'t understand your request. You can ask me for a \'trip plan\' or ask about a \'tourist destination\'.'
     };
   };
 
