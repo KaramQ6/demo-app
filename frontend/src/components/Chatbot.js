@@ -9,9 +9,11 @@ const Chatbot = () => {
     isChatbotOpen, 
     openChatbot,
     closeChatbot, 
-    sendMessage, 
-    chatMessages, 
+    // sendMessage, // <-- لن نستخدم الدالة القديمة من الـ Context
+    chatMessages,
+    setChatMessages, // <-- سنحتاج للوصول المباشر لهذه الدالة
     isTyping,
+    setIsTyping, // <-- سنحتاج للوصول المباشر لهذه الدالة
     showChatbot,
     toggleChatbotVisibility 
   } = useApp();
@@ -21,13 +23,10 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Simulated current location data for the prototype
-  const currentLocationData = {
-    name: { ar: 'جرش', en: 'Jerash' },
-    temperature: 28,
-    congestion: { ar: 'متوسط', en: 'Moderate' },
-    congestionLevel: 'medium' // for styling
-  };
+  // --- START: إضافة حالات جديدة للبيانات الحية ---
+  const [liveData, setLiveData] = useState(null);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  // --- END: إضافة حالات جديدة للبيانات الحية ---
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -43,13 +42,93 @@ const Chatbot = () => {
     }
   }, [isChatbotOpen]);
 
-  const handleSubmit = (e) => {
+  // --- START: useEffect لجلب البيانات الحية عند فتح الشات بوت ---
+  useEffect(() => {
+    const fetchLiveData = async () => {
+        setIsLoadingData(true);
+        const city = 'Amman'; // يمكن تطويرها لاحقاً لتكون ديناميكية
+        const lang = language;
+        const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?city=${city}&lang=${lang}`;
+
+        try {
+            const response = await fetch(liveDataUrl);
+            if (!response.ok) throw new Error('Failed to fetch live data');
+            const data = await response.json();
+            setLiveData(data);
+        } catch (error) {
+            console.error("Live Data Fetch Error:", error);
+            setLiveData(null);
+        } finally {
+            setIsLoadingData(false);
+        }
+    };
+
+    if (isChatbotOpen) {
+        fetchLiveData();
+    }
+  }, [isChatbotOpen, language]);
+  // --- END: useEffect لجلب البيانات الحية ---
+
+  // --- START: تعديل دالة handleSubmit لترسل الطلب إلى n8n ---
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (inputValue.trim()) {
-      sendMessage(inputValue.trim());
-      setInputValue('');
+    const userInput = inputValue.trim();
+    if (!userInput) return;
+
+    // 1. إضافة رسالة المستخدم فوراً للواجهة
+    const userMessage = {
+      id: Date.now(),
+      text: userInput,
+      type: 'user',
+      timestamp: new Date(),
+    };
+    setChatMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsTyping(true);
+
+    // 2. تجهيز وإرسال الطلب لـ n8n
+    let sessionId = localStorage.getItem('chatSessionId');
+    if (!sessionId) {
+        sessionId = `session_${Date.now()}`;
+        localStorage.setItem('chatSessionId', sessionId);
+    }
+    const chatbotUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
+
+    try {
+        const response = await fetch(chatbotUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: userInput, sessionId: sessionId })
+        });
+
+        if (!response.ok) throw new Error(`Network error: ${response.status}`);
+        
+        const data = await response.json();
+        const botResponseText = data.reply || "عذرًا، حدث خطأ ما.";
+
+        // 3. إضافة رد البوت الحقيقي للواجهة
+        const botMessage = {
+          id: Date.now() + 1,
+          text: botResponseText,
+          type: 'bot',
+          timestamp: new Date(),
+        };
+        setChatMessages(prev => [...prev, botMessage]);
+
+    } catch (error) {
+        console.error("Chat API Error:", error);
+        const errorMessage = {
+            id: Date.now() + 1,
+            text: "❌ فشل الاتصال بالخادم.",
+            type: 'bot',
+            timestamp: new Date(),
+        };
+        setChatMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsTyping(false);
     }
   };
+  // --- END: تعديل دالة handleSubmit ---
 
   const handleCopyMessage = async (messageText, messageId) => {
     try {
@@ -70,7 +149,7 @@ const Chatbot = () => {
 
   return (
     <>
-      {/* Floating Action Button */}
+      {/* ... (الجزء الخاص بـ Floating Action Button يبقى كما هو) ... */}
       {!isChatbotOpen && (
         <button
           onClick={openChatbot}
@@ -81,10 +160,9 @@ const Chatbot = () => {
         </button>
       )}
 
-      {/* Chat Window */}
       {isChatbotOpen && (
         <div className="fixed bottom-6 right-6 w-96 h-[32rem] glass-card rounded-2xl shadow-2xl flex flex-col z-50 animate-slide-up border border-white/20">
-          {/* Header */}
+          {/* ... (الجزء الخاص بـ Header يبقى كما هو) ... */}
           <div className="flex items-center justify-between p-4 border-b border-white/10">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <div className="w-10 h-10 gradient-purple rounded-full flex items-center justify-center">
@@ -100,7 +178,6 @@ const Chatbot = () => {
               </div>
             </div>
             <div className="flex items-center space-x-2 rtl:space-x-reverse">
-              {/* Power Toggle Button */}
               <button
                 onClick={toggleChatbotVisibility}
                 className="p-2 rounded-lg hover:bg-white/10 transition-colors interactive-button"
@@ -108,7 +185,6 @@ const Chatbot = () => {
               >
                 <Power className="w-4 h-4 text-muted-foreground hover:text-white" />
               </button>
-              {/* Close Button */}
               <button
                 onClick={closeChatbot}
                 className="p-2 rounded-lg hover:bg-white/10 transition-colors interactive-button"
@@ -119,45 +195,42 @@ const Chatbot = () => {
             </div>
           </div>
 
-          {/* NEW: Context Header - Current Location Data */}
-          <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5">
-            <div className="flex items-center justify-between text-sm">
-              {/* Location */}
-              <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <MapPin className="w-4 h-4 text-blue-400" />
-                <span className="text-white font-medium font-['Open_Sans']">
-                  {t({ ar: `أنت الآن في: ${currentLocationData.name.ar}`, en: `You are in: ${currentLocationData.name.en}` })}
-                </span>
+          {/* --- START: تحديث شريط البيانات الحية --- */}
+          <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
+            {isLoadingData ? (
+              <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
-              
-              {/* Temperature */}
-              <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Thermometer className="w-4 h-4 text-orange-400" />
-                <span className="text-white font-medium font-['Open_Sans']">
-                  {currentLocationData.temperature}°{t({ ar: 'م', en: 'C' })}
-                </span>
+            ) : liveData ? (
+              <div className="flex items-center justify-between text-sm animate-fade-in">
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <MapPin className="w-4 h-4 text-blue-400" />
+                      <span className="text-white font-medium">
+                          {isRTL ? liveData.locationName.ar : liveData.locationName.en}
+                      </span>
+                  </div>
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <Thermometer className="w-4 h-4 text-orange-400" />
+                      <span className="text-white font-medium">
+                          {liveData.temperature}°م
+                      </span>
+                  </div>
+                  <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                    <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
+                    <span className="text-white font-medium text-xs">
+                        {liveData.weather.description}
+                    </span>
+                  </div>
               </div>
-              
-              {/* Congestion */}
-              <div className="flex items-center space-x-2 rtl:space-x-reverse">
-                <Activity className={`w-4 h-4 ${
-                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
-                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
-                  'text-red-400'
-                }`} />
-                <span className={`font-medium font-['Open_Sans'] ${
-                  currentLocationData.congestionLevel === 'low' ? 'text-green-400' :
-                  currentLocationData.congestionLevel === 'medium' ? 'text-yellow-400' :
-                  'text-red-400'
-                }`}>
-                  {t({ ar: `الازدحام: ${currentLocationData.congestion.ar}`, en: `Crowd: ${currentLocationData.congestion.en}` })}
-                </span>
-              </div>
-            </div>
+            ) : (
+              <div className="text-center text-xs text-red-400">فشل تحميل البيانات الحية</div>
+            )}
           </div>
+          {/* --- END: تحديث شريط البيانات الحية --- */}
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/20">
+          {/* ... (الجزء الخاص بـ Messages Area و Input Form يبقى كما هو) ... */}
+           {/* Messages Area */}
+           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black/20">
             {chatMessages.map((message) => (
               <div
                 key={message.id}
@@ -175,7 +248,7 @@ const Chatbot = () => {
                     
                     {/* Timestamp */}
                     <div className="text-xs opacity-60 mt-2">
-                      {message.timestamp.toLocaleTimeString([], { 
+                      {new Date(message.timestamp).toLocaleTimeString([], { 
                         hour: '2-digit', 
                         minute: '2-digit' 
                       })}
