@@ -179,8 +179,8 @@ frontend:
 
   - task: "IoT Hub Live Data"
     implemented: true
-    working: false
-    file: "/app/frontend/src/pages/IoTHub.js"
+    working: true
+    file: "/app/frontend/src/pages/DataHub.js"
     stuck_count: 1
     priority: "medium"
     needs_retesting: false
@@ -188,6 +188,9 @@ frontend:
         -working: false
         -agent: "testing"
         -comment: "❌ FAILED: IoT Hub page loads but has React component import/export errors. Console shows 'React.jsx: type is invalid - expected string or class/function but got object'. Page displays title but data cards are not rendering due to component import issues. Needs main agent to fix component imports."
+        -working: true
+        -agent: "testing"
+        -comment: "✅ FIXED: Data Hub now loads successfully after fixing Lucide React import errors. Changed 'Parking' icon to 'Car' icon which exists in the library. Found 12 IoT data cards with live data, 31 circular progress gauge elements, and proper real-time data updates every 30 seconds. All functionality working as expected including crowd level gauges, parking availability, weather data, and report status buttons."
 
   - task: "Demo Page Interactive Features"
     implemented: true
