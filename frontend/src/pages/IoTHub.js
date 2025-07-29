@@ -203,7 +203,7 @@ const IoTHub = () => {
                       {/* Weather */}
                       <div className="flex items-center justify-between glass p-4 rounded-lg">
                         <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                          <WeatherIcon className="w-5 h-5 text-primary" />
+                          <WeatherIconComponent className="w-5 h-5 text-primary" />
                           <span className="text-sm text-muted-foreground font-['Open_Sans']">
                             {t({ ar: 'الطقس', en: 'Weather' })}
                           </span>
