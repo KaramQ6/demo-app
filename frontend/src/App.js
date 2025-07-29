@@ -9,15 +9,12 @@ import { Toaster } from "./components/ui/toaster";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Chatbot from "./components/Chatbot";
-import NotificationSystem from "./components/NotificationSystem";
 
 // Pages
 import Homepage from "./pages/Homepage";
 import Destinations from "./pages/Destinations";
 import DestinationDetail from "./pages/DestinationDetail";
-import IoTHub from "./pages/IoTHub";
-import Demo from "./pages/Demo";
-import About from "./pages/About";
+import DataHub from "./pages/DataHub";
 
 function App() {
   return (
@@ -31,14 +28,11 @@ function App() {
                 <Route path="/" element={<Homepage />} />
                 <Route path="/destinations" element={<Destinations />} />
                 <Route path="/destinations/:id" element={<DestinationDetail />} />
-                <Route path="/iot-hub" element={<IoTHub />} />
-                <Route path="/demo" element={<Demo />} />
-                <Route path="/about" element={<About />} />
+                <Route path="/data" element={<DataHub />} />
               </Routes>
             </main>
             <Footer />
             <Chatbot />
-            <NotificationSystem />
             <Toaster />
           </AppProvider>
         </BrowserRouter>

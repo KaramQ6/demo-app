@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const LanguageContext = createContext();
 
@@ -12,42 +12,30 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState('ar');
-  const [direction, setDirection] = useState('rtl');
-
-  useEffect(() => {
-    // Update document direction and language
-    document.documentElement.dir = direction;
-    document.documentElement.lang = language;
-    
-    // Update body class for styling
-    document.body.className = document.body.className.replace(/\b(rtl|ltr)\b/g, '');
-    document.body.className += ` ${direction}`;
-  }, [language, direction]);
 
   const toggleLanguage = () => {
-    if (language === 'ar') {
-      setLanguage('en');
-      setDirection('ltr');
-    } else {
-      setLanguage('ar');
-      setDirection('rtl');
-    }
+    setLanguage(prev => prev === 'ar' ? 'en' : 'ar');
   };
 
-  const t = (textObj) => {
-    if (typeof textObj === 'string') return textObj;
-    return textObj[language] || textObj.en || textObj.ar || '';
+  const t = (translations) => {
+    return translations[language] || translations.ar || translations.en || '';
+  };
+
+  const isRTL = language === 'ar';
+
+  const value = {
+    language,
+    setLanguage,
+    toggleLanguage,
+    t,
+    isRTL
   };
 
   return (
-    <LanguageContext.Provider value={{
-      language,
-      direction,
-      toggleLanguage,
-      t,
-      isRTL: direction === 'rtl'
-    }}>
-      {children}
+    <LanguageContext.Provider value={value}>
+      <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'rtl' : 'ltr'}>
+        {children}
+      </div>
     </LanguageContext.Provider>
   );
 };
