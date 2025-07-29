@@ -88,8 +88,8 @@ export const AppProvider = ({ children }) => {
     
     // Enhanced homepage greeting with location context
     return isArabic 
-      ? 'أهلاً بك في SmartTour.Jo! كيف يمكنني مساعدتك في اكتشاف كنوز الأردن؟'
-      : 'Welcome to SmartTour.Jo! How can I help you discover Jordan\'s treasures?';
+      ? `أهلاً بك في SmartTour.Jo! أرى أنك في ${currentLocationData.name.ar} الآن. كيف يمكنني مساعدتك في اكتشاف كنوز الأردن؟`
+      : `Welcome to SmartTour.Jo! I see you're currently in ${currentLocationData.name.en}. How can I help you discover Jordan's treasures?`;
   };
 
   // Enhanced intelligent chatbot response system
