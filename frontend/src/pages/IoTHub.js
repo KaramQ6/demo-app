@@ -57,7 +57,7 @@ const IoTHub = () => {
   const generateInitialIoTData = (destinationId) => {
     const crowdLevels = [25, 45, 65, 85, 30, 55];
     const parkingLevels = [80, 60, 45, 25, 75, 90];
-    const weatherIcons = [Sun, Cloud, CloudRain];
+    const weatherIcons = ['Sun', 'Cloud', 'CloudRain'];
     
     const index = destinations.findIndex(d => d.id === destinationId);
     const baseIndex = index >= 0 ? index : 0;
@@ -65,7 +65,7 @@ const IoTHub = () => {
     return {
       crowdLevel: crowdLevels[baseIndex % crowdLevels.length] + Math.floor(Math.random() * 10),
       parkingAvailable: parkingLevels[baseIndex % parkingLevels.length] + Math.floor(Math.random() * 10),
-      WeatherIcon: weatherIcons[baseIndex % weatherIcons.length],
+      weatherIcon: weatherIcons[baseIndex % weatherIcons.length],
       temperature: Math.floor(Math.random() * 15) + 20, // 20-35°C
       airQuality: Math.floor(Math.random() * 40) + 60, // 60-100 AQI
       visitors: Math.floor(Math.random() * 200) + 50, // 50-250 visitors
