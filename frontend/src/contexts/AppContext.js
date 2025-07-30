@@ -23,6 +23,13 @@ export const AppProvider = ({ children }) => {
   const [citiesData, setCitiesData] = useState([]);
   const [isCitiesLoading, setIsCitiesLoading] = useState(true);
 
+  // States for User Preferences
+  const [userPreferences, setUserPreferences] = useState(null);
+
+  // States for Itinerary Data
+  const [itineraryData, setItineraryData] = useState(null);
+  const [isItineraryLoading, setIsItineraryLoading] = useState(true);
+
   // Effect to get user's geolocation
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
@@ -30,6 +37,28 @@ export const AppProvider = ({ children }) => {
       (error) => setLocationError("User denied location access.")
     );
   }, []);
+
+  // Effect to load user preferences from localStorage
+  useEffect(() => {
+    try {
+      const storedPreferences = localStorage.getItem('userPreferences');
+      if (storedPreferences) {
+        setUserPreferences(JSON.parse(storedPreferences));
+      }
+    } catch (error) {
+      console.error("Failed to load user preferences from localStorage:", error);
+    }
+  }, []);
+
+  // Function to save user preferences to state and localStorage
+  const saveUserPreferences = (preferences) => {
+    setUserPreferences(preferences);
+    try {
+      localStorage.setItem('userPreferences', JSON.stringify(preferences));
+    } catch (error) {
+      console.error("Failed to save user preferences to localStorage:", error);
+    }
+  };
 
   // Effect to fetch live data for the CHATBOT (This one works correctly)
   useEffect(() => {
@@ -45,10 +74,10 @@ export const AppProvider = ({ children }) => {
       } catch (error) {
         console.error("Chatbot Live Data Fetch Error:", error);
         setLiveData(null);
-      } finally {
-        setIsLoadingData(false);
       }
-    };
+    } finally {
+      setIsLoadingData(false);
+    }
     fetchUserLiveData();
   }, [userLocation, language]);
 
@@ -94,6 +123,41 @@ export const AppProvider = ({ children }) => {
     fetchCitiesData();
   }, [language]);
 
+  // Effect to fetch Itinerary data
+  useEffect(() => {
+    const fetchItineraryData = async () => {
+      setIsItineraryLoading(true);
+      // Replace with your actual n8n Smart Itinerary webhook URL
+      const itineraryApiUrl = 'https://karamq5.app.n8n.cloud/webhook/your-smart-itinerary-webhook'; 
+      try {
+        const response = await fetch(itineraryApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            destination: 'Petra',
+            crowdLevel: 85,
+            currentWeather: 'Hot',
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setItineraryData(data);
+      } catch (error) {
+        console.error("Error fetching itinerary data:", error);
+        setItineraryData(null);
+      } finally {
+        setIsItineraryLoading(false);
+      }
+    };
+
+    fetchItineraryData();
+  }, []); // Empty dependency array to run once on mount
+
 
   // (The rest of your functions remain the same)
   const sendMessage = async (userInput) => { /* ...your existing logic... */ };
@@ -104,7 +168,9 @@ export const AppProvider = ({ children }) => {
   const value = {
     isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot,
     liveData, isLoadingData, locationError,
-    citiesData, isCitiesLoading
+    citiesData, isCitiesLoading,
+    userPreferences, saveUserPreferences,
+    itineraryData, isItineraryLoading
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

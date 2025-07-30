@@ -15,6 +15,8 @@ import Homepage from "./pages/Homepage";
 import Destinations from "./pages/Destinations";
 import DestinationDetail from "./pages/DestinationDetail";
 import DataHub from "./pages/DataHub";
+import UserProfile from "./pages/UserProfile";
+import Itinerary from "./pages/Itinerary";
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
                 <Route path="/destinations" element={<Destinations />} />
                 <Route path="/destinations/:id" element={<DestinationDetail />} />
                 <Route path="/data" element={<DataHub />} />
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/itinerary" element={<Itinerary />} />
               </Routes>
             </main>
             <Footer />
