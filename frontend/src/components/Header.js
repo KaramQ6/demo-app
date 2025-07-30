@@ -23,6 +23,10 @@ const Header = () => {
     { 
       path: '/data', 
       label: { ar: 'البيانات الحية', en: 'Live Data' }
+    },
+    {
+      path: '/profile',
+      label: { ar: 'ملفي الشخصي', en: 'My Profile' }
     }
   ];
 
