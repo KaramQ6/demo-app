@@ -108,7 +108,35 @@ export const AppProvider = ({ children }) => {
 
 
     // --- Other Functions ---
-    const sendMessage = async (userInput) => { /* ...your existing logic... */ };
+    const sendMessage = async (userInput) => {
+        const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
+        setChatMessages(prev => [...prev, userMessage]);
+        setIsTyping(true);
+        let sessionId = localStorage.getItem('chatSessionId') || `session_${Date.now()}`;
+        localStorage.setItem('chatSessionId', sessionId);
+        const chatbotUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
+        try {
+            const response = await fetch(chatbotUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: userInput,
+                    sessionId: sessionId,
+                    preferences: userPreferences // Add the user preferences here
+                })
+            });
+            if (!response.ok) throw new Error('Network error');
+            const data = await response.json();
+            const botMessage = { id: Date.now() + 1, text: data.reply || "Error", type: 'bot', timestamp: new Date() };
+            setChatMessages(prev => [...prev, botMessage]);
+        } catch (error) {
+            console.error("Chat API Error:", error);
+            const errorMessage = { id: Date.now() + 1, text: "❌ Connection Error", type: 'bot', timestamp: new Date() };
+            setChatMessages(prev => [...prev, errorMessage]);
+        } finally {
+            setIsTyping(false);
+        }
+    };
     const openChatbot = () => setIsChatbotOpen(true);
     const closeChatbot = () => setIsChatbotOpen(false);
     const toggleChatbotVisibility = () => { /* ...your existing logic... */ };
