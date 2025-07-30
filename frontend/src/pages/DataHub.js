@@ -4,16 +4,13 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { Loader2, Cloud, Sun, CloudRain, Snowflake, Wind, AlertTriangle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
-// بيانات ثابتة لاستخدامها في حال فشل التحميل
+// Fallback data in case the live fetch fails
 const fallbackCitiesData = [
   { cityName: 'Amman', temperature: 28, weather: { description: 'Sunny' } },
   { cityName: 'Petra', temperature: 32, weather: { description: 'Clear' } },
   { cityName: 'Aqaba', temperature: 35, weather: { description: 'Hot' } },
-  { cityName: 'Irbid', temperature: 27, weather: { description: 'Cloudy' } },
-  { cityName: 'Jerash', temperature: 29, weather: { description: 'Windy' } },
 ];
 
-// أيقونات الطقس
 const WeatherIcon = ({ description }) => {
     if (!description) return <Cloud className="w-8 h-8 text-gray-400" />;
     const desc = description.toLowerCase();
@@ -26,10 +23,8 @@ const WeatherIcon = ({ description }) => {
 
 const DataHub = () => {
     const { t } = useLanguage();
-    // نستهلك البيانات من الكونتكست
     const { citiesData, isCitiesLoading } = useApp();
 
-    // 1. عرض مؤشر التحميل
     if (isCitiesLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -38,7 +33,6 @@ const DataHub = () => {
         );
     }
 
-    // 2. تحديد أي بيانات سنستخدم: الحية أو الثابتة
     const hasFailed = !citiesData || citiesData.length === 0;
     const dataToDisplay = hasFailed ? fallbackCitiesData : citiesData;
 
@@ -54,7 +48,6 @@ const DataHub = () => {
                     </p>
                 </div>
 
-                {/* 3. عرض رسالة خطأ إذا فشل التحميل، مع الاستمرار في عرض البيانات الثابتة */}
                 {hasFailed && (
                     <div className="mb-8 p-4 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-500/50 rounded-lg flex items-center justify-center space-x-3 rtl:space-x-reverse animate-fade-in">
                         <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
@@ -73,15 +66,23 @@ const DataHub = () => {
                         >
                             <Card className="bg-white dark:bg-gray-800 h-full overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
                                 <CardHeader>
-                                    <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">{city.cityName}</CardTitle>
+                                    <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
+                                        {/* Use optional chaining here as a fallback */}
+                                        {city?.cityName || 'Unknown City'}
+                                    </CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center justify-center space-y-4 pt-0">
                                     <div className="text-6xl font-bold text-purple-600 dark:text-purple-400">
-                                        {Math.round(city.temperature)}°C
+                                        {/* Use optional chaining and provide a default value */}
+                                        {Math.round(city?.temperature || 0)}°C
                                     </div>
                                     <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                        <WeatherIcon description={city.weather.description} />
-                                        <p className="text-lg text-gray-500 dark:text-gray-300 capitalize">{city.weather.description}</p>
+                                        {/* THE FIX IS HERE: Using '?.' to prevent the crash */}
+                                        <WeatherIcon description={city.weather?.description} />
+                                        <p className="text-lg text-gray-500 dark:text-gray-300 capitalize">
+                                            {/* AND HERE */}
+                                            {city.weather?.description || 'No data'}
+                                        </p>
                                     </div>
                                 </CardContent>
                             </Card>
