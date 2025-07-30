@@ -20,6 +20,10 @@ export const AppProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
 
+  // New state for multi-city data
+  const [citiesData, setCitiesData] = useState([]);
+  const [isCitiesLoading, setIsCitiesLoading] = useState(true);
+
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => setUserLocation({ lat: position.coords.latitude, lon: position.coords.longitude }),
@@ -47,6 +51,37 @@ export const AppProvider = ({ children }) => {
     };
     if (isChatbotOpen) fetchLiveData();
   }, [isChatbotOpen, language, userLocation]);
+
+  // New useEffect for multi-city data
+  useEffect(() => {
+    const fetchCitiesData = async () => {
+      const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid'];
+      const webhookBaseUrl = 'https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658';
+
+      try {
+        const cityPromises = cities.map(async (city) => {
+          // This assumes the webhook can take a 'city' parameter or you have a way to get city-specific data.
+          // For a real scenario, you might need a different API endpoint or a lookup for lat/lon for each city.
+          const response = await fetch(`${webhookBaseUrl}?city=${city}&lang=${language}`);
+          if (!response.ok) {
+            console.warn(`Failed to fetch data for ${city}: ${response.status}`);
+            return null; // Return null for failed fetches
+          }
+          const data = await response.json();
+          return { ...data, cityName: city }; // Add city name to the data
+        });
+
+        const results = await Promise.all(cityPromises);
+        setCitiesData(results.filter(Boolean)); // Filter out nulls from failed fetches
+      } catch (error) {
+        console.error("Error fetching multi-city data:", error);
+      } finally {
+        setIsCitiesLoading(false);
+      }
+    };
+
+    fetchCitiesData();
+  }, [language]); // Re-fetch if language changes
 
   const sendMessage = async (userInput) => {
     const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
@@ -88,6 +123,6 @@ export const AppProvider = ({ children }) => {
     setShowChatbot(!isHidden);
   }, []);
 
-  const value = { isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError, setChatMessages, setIsTyping };
+  const value = { isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError, setChatMessages, setIsTyping, citiesData, isCitiesLoading };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
