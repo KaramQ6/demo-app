@@ -1,11 +1,17 @@
 import React from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Loader2, Cloud, Sun, CloudRain, Snowflake, Wind, Droplets } from 'lucide-react'; // 1. أضفنا أيقونة Droplets
+import { Loader2, Cloud, Sun, CloudRain, Snowflake, Wind, Droplets } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
-const WeatherIcon = ({ iconCode }) => {
-    // ... (لا تغيير هنا)
+const WeatherIcon = ({ description }) => {
+    if (!description) return <Cloud className="w-8 h-8 text-gray-400" />;
+    const desc = description.toLowerCase();
+    if (desc.includes('rain')) return <CloudRain className="w-8 h-8 text-blue-400" />;
+    if (desc.includes('snow')) return <Snowflake className="w-8 h-8 text-blue-200" />;
+    if (desc.includes('sun') || desc.includes('صافية')) return <Sun className="w-8 h-8 text-yellow-400" />; // تعديل بسيط للغة العربية
+    if (desc.includes('wind')) return <Wind className="w-8 h-8 text-gray-400" />;
+    return <Cloud className="w-8 h-8 text-gray-400" />;
 };
 
 const DataHub = () => {
@@ -19,8 +25,6 @@ const DataHub = () => {
             </div>
         );
     }
-    
-    // ... (لا تغيير هنا)
 
     return (
         <div className="relative min-h-screen pt-20">
@@ -36,7 +40,13 @@ const DataHub = () => {
                      </h1>
                  </div>
 
-                {/* ... (لا تغيير هنا) */}
+                {(!citiesData || citiesData.length === 0) && (
+                    <div className="mb-8 p-4 bg-red-900/30 border border-red-500/50 rounded-lg flex items-center justify-center">
+                        <p className="text-red-300 font-medium">
+                            {t({ ar: 'فشل تحميل بيانات المدن.', en: 'Failed to load city data.' })}
+                        </p>
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {citiesData.map((city, index) => (
@@ -50,11 +60,11 @@ const DataHub = () => {
                                         {Math.round(city?.temperature || 0)}°C
                                     </div>
                                     <div className="flex items-center space-x-4 rtl:space-x-reverse text-gray-300">
-                                        <WeatherIcon iconCode={city.weather?.icon} />
-                                        <p className="text-lg capitalize">{city.weather?.description || 'No data'}</p>
+                                        {/* === التعديل هنا === */}
+                                        <WeatherIcon description={city.description} />
+                                        <p className="text-lg capitalize">{city.description || 'No data'}</p>
                                     </div>
                                     
-                                    {/* 2. هذا هو الكود الجديد لعرض الرطوبة */}
                                     {city.humidity && (
                                         <div className="flex items-center space-x-2 rtl:space-x-reverse text-gray-400 pt-2">
                                             <Droplets className="w-5 h-5" />
