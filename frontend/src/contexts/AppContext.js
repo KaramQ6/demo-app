@@ -41,7 +41,7 @@ export const AppProvider = ({ children }) => {
   // Effect to load user preferences from localStorage
   useEffect(() => {
     try {
-      const storedPreferences = localStorage.getItem('userPreferences');
+      const storedPreferences = localStorage.getItem('userTravelPreferences');
       if (storedPreferences) {
         setUserPreferences(JSON.parse(storedPreferences));
       }
@@ -54,7 +54,7 @@ export const AppProvider = ({ children }) => {
   const saveUserPreferences = (preferences) => {
     setUserPreferences(preferences);
     try {
-      localStorage.setItem('userPreferences', JSON.stringify(preferences));
+      localStorage.setItem('userTravelPreferences', JSON.stringify(preferences));
     } catch (error) {
       console.error("Failed to save user preferences to localStorage:", error);
     }
