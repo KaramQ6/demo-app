@@ -75,8 +75,9 @@ export const AppProvider = ({ children }) => {
         console.error("Chatbot Live Data Fetch Error:", error);
         setLiveData(null);
       } finally {
-      setIsLoadingData(false);
-    }
+        setIsLoadingData(false);
+      }
+    };
     fetchUserLiveData();
   }, [userLocation, language]);
 
