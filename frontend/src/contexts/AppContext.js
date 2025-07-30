@@ -59,7 +59,7 @@ export const AppProvider = ({ children }) => {
       setIsCitiesLoading(true);
       
       const cityPromises = cities.map(async (city) => {
-        const liveDataApiUrl = `https://karamq5.app.n8n.cloud/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
+        const liveDataApiUrl = `https://karamq5.app.n8n.cloud/webhook/a5be8642-6a92-407c-b537-9bd4bda4dcdc?city=${city}&lang=${language}`;
         try {
           const response = await fetch(liveDataApiUrl);
           // Check if the response is ok AND has content
