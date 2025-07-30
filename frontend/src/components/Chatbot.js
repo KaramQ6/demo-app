@@ -65,7 +65,7 @@ const Chatbot = () => {
               <div className="flex items-center justify-center h-full">
                   <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
-            ) : liveData && liveData.cityName && liveData.weather ? (
+            ) : liveData && liveData.cityName ? (
               <div className="flex items-center justify-between text-sm animate-fade-in">
                   {/* Location - Reads from the correct 'cityName' property */}
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
