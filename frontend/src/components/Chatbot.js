@@ -62,18 +62,39 @@ const Chatbot = () => {
 
           <div className="px-4 py-3 bg-gradient-to-r from-purple-900/30 to-indigo-900/30 border-b border-white/5 min-h-[50px]">
             {isLoadingData ? (
-              <div className="flex items-center justify-center h-full"><Loader2 className="w-4 h-4 text-white animate-spin" /></div>
-            ) : liveData && liveData.weather ? ( // <-- Defensive check added here
+              <div className="flex items-center justify-center h-full">
+                  <Loader2 className="w-4 h-4 text-white animate-spin" />
+              </div>
+            ) : liveData && liveData.cityName && liveData.weather ? (
               <div className="flex items-center justify-between text-sm animate-fade-in">
-                <div className="flex items-center space-x-2 rtl:space-x-reverse"><MapPin className="w-4 h-4 text-blue-400" /><span className="text-white font-medium">{liveData.cityName}</span></div>
-                <div className="flex items-center space-x-2 rtl:space-x-reverse"><Thermometer className="w-4 h-4 text-orange-400" /><span className="text-white font-medium">{liveData.temperature}°م</span></div>
-                <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                  <img src={liveData.weather.iconUrl} alt={liveData.weather.description} className="w-6 h-6" />
-                  <span className="text-white font-medium text-xs">{liveData.weather.description}</span>
-                </div>
+                  {/* Location - Reads from the correct 'cityName' property */}
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <MapPin className="w-4 h-4 text-blue-400" />
+                      <span className="text-white font-medium">
+                          {liveData.cityName}
+                      </span>
+                  </div>
+                  
+                  {/* Temperature & Weather Icon - Reads from 'weather.iconUrl' */}
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                      <Thermometer className="w-4 h-4 text-orange-400" />
+                      <span className="text-white font-medium">
+                          {liveData.temperature}°م
+                      </span>
+                      {/* Defensive check for iconUrl */}
+                      {liveData.weather.iconUrl && (
+                        <img 
+                          src={liveData.weather.iconUrl} 
+                          alt={liveData.weather.description || 'Weather icon'}
+                          className="w-6 h-6" 
+                        />
+                      )}
+                  </div>
               </div>
             ) : (
-              <div className="text-center text-xs text-red-400">فشل تحميل البيانات</div>
+              <div className="text-center text-xs text-red-400">
+                {t({ ar: 'فشل تحميل البيانات', en: 'Failed to load data' })}
+              </div>
             )}
           </div>
 
