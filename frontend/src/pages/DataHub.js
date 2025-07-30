@@ -37,18 +37,20 @@ const DataHub = () => {
     const dataToDisplay = hasFailed ? fallbackCitiesData : citiesData;
 
     return (
+        // This is the corrected structure with a parent div and background
         <div className="relative min-h-screen pt-20">
-  <div className="absolute inset-0 w-full h-full">
-    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
-    <img src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8" alt="Background" className="w-full h-full object-cover" />
-  </div>
-  <div className="relative z-20 container mx-auto p-4 md:p-8">
-            <div className="container mx-auto max-w-6xl">
+            <div className="absolute inset-0 w-full h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
+                <img src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8" alt="Background" className="w-full h-full object-cover" />
+            </div>
+            
+            {/* All page content goes inside this relative container */}
+            <div className="relative z-20 container mx-auto p-4 md:p-8">
                 <div className="text-center mb-16 animate-fade-in-up">
-                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                    <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
                         {t({ ar: 'الطقس المباشر في أنحاء الأردن', en: 'Live Weather Across Jordan' })}
                     </h1>
-                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                    <p className="text-lg text-gray-200 max-w-2xl mx-auto">
                         {t({ ar: 'بيانات الطقس لحظة بلحظة لمساعدتك في التخطيط لرحلتك', en: 'Up-to-the-minute weather data for your trip planning' })}
                     </p>
                 </div>
@@ -69,23 +71,19 @@ const DataHub = () => {
                             className="animate-fade-in-up"
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
-                            <Card className="bg-white dark:bg-gray-800 h-full overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
+                            <Card className="glass-card h-full overflow-hidden border-white/10">
                                 <CardHeader>
-                                    <CardTitle className="text-2xl font-semibold text-gray-800 dark:text-white">
-                                        {/* Use optional chaining here as a fallback */}
+                                    <CardTitle className="text-2xl font-semibold text-white">
                                         {city?.cityName || 'Unknown City'}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="flex flex-col items-center justify-center space-y-4 pt-0">
-                                    <div className="text-6xl font-bold text-purple-600 dark:text-purple-400">
-                                        {/* Use optional chaining and provide a default value */}
+                                    <div className="text-6xl font-bold text-purple-400">
                                         {Math.round(city?.temperature || 0)}°C
                                     </div>
                                     <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                        {/* THE FIX IS HERE: Using '?.' to prevent the crash */}
                                         <WeatherIcon description={city.weather?.description} />
-                                        <p className="text-lg text-gray-500 dark:text-gray-300 capitalize">
-                                            {/* AND HERE */}
+                                        <p className="text-lg text-gray-300 capitalize">
                                             {city.weather?.description || 'No data'}
                                         </p>
                                     </div>
@@ -94,8 +92,8 @@ const DataHub = () => {
                         </div>
                     ))}
                 </div>
-            </div>
-        </div>
+            </div> {/* This div closes the "relative z-20 container" */}
+        </div> // This div closes the main "relative min-h-screen"
     );
 };
 
