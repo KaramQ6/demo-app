@@ -1,7 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
+import { useLanguage } from './LanguageContext';
 
+console.log("AppContext file is running now!"); // <--- أضف هذا السطر هنا
+
+// ... باقي الكود
 const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
