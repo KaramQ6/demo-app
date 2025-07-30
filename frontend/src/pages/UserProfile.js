@@ -47,20 +47,24 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="min-h-screen bg-purple-100 dark:bg-gray-900 py-20 px-4 sm:px-6">
-            <div className="container mx-auto max-w-2xl">
-                <Card className="bg-purple-200 dark:bg-gray-800/30 shadow-lg">
+        <div className="relative min-h-screen pt-20">
+            <div className="absolute inset-0 w-full h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
+                <img src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8" alt="Background" className="w-full h-full object-cover" />
+            </div>
+            <div className="relative z-20 container mx-auto p-4 md:p-8">
+                <Card className="glass-card shadow-lg">
                     <CardHeader>
-                        <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">
+                        <CardTitle className="text-3xl font-bold text-white">
                             {t({ ar: 'ملف تعريف المسافر', en: 'Traveler Profile' })}
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className="text-gray-300">
                             {t({ ar: 'بتخصيص تفضيلاتك، يمكن لـ "جواد" أن يقدم لك اقتراحات أفضل.', en: 'Customize your preferences so "Jawad" can give you better suggestions.' })}
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <Label>{t({ ar: 'اهتماماتك', en: 'Your Interests' })}</Label>
+                            <Label className="text-white">{t({ ar: 'اهتماماتك', en: 'Your Interests' })}</Label>
                             <div className="grid grid-cols-2 gap-4">
                                 {interestsOptions.map((interest) => (
                                     <div key={interest} className="flex items-center space-x-2 rtl:space-x-reverse">
@@ -69,7 +73,7 @@ const UserProfile = () => {
                                             checked={interests.includes(interest)}
                                             onCheckedChange={() => handleInterestChange(interest)}
                                         />
-                                        <label htmlFor={interest} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200">
+                                        <label htmlFor={interest} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-gray-300">
                                             {t({ ar: interest, en: interest })}
                                         </label>
                                     </div>
@@ -78,12 +82,12 @@ const UserProfile = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="budget">{t({ ar: 'الميزانية', en: 'Budget' })}</Label>
+                            <Label htmlFor="budget" className="text-white">{t({ ar: 'الميزانية', en: 'Budget' })}</Label>
                             <Select value={budget} onValueChange={setBudget}>
-                                <SelectTrigger id="budget">
+                                <SelectTrigger id="budget" className="bg-white/10 text-white border-white/20">
                                     <SelectValue placeholder={t({ ar: 'اختر ميزانيتك', en: 'Select your budget' })} />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-gray-800 text-white border-gray-700">
                                     {budgetOptions.map((option) => (
                                         <SelectItem key={option} value={option}>{t({ ar: option, en: option })}</SelectItem>
                                     ))}
@@ -92,16 +96,15 @@ const UserProfile = () => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label htmlFor="travelsWith">{t({ ar: 'تسافر مع', en: 'Traveling With' })}</Label>
+                            <Label htmlFor="travelsWith" className="text-white">{t({ ar: 'تسافر مع', en: 'Traveling With' })}</Label>
                             <Select value={travelsWith} onValueChange={setTravelsWith}>
-                                <SelectTrigger id="travelsWith">
+                                <SelectTrigger id="travelsWith" className="bg-white/10 text-white border-white/20">
                                     <SelectValue placeholder="Select" />
                                 </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="Solo">{t({ ar: 'بمفردي', en: 'Solo' })}</SelectItem>
-                                    <SelectItem value="Partner">{t({ ar: 'مع شريك', en: 'Partner' })}</SelectItem>
-                                    <SelectItem value="Family">{t({ ar: 'مع العائلة', en: 'Family' })}</SelectItem>
-                                    <SelectItem value="Friends">{t({ ar: 'مع الأصدقاء', en: 'Friends' })}</SelectItem>
+                                <SelectContent className="bg-gray-800 text-white border-gray-700">
+                                    {['Solo', 'Partner', 'Family', 'Friends'].map(option => (
+                                        <SelectItem key={option} value={option}>{t({ ar: option, en: option })}</SelectItem>
+                                    ))}
                                 </SelectContent>
                             </Select>
                         </div>
