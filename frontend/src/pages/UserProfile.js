@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+// src/pages/UserProfile.js
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Button } from '../components/ui/button';
@@ -16,9 +17,17 @@ const UserProfile = () => {
     const { userPreferences, saveUserPreferences } = useApp();
     const { toast } = useToast();
 
-    const [interests, setInterests] = useState(userPreferences?.interests || []);
-    const [budget, setBudget] = useState(userPreferences?.budget || '');
-    const [travelsWith, setTravelsWith] = useState(userPreferences?.travelsWith || 'Solo');
+    const [interests, setInterests] = useState([]);
+    const [budget, setBudget] = useState('');
+    const [travelsWith, setTravelsWith] = useState('Solo');
+    
+    useEffect(() => {
+        if (userPreferences) {
+            setInterests(userPreferences.interests || []);
+            setBudget(userPreferences.budget || '');
+            setTravelsWith(userPreferences.travelsWith || 'Solo');
+        }
+    }, [userPreferences]);
 
     const handleInterestChange = (interest) => {
         setInterests((prev) =>
@@ -60,7 +69,7 @@ const UserProfile = () => {
                                             checked={interests.includes(interest)}
                                             onCheckedChange={() => handleInterestChange(interest)}
                                         />
-                                        <label htmlFor={interest} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                        <label htmlFor={interest} className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-gray-200">
                                             {t({ ar: interest, en: interest })}
                                         </label>
                                     </div>
