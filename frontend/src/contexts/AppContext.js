@@ -70,11 +70,8 @@ export const AppProvider = ({ children }) => {
       setIsTyping(false);
     }
   };
-
-  const openChatbot = () => {
-    setIsChatbotOpen(true);
-  };
   
+  const openChatbot = () => setIsChatbotOpen(true);
   const closeChatbot = () => setIsChatbotOpen(false);
   const toggleChatbotVisibility = () => {
     const isHidden = sessionStorage.getItem('isChatbotHidden') === 'true';
