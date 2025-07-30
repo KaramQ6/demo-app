@@ -2,87 +2,84 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useLanguage } from './LanguageContext';
 
-console.log("AppContext file is running now!"); // <--- أضف هذا السطر هنا
-
-// ... باقي الكود
 const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
   const { language, t } = useLanguage();
-  const location = useLocation();
+  
+  // --- States for Chatbot and Geolocation (Existing Logic - DO NOT CHANGE) ---
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [showChatbot, setShowChatbot] = useState(true);
   const [liveData, setLiveData] = useState(null);
-  const [isLoadingData, setIsLoadingData] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true); // For user's location
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
 
-  // New state for multi-city data
+  // --- NEW: States for Multi-City Data Page ---
   const [citiesData, setCitiesData] = useState([]);
   const [isCitiesLoading, setIsCitiesLoading] = useState(true);
 
+  // Effect for user's geolocation (for chatbot)
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       (position) => setUserLocation({ lat: position.coords.latitude, lon: position.coords.longitude }),
-      (error) => setLocationError("User denied or failed to get location.")
+      (error) => setLocationError("User denied location access.")
     );
   }, []);
 
+  // Effect to fetch live data for the user's location (for chatbot)
   useEffect(() => {
-    const fetchLiveData = async () => {
+    const fetchUserLiveData = async () => {
       if (!userLocation) return;
       setIsLoadingData(true);
       const { lat, lon } = userLocation;
       const liveDataUrl = `https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?lat=${lat}&lon=${lon}&lang=${language}`;
       try {
         const response = await fetch(liveDataUrl);
-        if (!response.ok) throw new Error('Failed to fetch');
+        if (!response.ok) throw new Error('Failed to fetch user live data');
         const data = await response.json();
         setLiveData(data);
       } catch (error) {
-        console.error("Live Data Fetch Error:", error);
+        console.error("User Live Data Fetch Error:", error);
         setLiveData(null);
       } finally {
         setIsLoadingData(false);
       }
     };
-    if (isChatbotOpen) fetchLiveData();
-  }, [isChatbotOpen, language, userLocation]);
+    fetchUserLiveData();
+  }, [userLocation, language]);
 
-  // New useEffect for multi-city data
+  // --- NEW: Effect to fetch data for multiple cities (for /data page) ---
   useEffect(() => {
     const fetchCitiesData = async () => {
-      const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid'];
-      const webhookBaseUrl = 'https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658';
-
+      const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid', 'Jerash'];
+      setIsCitiesLoading(true);
       try {
-        const cityPromises = cities.map(async (city) => {
-          // This assumes the webhook can take a 'city' parameter or you have a way to get city-specific data.
-          // For a real scenario, you might need a different API endpoint or a lookup for lat/lon for each city.
-          const response = await fetch(`${webhookBaseUrl}?city=${city}&lang=${language}`);
-          if (!response.ok) {
-            console.warn(`Failed to fetch data for ${city}: ${response.status}`);
-            return null; // Return null for failed fetches
-          }
-          const data = await response.json();
-          return { ...data, cityName: city }; // Add city name to the data
-        });
-
+        const cityPromises = cities.map(city =>
+          fetch(`https://karamq5.app.n8n.cloud/webhook/b6868914-36ea-4781-8b6d-21ddb4f44658?city=${city}&lang=${language}`).then(res => {
+            if (!res.ok) {
+              console.error(`Failed to fetch data for ${city}`);
+              return null; // Return null for failed fetches
+            }
+            return res.json();
+          })
+        );
         const results = await Promise.all(cityPromises);
-        setCitiesData(results.filter(Boolean)); // Filter out nulls from failed fetches
+        setCitiesData(results.filter(Boolean)); // Filter out any null results
       } catch (error) {
-        console.error("Error fetching multi-city data:", error);
+        console.error("Cities Data Fetch Error:", error);
+        setCitiesData([]);
       } finally {
         setIsCitiesLoading(false);
       }
     };
-
     fetchCitiesData();
-  }, [language]); // Re-fetch if language changes
+  }, [language]);
 
+  // (The rest of your functions: sendMessage, openChatbot, etc.)
   const sendMessage = async (userInput) => {
     const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
     setChatMessages(prev => [...prev, userMessage]);
@@ -123,6 +120,14 @@ export const AppProvider = ({ children }) => {
     setShowChatbot(!isHidden);
   }, []);
 
-  const value = { isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError, setChatMessages, setIsTyping, citiesData, isCitiesLoading };
+  // Combine all values for the provider, including the new ones
+  const value = {
+    isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage,
+    showChatbot, toggleChatbotVisibility, liveData, isLoadingData, locationError,
+    setChatMessages, setIsTyping,
+    citiesData,       // NEW
+    isCitiesLoading   // NEW
+  };
+
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
