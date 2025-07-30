@@ -82,7 +82,7 @@ const Chatbot = () => {
                           {liveData.temperature}°م
                       </span>
                       {/* Defensive check for iconUrl */}
-                      {liveData.weather.iconUrl && (
+                      {liveData.weather && liveData.weather.iconUrl && (
                         <img 
                           src={liveData.weather.iconUrl} 
                           alt={liveData.weather.description || 'Weather icon'}
