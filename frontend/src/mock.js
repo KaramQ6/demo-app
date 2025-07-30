@@ -99,47 +99,29 @@ export const destinations = [
   }
 ];
 
-export const iotSensorData = {
-  jerash: {
-    crowdLevel: 65,
-    parkingAvailable: 40,
-    temperature: 28,
-    weatherCondition: 'sunny',
-    lastUpdated: new Date()
+export const iotData = [
+  { 
+    id: 'jerash-iot', name: { ar: 'جرش', en: 'Jerash' }, status: 'Operational',
+    temperature: 25, crowdLevel: 'medium', powerUsage: 120 
   },
-  petra: {
-    crowdLevel: 85,
-    parkingAvailable: 20,
-    temperature: 32,
-    weatherCondition: 'sunny',
-    lastUpdated: new Date()
+  { 
+    id: 'petra-iot', name: { ar: 'البتراء', en: 'Petra' }, status: 'Operational',
+    temperature: 28, crowdLevel: 'high', powerUsage: 150 
   },
-  'wadi-rum': {
-    crowdLevel: 30,
-    parkingAvailable: 90,
-    temperature: 35,
-    weatherCondition: 'clear',
-    lastUpdated: new Date()
+  { 
+    id: 'wadi-rum-iot', name: { ar: 'وادي رم', en: 'Wadi Rum' }, status: 'Maintenance',
+    temperature: 30, crowdLevel: 'low', powerUsage: 80 
   },
-  'umm-qais': {
-    crowdLevel: 25,
-    parkingAvailable: 85,
-    temperature: 26,
-    weatherCondition: 'partly-cloudy',
-    lastUpdated: new Date()
+  { 
+    id: 'umm-qais-iot', name: { ar: 'أم قيس', en: 'Umm Qais' }, status: 'Operational',
+    temperature: 22, crowdLevel: 'medium', powerUsage: 100 
   },
-  ajloun: {
-    crowdLevel: 20,
-    parkingAvailable: 95,
-    temperature: 24,
-    weatherCondition: 'cloudy',
-    lastUpdated: new Date()
+  { 
+    id: 'ajloun-iot', name: { ar: 'عجلون', en: 'Ajloun' }, status: 'Operational',
+    temperature: 20, crowdLevel: 'low', powerUsage: 90 
   },
-  salt: {
-    crowdLevel: 45,
-    parkingAvailable: 60,
-    temperature: 29,
-    weatherCondition: 'sunny',
-    lastUpdated: new Date()
+  { 
+    id: 'salt-iot', name: { ar: 'السلط', en: 'As-Salt' }, status: 'Operational',
+    temperature: 23, crowdLevel: 'medium', powerUsage: 110 
   }
-};
+];
