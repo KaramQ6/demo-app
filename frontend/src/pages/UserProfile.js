@@ -47,9 +47,9 @@ const UserProfile = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-20 px-4 sm:px-6">
+        <div className="min-h-screen bg-purple-100 dark:bg-gray-900 py-20 px-4 sm:px-6">
             <div className="container mx-auto max-w-2xl">
-                <Card className="bg-white dark:bg-gray-800/30 shadow-lg">
+                <Card className="bg-purple-200 dark:bg-gray-800/30 shadow-lg">
                     <CardHeader>
                         <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white">
                             {t({ ar: 'ملف تعريف المسافر', en: 'Traveler Profile' })}
