@@ -57,7 +57,7 @@ export const AppProvider = ({ children }) => {
   // Effect to fetch data for multiple cities for the DATAHUB page using its own URL
   useEffect(() => {
     const fetchCitiesData = async () => {
-      const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid', 'Jerash'];
+      const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid', 'Jerash', 'Ajloun'];
       setIsCitiesLoading(true);
       try {
         const cityPromises = cities.map(city => {

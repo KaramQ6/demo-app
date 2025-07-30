@@ -37,7 +37,12 @@ const DataHub = () => {
     const dataToDisplay = hasFailed ? fallbackCitiesData : citiesData;
 
     return (
-        <div className="min-h-screen py-20 px-4 sm:px-6 bg-gray-50 dark:bg-gray-900">
+        <div className="relative min-h-screen pt-20">
+  <div className="absolute inset-0 w-full h-full">
+    <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
+    <img src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8" alt="Background" className="w-full h-full object-cover" />
+  </div>
+  <div className="relative z-20 container mx-auto p-4 md:p-8">
             <div className="container mx-auto max-w-6xl">
                 <div className="text-center mb-16 animate-fade-in-up">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
