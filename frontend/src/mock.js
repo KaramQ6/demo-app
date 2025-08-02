@@ -24,7 +24,7 @@ export const destinations = [
       ar: 'المدينة الوردية المنحوتة في الصخر', 
       en: 'The rose-red city carved from rock' 
     },
-    description: { 
+    description: {
       ar: 'البتراء هي موقع تراث عالمي لليونسكو وإحدى عجائب الدنيا السبع الجديدة. هذه المدينة الأثرية المذهلة منحوتة بالكامل في الصخر الوردي وتعتبر أهم وجهة سياحية في الأردن.', 
       en: 'Petra is a UNESCO World Heritage Site and one of the New Seven Wonders of the World. This stunning archaeological city is carved entirely from rose-red sandstone and is Jordan\'s most visited tourist attraction.' 
     },
@@ -125,3 +125,7 @@ export const iotData = [
     temperature: 23, crowdLevel: 'medium', powerUsage: 110 
   }
 ];
+
+export const heroImages = {
+  demo: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e',
+};
