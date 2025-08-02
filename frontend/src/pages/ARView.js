@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
-import { destinations } from '../data/mock'; // استيراد بيانات الوجهات
+import { destinations } from '../src/mock'; // استيراد بيانات الوجهات
 
 // نصوص الواجهة باللغتين
 const uiTexts = {
