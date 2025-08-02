@@ -36,7 +36,7 @@ function App() {
                 <Route path="/data" element={<DataHub />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/itinerary" element={<Itinerary />} />
-                <Route path="/demo" element={<Demo />} /> 
+                <Route path="/demo" element={<Demo />} />
                 <Route path="/ar" element={<ARView />} />
                 <Route path="/ar" element={<ARView />} />
 
