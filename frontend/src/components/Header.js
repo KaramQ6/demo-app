@@ -31,7 +31,7 @@ const Header = () => {
     {
       path: '/demo',
       label: { ar: 'Demo', en: 'Demo' }
-    }
+    },
     {
       path: '/ar',
       label: { ar: 'AR View', en: 'AR View' }
