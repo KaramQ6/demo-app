@@ -1,3 +1,5 @@
+// src/mock.js
+
 export const destinations = [
   // ENHANCED: الوصف أصبح أكثر ثراءً من النص الجديد
   {
@@ -209,3 +211,35 @@ export const destinations = [
     lon: 35.5724
   }
 ];
+
+// <<<<< هذا هو الجزء الذي كان ناقصًا >>>>>
+export const iotData = [
+  { 
+    id: 'jerash-iot', name: { ar: 'جرش', en: 'Jerash' }, status: 'Operational',
+    temperature: 25, crowdLevel: 'medium', powerUsage: 120 
+  },
+  { 
+    id: 'petra-iot', name: { ar: 'البتراء', en: 'Petra' }, status: 'Operational',
+    temperature: 28, crowdLevel: 'high', powerUsage: 150 
+  },
+  { 
+    id: 'wadi-rum-iot', name: { ar: 'وادي رم', en: 'Wadi Rum' }, status: 'Maintenance',
+    temperature: 30, crowdLevel: 'low', powerUsage: 80 
+  },
+  { 
+    id: 'umm-qais-iot', name: { ar: 'أم قيس', en: 'Umm Qais' }, status: 'Operational',
+    temperature: 22, crowdLevel: 'medium', powerUsage: 100 
+  },
+  { 
+    id: 'ajloun-iot', name: { ar: 'عجلون', en: 'Ajloun' }, status: 'Operational',
+    temperature: 20, crowdLevel: 'low', powerUsage: 90 
+  },
+  { 
+    id: 'salt-iot', name: { ar: 'السلط', en: 'As-Salt' }, status: 'Operational',
+    temperature: 23, crowdLevel: 'medium', powerUsage: 110 
+  }
+];
+
+export const heroImages = {
+  demo: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e',
+};
