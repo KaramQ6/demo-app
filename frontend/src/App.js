@@ -18,6 +18,7 @@ import DataHub from "./pages/DataHub";
 import UserProfile from "./pages/UserProfile";
 import Itinerary from "./pages/Itinerary";
 import Demo from './pages/Demo';
+import ARView from './pages/ARView';
 
 
 function App() {
@@ -36,6 +37,9 @@ function App() {
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/itinerary" element={<Itinerary />} />
                 <Route path="/demo" element={<Demo />} /> 
+                <Route path="/ar" element={<ARView />} />
+                <Route path="/ar" element={<ARView />} />
+
               </Routes>
             </main>
             <Footer />

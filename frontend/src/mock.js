@@ -14,7 +14,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96',
     rating: 4.8,
     crowdLevel: 'medium',
-    features: ['historical', 'archaeological', 'guided-tours', 'photography', 'roman']
+    features: ['historical', 'archaeological', 'guided-tours', 'photography', 'roman'],
+    lat: 32.2724,
+    lon: 35.8916
   },
   // KEPT AS IS: وصفها الأصلي ممتاز
   {
@@ -31,7 +33,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e',
     rating: 4.9,
     crowdLevel: 'high',
-    features: ['world-heritage', 'hiking', 'photography', 'adventure']
+    features: ['world-heritage', 'hiking', 'photography', 'adventure'],
+    lat: 30.3285,
+    lon: 35.4444
   },
   // KEPT AS IS: وصفها الأصلي ممتاز
   {
@@ -48,7 +52,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1574082512734-8336f25bb9d8',
     rating: 4.7,
     crowdLevel: 'low',
-    features: ['desert', 'adventure', 'camping', 'stargazing']
+    features: ['desert', 'adventure', 'camping', 'stargazing'],
+    lat: 29.5731,
+    lon: 35.4207
   },
   // ENHANCED: الوصف أصبح أكثر جاذبية
   {
@@ -65,7 +71,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1590736969955-71cc94901144',
     rating: 4.5,
     crowdLevel: 'low',
-    features: ['historical', 'scenic-views', 'peaceful', 'photography', 'roman']
+    features: ['historical', 'scenic-views', 'peaceful', 'photography', 'roman'],
+    lat: 32.6560,
+    lon: 35.6800
   },
   // ENHANCED: الوصف يجمع بين الطبيعة والتاريخ بشكل أفضل
   {
@@ -82,7 +90,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1571771019784-3ff35f4f4277',
     rating: 4.3,
     crowdLevel: 'low',
-    features: ['castle', 'nature', 'hiking', 'eco-tourism']
+    features: ['castle', 'nature', 'hiking', 'eco-tourism'],
+    lat: 32.3275,
+    lon: 35.7533
   },
   // ENHANCED: وصف أغنى بالتفاصيل
   {
@@ -99,7 +109,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1578309770804-bc9e5dc24e5d',
     rating: 4.4,
     crowdLevel: 'medium',
-    features: ['heritage', 'architecture', 'cultural', 'ottoman', 'unesco']
+    features: ['heritage', 'architecture', 'cultural', 'ottoman', 'unesco'],
+    lat: 32.0384,
+    lon: 35.7292
   },
   // ADDED: إدخال جديد من النص
   {
@@ -116,7 +128,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1593693397623-134d1a33b836', // Placeholder image
     rating: 4.6,
     crowdLevel: 'low',
-    features: ['nature-reserve', 'hiking', 'eco-tourism', 'canyons', 'stargazing']
+    features: ['nature-reserve', 'hiking', 'eco-tourism', 'canyons', 'stargazing'],
+    lat: 30.6728,
+    lon: 35.6121
   },
   // ADDED: إدخال جديد من النص
   {
@@ -133,7 +147,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1615414293144-42f6b43252b4', // Placeholder image
     rating: 4.5,
     crowdLevel: 'medium',
-    features: ['mosaics', 'cultural', 'history', 'artisan-shops']
+    features: ['mosaics', 'cultural', 'history', 'artisan-shops'],
+    lat: 31.7175,
+    lon: 35.7942
   },
   // ADDED: إدخال جديد من النص
   {
@@ -150,7 +166,9 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1588808530153-273520894565', // Placeholder image
     rating: 4.2,
     crowdLevel: 'low',
-    features: ['castle', 'history', 'crusader', 'scenic-views']
+    features: ['castle', 'history', 'crusader', 'scenic-views'],
+    lat: 31.1811,
+    lon: 35.7025
   },
   // ADDED: إدخال جديد من النص
   {
@@ -167,7 +185,9 @@ export const destinations = [
     image: 'https://plus.unsplash.com/premium_photo-1677343210672-2d105b4a0f8a', // Placeholder image
     rating: 4.1,
     crowdLevel: 'low',
-    features: ['castle', 'history', 'crusader', 'solitude']
+    features: ['castle', 'history', 'crusader', 'solitude'],
+    lat: 30.5319,
+    lon: 35.5594
   },
   // ADDED: إدخال جديد من النص
   {
@@ -184,6 +204,8 @@ export const destinations = [
     image: 'https://images.unsplash.com/photo-1615032988498-c8913953738a', // Placeholder image
     rating: 4.8,
     crowdLevel: 'medium',
-    features: ['adventure', 'hiking', 'canyoning', 'nature', 'water']
+    features: ['adventure', 'hiking', 'canyoning', 'nature', 'water'],
+    lat: 31.4655,
+    lon: 35.5724
   }
 ];
