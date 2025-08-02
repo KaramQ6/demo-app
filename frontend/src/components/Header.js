@@ -28,6 +28,10 @@ const Header = () => {
       path: '/profile',
       label: { ar: 'ملفي الشخصي', en: 'My Profile' }
     }
+    {
+      path: '/demo',
+      label: { ar: 'Demo', en: 'Demo' }
+    }
   ];
 
   const isActivePath = (path) => {

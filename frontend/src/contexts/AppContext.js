@@ -122,7 +122,7 @@ export const AppProvider = ({ children }) => {
                 body: JSON.stringify({
                     message: userInput,
                     sessionId: sessionId,
-                    preferences: userPreferences // Add the user preferences here
+                    preferences: userPreferences || {} // Add the user preferences here
                 })
             });
             if (!response.ok) throw new Error('Network error');
