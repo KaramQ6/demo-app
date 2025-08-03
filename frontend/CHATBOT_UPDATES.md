@@ -56,7 +56,7 @@
 ### 2. إعداد Webhook في n8n
 إنشاء webhook جديد بالرابط:
 ```
-https://karamq5.app.n8n.cloud/webhook/addToItinerary
+https://karamq6.app.n8n.cloud/webhook/addToItinerary
 ```
 
 **المطلوب في الـ workflow:**

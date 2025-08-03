@@ -65,7 +65,7 @@ const Chatbot = () => {
     setIsAddingToItinerary(messageId);
 
     try {
-      const response = await fetch('https://karamq5.app.n8n.cloud/webhook/addToItinerary', {
+      const response = await fetch('https://karamq6.app.n8n.cloud/webhook/addToItinerary', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
