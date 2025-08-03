@@ -1,27 +1,39 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { Globe, Menu, X } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut } from 'lucide-react';
 import { useState } from 'react';
 
 const Header = () => {
   const { t, language, toggleLanguage, isRTL } = useLanguage();
-  const { openChatbot } = useApp();
+  const { openChatbot, user, logout } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setIsUserMenuOpen(false);
+      navigate('/');
+    } catch (error) {
+      console.error('خطأ في تسجيل الخروج:', error);
+    }
+  };
 
   const navigation = [
-    { 
-      path: '/', 
+    {
+      path: '/',
       label: { ar: 'الرئيسية', en: 'Home' }
     },
-    { 
-      path: '/destinations', 
+    {
+      path: '/destinations',
       label: { ar: 'وجهاتنا', en: 'Destinations' }
     },
-    { 
-      path: '/data', 
+    {
+      path: '/data',
       label: { ar: 'البيانات الحية', en: 'Live Data' }
     },
     {
@@ -70,19 +82,72 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
-                  isActivePath(item.path)
+                className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
                     ? 'gradient-purple text-white shadow-lg'
                     : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                }`}
+                  }`}
               >
                 {t(item.label)}
               </Link>
             ))}
           </nav>
 
-          {/* Language Toggle & Mobile Menu */}
+          {/* Language Toggle & User Menu & Mobile Menu */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
+            {/* User Menu */}
+            {user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center space-x-2 rtl:space-x-reverse px-3 py-2 rounded-lg glass hover:bg-white/10 transition-all duration-200 interactive-button"
+                  aria-label={t({ ar: 'قائمة المستخدم', en: 'User Menu' })}
+                >
+                  <User className="w-4 h-4" />
+                  <span className="text-sm font-medium font-['Open_Sans'] hidden md:block">
+                    {user.email?.split('@')[0] || 'المستخدم'}
+                  </span>
+                </button>
+
+                {/* User Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                    <div className="py-1">
+                      <Link
+                        to="/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <User className="w-4 h-4 mr-2" />
+                        {t({ ar: 'الملف الشخصي', en: 'Profile' })}
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        {t({ ar: 'تسجيل الخروج', en: 'Logout' })}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <Link
+                  to="/login"
+                  className="px-3 py-2 text-sm font-medium rounded-lg text-muted-foreground hover:text-white hover:bg-white/5 transition-all duration-200"
+                >
+                  {t({ ar: 'دخول', en: 'Login' })}
+                </Link>
+                <Link
+                  to="/register"
+                  className="px-3 py-2 text-sm font-medium rounded-lg gradient-purple text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {t({ ar: 'تسجيل', en: 'Register' })}
+                </Link>
+              </div>
+            )}
+
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
@@ -119,11 +184,10 @@ const Header = () => {
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
-                    isActivePath(item.path)
+                  className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
                       ? 'gradient-purple text-white shadow-lg'
                       : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                  }`}
+                    }`}
                 >
                   {t(item.label)}
                 </Link>

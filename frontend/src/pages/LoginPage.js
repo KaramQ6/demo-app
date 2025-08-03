@@ -1,7 +1,7 @@
 // src/pages/LoginPage.js
 import React, { useState, useContext } from 'react';
 import { AppContext } from '../contexts/AppContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -9,6 +9,10 @@ const LoginPage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const { login } = useContext(AppContext);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // الصفحة المطلوبة بعد تسجيل الدخول
+    const from = location.state?.from?.pathname || '/profile';
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -23,7 +27,7 @@ const LoginPage = () => {
             if (error) {
                 alert(error.message);
             } else {
-                navigate('/profile'); // اذهب إلى صفحة الملف الشخصي بعد النجاح
+                navigate(from, { replace: true }); // اذهب إلى الصفحة المطلوبة بعد النجاح
             }
         } catch (error) {
             alert('حدث خطأ غير متوقع');
@@ -95,6 +99,15 @@ const LoginPage = () => {
                         >
                             {isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                         </button>
+                    </div>
+
+                    <div className="text-center">
+                        <Link
+                            to="/reset-password"
+                            className="text-sm text-indigo-600 hover:text-indigo-500"
+                        >
+                            نسيت كلمة المرور؟
+                        </Link>
                     </div>
                 </form>
             </div>
