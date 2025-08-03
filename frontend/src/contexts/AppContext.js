@@ -56,15 +56,26 @@ export const AppProvider = ({ children }) => {
 
     // --- Effect for Supabase Authentication ---
     useEffect(() => {
+        let isInitialLoad = true; // flag لتجنب conflicts مع onAuthStateChange
+        
         const checkUserAndProfile = async () => {
-            setLoading(true); // ابدأ التحميل هنا
+            if (!isInitialLoad) return; // تجنب التشغيل المتعدد
+            
+            setLoading(true);
 
             try {
                 const { data: { session }, error: sessionError } = await supabase.auth.getSession();
                 if (sessionError) throw sessionError;
 
                 const currentUser = session?.user;
-                setUser(currentUser ?? null);
+                
+                // استخدم نفس الطريقة الآمنة لتحديث المستخدم
+                setUser(prevUser => {
+                    if (prevUser?.id === currentUser?.id) {
+                        return prevUser;
+                    }
+                    return currentUser ?? null;
+                });
 
                 if (currentUser) {
                     console.log("User found, attempting to fetch profile...");
@@ -75,8 +86,6 @@ export const AppProvider = ({ children }) => {
                         .single();
 
                     if (profileError && profileError.code !== 'PGRST116') {
-                        // PGRST116 means "No rows found", which is not a critical error for new users.
-                        // We only throw for other, more serious errors.
                         throw profileError;
                     }
 
@@ -99,6 +108,7 @@ export const AppProvider = ({ children }) => {
                 // سيتم تنفيذ هذا السطر دائمًا، سواء نجح الكود أو فشل
                 console.log("Finished auth check, setting loading to false.");
                 setLoading(false);
+                isInitialLoad = false; // منع التشغيل مرة أخرى
             }
         };
 
@@ -106,12 +116,22 @@ export const AppProvider = ({ children }) => {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log("Auth state changed:", session?.user ? "User logged in" : "User logged out");
-            setUser(session?.user ?? null);
-            // لا نحتاج setLoading(false) هنا لأنه سيتم تحديده في checkUserAndProfile
+            
+            // فقط إذا انتهى initial load
+            if (!isInitialLoad) {
+                setUser(currentUser => {
+                    const newUser = session?.user ?? null;
+                    if (currentUser?.id === newUser?.id) {
+                        return currentUser; // لا تغيير - تجنب re-render
+                    }
+                    return newUser;
+                });
+            }
         });
 
         return () => {
             subscription?.unsubscribe();
+            isInitialLoad = false; // cleanup
         };
     }, []);
     // Effect for user's geolocation (for chatbot)
