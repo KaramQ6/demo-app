@@ -1,15 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Plus } from 'lucide-react';
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
-  const { isChatbotOpen, openChatbot, closeChatbot, sendMessage, chatMessages, showChatbot, toggleChatbotVisibility, liveData, isLoadingData } = useApp();
+  const { isChatbotOpen, openChatbot, closeChatbot, sendMessage, chatMessages, showChatbot, toggleChatbotVisibility, liveData, isLoadingData, user } = useApp();
   const [inputValue, setInputValue] = useState('');
   const [copiedMessageId, setCopiedMessageId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [localChatMessages, setLocalChatMessages] = useState([]);
+  const [isAddingToItinerary, setIsAddingToItinerary] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -30,6 +31,64 @@ const Chatbot = () => {
   };
 
   const currentStarters = promptStarters[language] || promptStarters.en;
+
+  // قائمة الوجهات المتاحة مع معرفاتها
+  const availableDestinations = [
+    { id: 'petra', names: ['البتراء', 'Petra', 'petra'] },
+    { id: 'jerash', names: ['جرش', 'Jerash', 'jerash'] },
+    { id: 'wadi-rum', names: ['وادي رم', 'Wadi Rum', 'wadi-rum', 'وادي القمر'] },
+    { id: 'aqaba', names: ['العقبة', 'Aqaba', 'aqaba'] },
+    { id: 'amman', names: ['عمان', 'Amman', 'amman'] },
+    { id: 'dead-sea', names: ['البحر الميت', 'Dead Sea', 'dead-sea'] }
+  ];
+
+  // التحقق من وجود اقتراح وجهة في النص
+  const extractDestinationFromMessage = (text) => {
+    const lowerText = text.toLowerCase();
+    for (const destination of availableDestinations) {
+      for (const name of destination.names) {
+        if (lowerText.includes(name.toLowerCase())) {
+          return destination.id;
+        }
+      }
+    }
+    return null;
+  };
+
+  // إضافة وجهة إلى المسار
+  const addToItinerary = async (destinationId, messageId) => {
+    if (!user) {
+      alert(t({ ar: 'يجب تسجيل الدخول أولاً', en: 'Please login first' }));
+      return;
+    }
+
+    setIsAddingToItinerary(messageId);
+
+    try {
+      const response = await fetch('https://karamq5.app.n8n.cloud/webhook/addToItinerary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          destinationId: destinationId
+        })
+      });
+
+      if (response.ok) {
+        // إظهار رسالة نجاح
+        alert(t({ ar: 'تمت إضافة الوجهة إلى خطتك بنجاح!', en: 'Destination added to your itinerary successfully!' }));
+      } else {
+        throw new Error('Failed to add to itinerary');
+      }
+    } catch (error) {
+      console.error('Error adding to itinerary:', error);
+      alert(t({ ar: 'حدث خطأ أثناء إضافة الوجهة', en: 'Error adding destination to itinerary' }));
+    } finally {
+      setIsAddingToItinerary(null);
+    }
+  };
 
   const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 
@@ -175,29 +234,55 @@ const Chatbot = () => {
                 </div>
               </div>
             ) : (
-              localChatMessages.map((message) => (
-                <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.type === 'user'
+              localChatMessages.map((message) => {
+                const destinationId = message.type === 'bot' ? extractDestinationFromMessage(message.text) : null;
+
+                return (
+                  <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.type === 'user'
                       ? 'bg-blue-500 text-white'
                       : message.id === 'typing-indicator'
                         ? 'bg-gray-200 text-gray-600 animate-pulse'
                         : 'bg-gray-200 text-gray-800'
-                    }`}>
-                    {message.id === 'typing-indicator' ? (
-                      <div className="flex items-center space-x-1">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                          <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                      }`}>
+                      {message.id === 'typing-indicator' ? (
+                        <div className="flex items-center space-x-1">
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                            <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                          </div>
+                          <span className="text-xs ml-2">{language === 'ar' ? 'يكتب...' : 'typing...'}</span>
                         </div>
-                        <span className="text-xs ml-2">{language === 'ar' ? 'يكتب...' : 'typing...'}</span>
-                      </div>
-                    ) : (
-                      message.text
-                    )}
+                      ) : (
+                        <>
+                          <div className="mb-2">{message.text}</div>
+                          {/* إضافة زر "أضف إلى خطتي" إذا كانت الرسالة تحتوي على اقتراح وجهة */}
+                          {destinationId && message.type === 'bot' && (
+                            <button
+                              onClick={() => addToItinerary(destinationId, message.id)}
+                              disabled={isAddingToItinerary === message.id}
+                              className="mt-2 flex items-center space-x-2 rtl:space-x-reverse px-3 py-1.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isAddingToItinerary === message.id ? (
+                                <Loader2 className="w-3 h-3 animate-spin" />
+                              ) : (
+                                <Plus className="w-3 h-3" />
+                              )}
+                              <span>
+                                {isAddingToItinerary === message.id
+                                  ? t({ ar: 'جاري الإضافة...', en: 'Adding...' })
+                                  : t({ ar: 'أضف إلى خطتي', en: 'Add to My Plan' })
+                                }
+                              </span>
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>                  <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200" id="chatbot-form">
             <div className="flex space-x-2">

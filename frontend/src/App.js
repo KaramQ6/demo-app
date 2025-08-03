@@ -18,6 +18,7 @@ const DestinationDetail = React.lazy(() => import("./pages/DestinationDetail"));
 const DataHub = React.lazy(() => import("./pages/DataHub"));
 const UserProfile = React.lazy(() => import("./pages/UserProfile"));
 const Itinerary = React.lazy(() => import("./pages/Itinerary"));
+const MyPlan = React.lazy(() => import("./pages/MyPlan"));
 const Demo = React.lazy(() => import('./pages/Demo'));
 const ARView = React.lazy(() => import('./pages/ARView'));
 const LoginPage = React.lazy(() => import('./pages/LoginPage'));
@@ -44,6 +45,7 @@ function AppContent() {
               <Route path="/data" element={<DataHub />} />
               <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
               <Route path="/itinerary" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
+              <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
               <Route path="/demo" element={<Demo />} />
               <Route path="/ar" element={<ARView />} />
               <Route path="/login" element={<LoginPage />} />

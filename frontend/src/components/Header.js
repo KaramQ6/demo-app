@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { Globe, Menu, X, User, LogOut } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, MapPin } from 'lucide-react';
 import { useState } from 'react';
 
 const Header = () => {
@@ -26,27 +26,38 @@ const Header = () => {
   const navigation = [
     {
       path: '/',
-      label: { ar: 'الرئيسية', en: 'Home' }
+      label: { ar: 'الرئيسية', en: 'Home' },
+      public: true
     },
     {
       path: '/destinations',
-      label: { ar: 'وجهاتنا', en: 'Destinations' }
+      label: { ar: 'وجهاتنا', en: 'Destinations' },
+      public: true
     },
     {
       path: '/data',
-      label: { ar: 'البيانات الحية', en: 'Live Data' }
+      label: { ar: 'البيانات الحية', en: 'Live Data' },
+      public: true
+    },
+    {
+      path: '/my-plan',
+      label: { ar: 'خطتي', en: 'My Plan' },
+      public: false
     },
     {
       path: '/profile',
-      label: { ar: 'ملفي الشخصي', en: 'My Profile' }
+      label: { ar: 'ملفي الشخصي', en: 'My Profile' },
+      public: false
     },
     {
       path: '/demo',
-      label: { ar: 'Demo', en: 'Demo' }
+      label: { ar: 'Demo', en: 'Demo' },
+      public: true
     },
     {
       path: '/ar',
-      label: { ar: 'AR View', en: 'AR View' }
+      label: { ar: 'AR View', en: 'AR View' },
+      public: true
     }
   ];
 
@@ -78,18 +89,20 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {navigation.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
+            {navigation
+              .filter(item => item.public || user) // إظهار الروابط العامة أو الروابط الخاصة للمستخدمين المسجلين
+              .map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
                     ? 'gradient-purple text-white shadow-lg'
                     : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                  }`}
-              >
-                {t(item.label)}
-              </Link>
-            ))}
+                    }`}
+                >
+                  {t(item.label)}
+                </Link>
+              ))}
           </nav>
 
           {/* Language Toggle & User Menu & Mobile Menu */}
@@ -112,6 +125,14 @@ const Header = () => {
                 {isUserMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
                     <div className="py-1">
+                      <Link
+                        to="/my-plan"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >
+                        <MapPin className="w-4 h-4 mr-2" />
+                        {t({ ar: 'خطتي', en: 'My Plan' })}
+                      </Link>
                       <Link
                         to="/profile"
                         onClick={() => setIsUserMenuOpen(false)}
@@ -185,8 +206,8 @@ const Header = () => {
                   to={item.path}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
-                      ? 'gradient-purple text-white shadow-lg'
-                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                    ? 'gradient-purple text-white shadow-lg'
+                    : 'text-muted-foreground hover:text-white hover:bg-white/5'
                     }`}
                 >
                   {t(item.label)}
