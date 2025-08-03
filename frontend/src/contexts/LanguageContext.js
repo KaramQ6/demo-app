@@ -17,8 +17,9 @@ export const LanguageProvider = ({ children }) => {
     setLanguage(prev => prev === 'ar' ? 'en' : 'ar');
   };
 
-  const t = (translations) => {
-    return translations[language] || translations.ar || translations.en || '';
+  const t = (keyObject) => {
+    if (typeof keyObject === 'string') return keyObject; // للتعامل مع النصوص العادية
+    return keyObject[language] || keyObject.en; // ارجع النص بناءً على اللغة
   };
 
   const isRTL = language === 'ar';
