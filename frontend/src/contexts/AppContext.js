@@ -57,10 +57,10 @@ export const AppProvider = ({ children }) => {
     // --- Effect for Supabase Authentication ---
     useEffect(() => {
         let isInitialLoad = true; // flag لتجنب conflicts مع onAuthStateChange
-        
+
         const checkUserAndProfile = async () => {
             if (!isInitialLoad) return; // تجنب التشغيل المتعدد
-            
+
             setLoading(true);
 
             try {
@@ -68,7 +68,7 @@ export const AppProvider = ({ children }) => {
                 if (sessionError) throw sessionError;
 
                 const currentUser = session?.user;
-                
+
                 // استخدم نفس الطريقة الآمنة لتحديث المستخدم
                 setUser(prevUser => {
                     if (prevUser?.id === currentUser?.id) {
@@ -116,7 +116,7 @@ export const AppProvider = ({ children }) => {
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log("Auth state changed:", session?.user ? "User logged in" : "User logged out");
-            
+
             // فقط إذا انتهى initial load
             if (!isInitialLoad) {
                 setUser(currentUser => {
