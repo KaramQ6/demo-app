@@ -32,9 +32,8 @@ export const AppProvider = ({ children }) => {
         setUserPreferences(preferences);
         localStorage.setItem('userTravelPreferences', JSON.stringify(preferences));
         console.log("Preferences saved to localStorage:", preferences);
-        
-        // تم تعطيل حفظ Supabase مؤقتاً حتى إعداد قاعدة البيانات
-        /* 
+
+        // حفظ التفضيلات في Supabase إذا كان المستخدم مسجل دخوله
         if (user) {
             try {
                 const { error } = await supabase
@@ -53,24 +52,70 @@ export const AppProvider = ({ children }) => {
                 console.error('Error saving preferences to Supabase:', error);
             }
         }
-        */
     };
 
     // --- Effect for Supabase Authentication ---
     useEffect(() => {
         setLoading(true); // ابدأ التحميل
-        
-        const checkUser = async () => {
+
+        const checkUserAndProfile = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
-                setUser(session?.user ?? null);
-                
-                // جلب التفضيلات من localStorage فقط (حل مؤقت)
-                const savedPrefs = localStorage.getItem('userTravelPreferences');
-                if (savedPrefs) {
-                    const localPrefs = JSON.parse(savedPrefs);
-                    setUserPreferences(localPrefs);
-                    console.log("Preferences loaded from localStorage:", localPrefs);
+                const currentUser = session?.user;
+                setUser(currentUser ?? null);
+
+                if (currentUser) {
+                    // إذا كان هناك مستخدم، اجلب تفضيلاته من Supabase
+                    try {
+                        const { data: profile, error } = await supabase
+                            .from('profiles')
+                            .select('preferences')
+                            .eq('id', currentUser.id)
+                            .single();
+
+                        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+                            console.error("Error fetching profile:", error.message);
+                        }
+
+                        if (profile && profile.preferences) {
+                            // إذا وجدنا تفضيلات في Supabase، نحدث الحالة و localStorage
+                            setUserPreferences(profile.preferences);
+                            localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
+                            console.log("Preferences loaded from Supabase:", profile.preferences);
+                        } else {
+                            // إذا لم نجد تفضيلات في Supabase، نحاول تحميلها من localStorage
+                            const savedPrefs = localStorage.getItem('userTravelPreferences');
+                            if (savedPrefs) {
+                                const localPrefs = JSON.parse(savedPrefs);
+                                setUserPreferences(localPrefs);
+                                console.log("Preferences loaded from localStorage:", localPrefs);
+
+                                // احفظ التفضيلات المحلية في Supabase للمزامنة
+                                const { error: upsertError } = await supabase
+                                    .from('profiles')
+                                    .upsert({
+                                        id: currentUser.id,
+                                        preferences: localPrefs
+                                    });
+
+                                if (upsertError) {
+                                    console.error('Error syncing preferences to Supabase:', upsertError.message);
+                                } else {
+                                    console.log('Local preferences synced to Supabase');
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading preferences:', error);
+                    }
+                } else {
+                    // إذا لم يكن هناك مستخدم، تحقق من التفضيلات المحلية
+                    const savedPrefs = localStorage.getItem('userTravelPreferences');
+                    if (savedPrefs) {
+                        const localPrefs = JSON.parse(savedPrefs);
+                        setUserPreferences(localPrefs);
+                        console.log("Preferences loaded from localStorage (no user):", localPrefs);
+                    }
                 }
             } catch (error) {
                 console.error("Error during auth check:", error);
@@ -80,10 +125,36 @@ export const AppProvider = ({ children }) => {
             }
         };
 
-        checkUser();
+        checkUserAndProfile();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+            const currentUser = session?.user;
+            setUser(currentUser ?? null);
+
+            if (currentUser) {
+                // عند تسجيل دخول جديد، اجلب التفضيلات
+                try {
+                    const { data: profile, error } = await supabase
+                        .from('profiles')
+                        .select('preferences')
+                        .eq('id', currentUser.id)
+                        .single();
+
+                    if (profile && profile.preferences) {
+                        setUserPreferences(profile.preferences);
+                        localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
+                        console.log("Preferences loaded on auth change:", profile.preferences);
+                    }
+                } catch (error) {
+                    console.error('Error loading preferences on auth change:', error);
+                }
+            } else {
+                // عند تسجيل الخروج، امسح التفضيلات
+                setUserPreferences(null);
+                localStorage.removeItem('userTravelPreferences');
+                console.log("Preferences cleared on logout");
+            }
+
             // أنهِ التحميل عند تغيير حالة المصادقة
             setLoading(false);
         });
@@ -108,9 +179,22 @@ export const AppProvider = ({ children }) => {
             const chatbotApiUrl = `https://karamq5.app.n8n.cloud/webhook/Simple-Weather-API-ChatBot?lat=${userLocation.lat}&lon=${userLocation.lon}&lang=${language}`;
             try {
                 const response = await fetch(chatbotApiUrl);
-                if (!response.ok) throw new Error('Chatbot API fetch failed');
-                const data = await response.json();
-                setLiveData(data);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const text = await response.text();
+                if (!text || text.trim() === '') {
+                    console.warn("Received empty response from weather API");
+                    setLiveData(null);
+                    return;
+                }
+
+                try {
+                    const data = JSON.parse(text);
+                    setLiveData(data);
+                } catch (jsonError) {
+                    console.error("JSON parsing error:", jsonError, "Response text:", text);
+                    setLiveData(null);
+                }
             } catch (error) {
                 console.error("Chatbot Live Data Fetch Error:", error);
                 setLiveData(null);
@@ -131,23 +215,34 @@ export const AppProvider = ({ children }) => {
                 const liveDataApiUrl = `https://karamq5.app.n8n.cloud/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
                 try {
                     const response = await fetch(liveDataApiUrl);
-                    if (response.ok) {
-                        const text = await response.text();
-                        if (text) {
-                            return JSON.parse(text);
-                        }
+                    if (!response.ok) {
+                        console.warn(`API Error for ${city}: ${response.status}`);
+                        return null;
                     }
-                    console.error(`Received empty response for ${city}`);
-                    return null;
+
+                    const text = await response.text();
+                    if (!text || text.trim() === '') {
+                        console.warn(`Received empty response for ${city}`);
+                        return null;
+                    }
+
+                    try {
+                        return JSON.parse(text);
+                    } catch (jsonError) {
+                        console.error(`JSON parsing error for ${city}:`, jsonError, "Response:", text.substring(0, 100));
+                        return null;
+                    }
                 } catch (error) {
-                    console.error(`Error fetching data for ${city}:`, error);
+                    console.error(`Network error fetching data for ${city}:`, error);
                     return null;
                 }
             });
 
             try {
                 const results = await Promise.all(cityPromises);
-                setCitiesData(results.filter(Boolean));
+                const validResults = results.filter(Boolean);
+                setCitiesData(validResults);
+                console.log(`Successfully loaded data for ${validResults.length}/${cities.length} cities`);
             } catch (error) {
                 console.error("An error occurred while processing city data:", error);
                 setCitiesData([]);
@@ -179,13 +274,39 @@ export const AppProvider = ({ children }) => {
                     preferences: userPreferences || {} // Add the user preferences here
                 })
             });
-            if (!response.ok) throw new Error('Network error');
-            const data = await response.json();
-            const botMessage = { id: Date.now() + 1, text: data.reply || "Error", type: 'bot', timestamp: new Date() };
+
+            if (!response.ok) {
+                throw new Error(`Chatbot API Error: ${response.status}`);
+            }
+
+            const text = await response.text();
+            if (!text || text.trim() === '') {
+                throw new Error('Empty response from chatbot');
+            }
+
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (jsonError) {
+                console.error("Chatbot JSON parsing error:", jsonError, "Response:", text);
+                throw new Error('Invalid JSON response from chatbot');
+            }
+
+            const botMessage = {
+                id: Date.now() + 1,
+                text: data.reply || "عذراً، لم أتمكن من الحصول على رد صحيح",
+                type: 'bot',
+                timestamp: new Date()
+            };
             setChatMessages(prev => [...prev, botMessage]);
         } catch (error) {
             console.error("Chat API Error:", error);
-            const errorMessage = { id: Date.now() + 1, text: "❌ Connection Error", type: 'bot', timestamp: new Date() };
+            const errorMessage = {
+                id: Date.now() + 1,
+                text: "❌ عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.",
+                type: 'bot',
+                timestamp: new Date()
+            };
             setChatMessages(prev => [...prev, errorMessage]);
         }
     };
