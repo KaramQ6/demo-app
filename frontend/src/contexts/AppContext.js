@@ -30,7 +30,7 @@ export const AppProvider = ({ children }) => {
 
     const saveUserPreferences = async (preferences) => {
         setUserPreferences(preferences);
-        localStorage.setItem('userTravelPreferences', JSON.stringify(preferences));
+        localStorage.setItem('userPreferences', JSON.stringify(preferences));
         console.log("Preferences saved to localStorage:", preferences);
 
         // حفظ التفضيلات في Supabase إذا كان المستخدم مسجل دخوله
@@ -56,106 +56,56 @@ export const AppProvider = ({ children }) => {
 
     // --- Effect for Supabase Authentication ---
     useEffect(() => {
-        setLoading(true); // ابدأ التحميل
-
         const checkUserAndProfile = async () => {
+            setLoading(true); // ابدأ التحميل هنا
+
             try {
-                const { data: { session } } = await supabase.auth.getSession();
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                if (sessionError) throw sessionError;
+
                 const currentUser = session?.user;
                 setUser(currentUser ?? null);
 
                 if (currentUser) {
-                    // إذا كان هناك مستخدم، اجلب تفضيلاته من Supabase
-                    try {
-                        const { data: profile, error } = await supabase
-                            .from('profiles')
-                            .select('preferences')
-                            .eq('id', currentUser.id)
-                            .single();
+                    console.log("User found, attempting to fetch profile...");
+                    const { data: profile, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('preferences')
+                        .eq('id', currentUser.id)
+                        .single();
 
-                        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-                            console.error("Error fetching profile:", error.message);
-                        }
+                    if (profileError && profileError.code !== 'PGRST116') {
+                        // PGRST116 means "No rows found", which is not a critical error for new users.
+                        // We only throw for other, more serious errors.
+                        throw profileError;
+                    }
 
-                        if (profile && profile.preferences) {
-                            // إذا وجدنا تفضيلات في Supabase، نحدث الحالة و localStorage
-                            setUserPreferences(profile.preferences);
-                            localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
-                            console.log("Preferences loaded from Supabase:", profile.preferences);
-                        } else {
-                            // إذا لم نجد تفضيلات في Supabase، نحاول تحميلها من localStorage
-                            const savedPrefs = localStorage.getItem('userTravelPreferences');
-                            if (savedPrefs) {
-                                const localPrefs = JSON.parse(savedPrefs);
-                                setUserPreferences(localPrefs);
-                                console.log("Preferences loaded from localStorage:", localPrefs);
-
-                                // احفظ التفضيلات المحلية في Supabase للمزامنة
-                                const { error: upsertError } = await supabase
-                                    .from('profiles')
-                                    .upsert({
-                                        id: currentUser.id,
-                                        preferences: localPrefs
-                                    });
-
-                                if (upsertError) {
-                                    console.error('Error syncing preferences to Supabase:', upsertError.message);
-                                } else {
-                                    console.log('Local preferences synced to Supabase');
-                                }
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error loading preferences:', error);
+                    if (profile && profile.preferences) {
+                        console.log("Profile found, setting preferences:", profile.preferences);
+                        setUserPreferences(profile.preferences);
+                        localStorage.setItem('userPreferences', JSON.stringify(profile.preferences));
+                    } else {
+                        console.log("No profile found for this user yet.");
                     }
                 } else {
-                    // إذا لم يكن هناك مستخدم، تحقق من التفضيلات المحلية
-                    const savedPrefs = localStorage.getItem('userTravelPreferences');
-                    if (savedPrefs) {
-                        const localPrefs = JSON.parse(savedPrefs);
-                        setUserPreferences(localPrefs);
-                        console.log("Preferences loaded from localStorage (no user):", localPrefs);
-                    }
+                    console.log("No user session found.");
                 }
+
             } catch (error) {
-                console.error("Error during auth check:", error);
+                console.error("Critical error in AppContext useEffect:", error);
+                // يمكنك عرض رسالة خطأ للمستخدم هنا إذا أردت
             } finally {
-                // أنهِ التحميل فورًا بعد التحقق من المستخدم
+                // **هذا هو الجزء الأهم**
+                // سيتم تنفيذ هذا السطر دائمًا، سواء نجح الكود أو فشل
+                console.log("Finished auth check, setting loading to false.");
                 setLoading(false);
             }
         };
 
         checkUserAndProfile();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-            const currentUser = session?.user;
-            setUser(currentUser ?? null);
-
-            if (currentUser) {
-                // عند تسجيل دخول جديد، اجلب التفضيلات
-                try {
-                    const { data: profile, error } = await supabase
-                        .from('profiles')
-                        .select('preferences')
-                        .eq('id', currentUser.id)
-                        .single();
-
-                    if (profile && profile.preferences) {
-                        setUserPreferences(profile.preferences);
-                        localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
-                        console.log("Preferences loaded on auth change:", profile.preferences);
-                    }
-                } catch (error) {
-                    console.error('Error loading preferences on auth change:', error);
-                }
-            } else {
-                // عند تسجيل الخروج، امسح التفضيلات
-                setUserPreferences(null);
-                localStorage.removeItem('userTravelPreferences');
-                console.log("Preferences cleared on logout");
-            }
-
-            // أنهِ التحميل عند تغيير حالة المصادقة
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
             setLoading(false);
         });
 
