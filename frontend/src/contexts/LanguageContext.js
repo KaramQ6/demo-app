@@ -1,6 +1,45 @@
-import React, { createContext, useContext, useState } from 'react';
+// src/contexts/LanguageContext.js
+import React, { createContext, useState, useContext, useEffect } from 'react';
 
-const LanguageContext = createContext();
+export const LanguageContext = createContext();
+
+export const LanguageProvider = ({ children }) => {
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem('language') || 'en';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('language', language);
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+
+  const t = (translations) => {
+    // إذا كان المدخل نصًا عاديًا، أرجعه كما هو
+    if (typeof translations === 'string') {
+      return translations;
+    }
+    // إذا كان كائنًا، أرجع الترجمة الصحيحة، أو الإنجليزية كخيار افتراضي
+    if (typeof translations === 'object' && translations !== null) {
+      return translations[language] || translations['en'];
+    }
+    // في أي حالة أخرى، أرجع نصًا فارغًا لمنع الأخطاء
+    return '';
+  };
+
+  const value = {
+    language,
+    setLanguage,
+    isRTL: language === 'ar',
+    t,
+  };
+
+  return (
+    <LanguageContext.Provider value={value}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
 
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
@@ -8,35 +47,4 @@ export const useLanguage = () => {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-};
-
-export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState('ar');
-
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'ar' ? 'en' : 'ar');
-  };
-
-  const t = (keyObject) => {
-    if (typeof keyObject === 'string') return keyObject; // للتعامل مع النصوص العادية
-    return keyObject[language] || keyObject.en; // ارجع النص بناءً على اللغة
-  };
-
-  const isRTL = language === 'ar';
-
-  const value = {
-    language,
-    setLanguage,
-    toggleLanguage,
-    t,
-    isRTL
-  };
-
-  return (
-    <LanguageContext.Provider value={value}>
-      <div dir={isRTL ? 'rtl' : 'ltr'} className={isRTL ? 'rtl' : 'ltr'}>
-        {children}
-      </div>
-    </LanguageContext.Provider>
-  );
 };
