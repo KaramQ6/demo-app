@@ -26,7 +26,11 @@ export const AppProvider = ({ children }) => {
     const [isCitiesLoading, setIsCitiesLoading] = useState(true);
 
     // --- NEW: State and functions for User Preferences ---
-    const [userPreferences, setUserPreferences] = useState(null);
+    const [userPreferences, setUserPreferences] = useState({
+        interests: [],
+        budget: '',
+        travelsWith: 'Solo'
+    });
 
     const saveUserPreferences = async (preferences) => {
         setUserPreferences(preferences);
@@ -56,82 +60,48 @@ export const AppProvider = ({ children }) => {
 
     // --- Effect for Supabase Authentication ---
     useEffect(() => {
-        let isInitialLoad = true; // flag لتجنب conflicts مع onAuthStateChange
+        setLoading(true);
 
-        const checkUserAndProfile = async () => {
-            if (!isInitialLoad) return; // تجنب التشغيل المتعدد
-
-            setLoading(true);
-
-            try {
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                if (sessionError) throw sessionError;
-
-                const currentUser = session?.user;
-
-                // استخدم نفس الطريقة الآمنة لتحديث المستخدم
-                setUser(prevUser => {
-                    if (prevUser?.id === currentUser?.id) {
-                        return prevUser;
-                    }
-                    return currentUser ?? null;
-                });
-
-                if (currentUser) {
-                    console.log("User found, attempting to fetch profile...");
-                    const { data: profile, error: profileError } = await supabase
-                        .from('profiles')
-                        .select('preferences')
-                        .eq('id', currentUser.id)
-                        .single();
-
-                    if (profileError && profileError.code !== 'PGRST116') {
-                        throw profileError;
-                    }
-
-                    if (profile && profile.preferences) {
-                        console.log("Profile found, setting preferences:", profile.preferences);
-                        setUserPreferences(profile.preferences);
-                        localStorage.setItem('userPreferences', JSON.stringify(profile.preferences));
-                    } else {
-                        console.log("No profile found for this user yet.");
-                    }
+        const checkUserAndLoadProfile = async (currentUser) => {
+            if (!currentUser) {
+                // إذا لم يكن هناك مستخدم، استخدم التفضيلات من localStorage أو القيمة الافتراضية
+                const savedPrefs = localStorage.getItem('userPreferences');
+                if (savedPrefs) {
+                    setUserPreferences(JSON.parse(savedPrefs));
                 } else {
-                    console.log("No user session found.");
+                    setUserPreferences({ interests: [], budget: '', travelsWith: 'Solo' });
                 }
-
-            } catch (error) {
-                console.error("Critical error in AppContext useEffect:", error);
-                // يمكنك عرض رسالة خطأ للمستخدم هنا إذا أردت
-            } finally {
-                // **هذا هو الجزء الأهم**
-                // سيتم تنفيذ هذا السطر دائمًا، سواء نجح الكود أو فشل
-                console.log("Finished auth check, setting loading to false.");
                 setLoading(false);
-                isInitialLoad = false; // منع التشغيل مرة أخرى
+                return;
             }
+
+            // إذا كان هناك مستخدم، حاول جلب ملفه الشخصي
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('preferences')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (profile && profile.preferences && Object.keys(profile.preferences).length > 0) {
+                setUserPreferences(profile.preferences);
+                localStorage.setItem('userPreferences', JSON.stringify(profile.preferences));
+            } else if (error && error.code !== 'PGRST116') {
+                console.error("Error fetching profile:", error);
+            }
+            // إذا لم يكن هناك ملف شخصي (PGRST116) أو كان فارغًا، ستبقى القيمة الافتراضية.
+
+            setLoading(false);
         };
 
-        checkUserAndProfile();
-
+        // استمع لتغييرات المصادقة
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            console.log("Auth state changed:", session?.user ? "User logged in" : "User logged out");
-
-            // فقط إذا انتهى initial load
-            if (!isInitialLoad) {
-                setUser(currentUser => {
-                    const newUser = session?.user ?? null;
-                    if (currentUser?.id === newUser?.id) {
-                        return currentUser; // لا تغيير - تجنب re-render
-                    }
-                    return newUser;
-                });
-            }
+            const currentUser = session?.user;
+            setUser(currentUser);
+            checkUserAndLoadProfile(currentUser);
         });
 
         return () => {
             subscription?.unsubscribe();
-            isInitialLoad = false; // cleanup
         };
     }, []);
     // Effect for user's geolocation (for chatbot)
