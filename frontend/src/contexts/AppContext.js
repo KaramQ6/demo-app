@@ -58,57 +58,71 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         // تحقق من المستخدم وجلب التفضيلات
         const checkUserAndProfile = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            const currentUser = session?.user;
-            setUser(currentUser ?? null);
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                const currentUser = session?.user;
+                setUser(currentUser ?? null);
 
-            if (currentUser) {
-                // إذا كان هناك مستخدم، اجلب تفضيلاته من Supabase
-                try {
-                    const { data: profile, error } = await supabase
-                        .from('profiles')
-                        .select('preferences')
-                        .eq('id', currentUser.id)
-                        .single();
+                if (currentUser) {
+                    // إذا كان هناك مستخدم، اجلب تفضيلاته من Supabase
+                    try {
+                        const { data: profile, error } = await supabase
+                            .from('profiles')
+                            .select('preferences')
+                            .eq('id', currentUser.id)
+                            .single();
 
-                    if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-                        console.error("Error fetching profile:", error.message);
-                    }
+                        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+                            console.error("Error fetching profile:", error.message);
+                        }
 
-                    if (profile && profile.preferences) {
-                        // إذا وجدنا تفضيلات في Supabase، نحدث الحالة و localStorage
-                        setUserPreferences(profile.preferences);
-                        localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
-                        console.log("Preferences loaded from Supabase:", profile.preferences);
-                    } else {
-                        // إذا لم نجد تفضيلات في Supabase، نحاول تحميلها من localStorage
-                        const savedPrefs = localStorage.getItem('userTravelPreferences');
-                        if (savedPrefs) {
-                            const localPrefs = JSON.parse(savedPrefs);
-                            setUserPreferences(localPrefs);
-                            console.log("Preferences loaded from localStorage:", localPrefs);
+                        if (profile && profile.preferences) {
+                            // إذا وجدنا تفضيلات في Supabase، نحدث الحالة و localStorage
+                            setUserPreferences(profile.preferences);
+                            localStorage.setItem('userTravelPreferences', JSON.stringify(profile.preferences));
+                            console.log("Preferences loaded from Supabase:", profile.preferences);
+                        } else {
+                            // إذا لم نجد تفضيلات في Supabase، نحاول تحميلها من localStorage
+                            const savedPrefs = localStorage.getItem('userTravelPreferences');
+                            if (savedPrefs) {
+                                const localPrefs = JSON.parse(savedPrefs);
+                                setUserPreferences(localPrefs);
+                                console.log("Preferences loaded from localStorage:", localPrefs);
 
-                            // احفظ التفضيلات المحلية في Supabase للمزامنة
-                            const { error: upsertError } = await supabase
-                                .from('profiles')
-                                .upsert({
-                                    id: currentUser.id,
-                                    preferences: localPrefs
-                                });
+                                // احفظ التفضيلات المحلية في Supabase للمزامنة
+                                const { error: upsertError } = await supabase
+                                    .from('profiles')
+                                    .upsert({
+                                        id: currentUser.id,
+                                        preferences: localPrefs
+                                    });
 
-                            if (upsertError) {
-                                console.error('Error syncing preferences to Supabase:', upsertError.message);
-                            } else {
-                                console.log('Local preferences synced to Supabase');
+                                if (upsertError) {
+                                    console.error('Error syncing preferences to Supabase:', upsertError.message);
+                                } else {
+                                    console.log('Local preferences synced to Supabase');
+                                }
                             }
                         }
+                    } catch (error) {
+                        console.error('Error loading preferences:', error);
                     }
-                } catch (error) {
-                    console.error('Error loading preferences:', error);
+                } else {
+                    // إذا لم يكن هناك مستخدم، تحقق من التفضيلات المحلية
+                    const savedPrefs = localStorage.getItem('userTravelPreferences');
+                    if (savedPrefs) {
+                        const localPrefs = JSON.parse(savedPrefs);
+                        setUserPreferences(localPrefs);
+                        console.log("Preferences loaded from localStorage (no user):", localPrefs);
+                    }
                 }
+            } catch (error) {
+                console.error("Error during initial auth check:", error);
+            } finally {
+                // **هذه هي أهم خطوة**
+                // تأكد من أن التحميل ينتهي دائمًا، سواء كان هناك مستخدم أم لا
+                setLoading(false);
             }
-
-            setLoading(false);
         };
 
         checkUserAndProfile();
@@ -139,6 +153,9 @@ export const AppProvider = ({ children }) => {
                 setUserPreferences(null);
                 localStorage.removeItem('userTravelPreferences');
             }
+
+            // تأكد من إنهاء التحميل عند تغيير حالة المصادقة
+            setLoading(false);
         });
 
         return () => {
