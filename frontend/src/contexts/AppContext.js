@@ -105,8 +105,9 @@ export const AppProvider = ({ children }) => {
         checkUserAndProfile();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("Auth state changed:", session?.user ? "User logged in" : "User logged out");
             setUser(session?.user ?? null);
-            setLoading(false);
+            // لا نحتاج setLoading(false) هنا لأنه سيتم تحديده في checkUserAndProfile
         });
 
         return () => {
@@ -289,7 +290,16 @@ export const AppProvider = ({ children }) => {
 
     return (
         <AppContext.Provider value={value}>
-            {!loading && children}
+            {loading ? (
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                        <p className="text-lg text-gray-400">Loading...</p>
+                    </div>
+                </div>
+            ) : (
+                children
+            )}
         </AppContext.Provider>
     );
 };

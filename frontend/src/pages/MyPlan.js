@@ -89,8 +89,13 @@ const MyPlan = () => {
     };
 
     useEffect(() => {
-        fetchUserItinerary();
-    }, [user]);
+        if (user) {
+            fetchUserItinerary();
+        } else {
+            setLoading(false);
+            setItineraryDestinations([]);
+        }
+    }, [user?.id]); // نستمع فقط لـ user.id بدلاً من user كاملاً
 
     // إذا لم يكن المستخدم مسجلاً دخوله
     if (!user) {
