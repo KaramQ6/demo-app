@@ -1,10 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
+import { supabase } from '../supabaseClient'; // استيراد Supabase
 
 export const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
+    // --- States for Authentication ---
+    const [user, setUser] = useState(null); // حالة جديدة لتخزين معلومات المستخدم
+    const [loading, setLoading] = useState(true); // حالة جديدة لمعرفة ما إذا كان يتم التحقق من المستخدم
+
     // --- States for Chatbot and Geolocation ---
     const { language, t } = useLanguage();
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -36,6 +41,27 @@ export const AppProvider = ({ children }) => {
             setUserPreferences(JSON.parse(savedPrefs));
             console.log("Preferences loaded from localStorage:", JSON.parse(savedPrefs));
         }
+    }, []);
+
+    // --- Effect for Supabase Authentication ---
+    useEffect(() => {
+        // تحقق إذا كان هناك مستخدم مسجل دخوله عند تحميل التطبيق
+        const checkUser = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setUser(session?.user ?? null);
+            setLoading(false);
+        };
+
+        checkUser();
+
+        // استمع لتغييرات حالة المصادقة (تسجيل دخول/خروج)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => {
+            subscription?.unsubscribe();
+        };
     }, []);
 
 
@@ -71,38 +97,38 @@ export const AppProvider = ({ children }) => {
     // Effect to fetch data for multiple cities for the DATAHUB page
     useEffect(() => {
         const fetchCitiesData = async () => {
-          const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid', 'Jerash', 'Ajloun'];
-          setIsCitiesLoading(true);
-          
-          const cityPromises = cities.map(async (city) => {
-            const liveDataApiUrl = `https://karamq5.app.n8n.cloud/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
-            try {
-              const response = await fetch(liveDataApiUrl);
-              if (response.ok) {
-                const text = await response.text();
-                if (text) {
-                  return JSON.parse(text);
+            const cities = ['Amman', 'Petra', 'Aqaba', 'Irbid', 'Jerash', 'Ajloun'];
+            setIsCitiesLoading(true);
+
+            const cityPromises = cities.map(async (city) => {
+                const liveDataApiUrl = `https://karamq5.app.n8n.cloud/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
+                try {
+                    const response = await fetch(liveDataApiUrl);
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text) {
+                            return JSON.parse(text);
+                        }
+                    }
+                    console.error(`Received empty response for ${city}`);
+                    return null;
+                } catch (error) {
+                    console.error(`Error fetching data for ${city}:`, error);
+                    return null;
                 }
-              }
-              console.error(`Received empty response for ${city}`);
-              return null;
+            });
+
+            try {
+                const results = await Promise.all(cityPromises);
+                setCitiesData(results.filter(Boolean));
             } catch (error) {
-              console.error(`Error fetching data for ${city}:`, error);
-              return null;
+                console.error("An error occurred while processing city data:", error);
+                setCitiesData([]);
+            } finally {
+                setIsCitiesLoading(false);
             }
-          });
-    
-          try {
-            const results = await Promise.all(cityPromises);
-            setCitiesData(results.filter(Boolean)); 
-          } catch (error) {
-            console.error("An error occurred while processing city data:", error);
-            setCitiesData([]);
-          } finally {
-            setIsCitiesLoading(false);
-          }
         };
-    
+
         fetchCitiesData();
     }, [language]);
 
@@ -111,10 +137,11 @@ export const AppProvider = ({ children }) => {
     const sendMessage = async (userInput) => {
         const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
         setChatMessages(prev => [...prev, userMessage]);
-        setIsTyping(true);
+
         let sessionId = localStorage.getItem('chatSessionId') || `session_${Date.now()}`;
         localStorage.setItem('chatSessionId', sessionId);
         const chatbotUrl = "https://karamq5.app.n8n.cloud/webhook/gemini-tour-chat";
+
         try {
             const response = await fetch(chatbotUrl, {
                 method: 'POST',
@@ -133,23 +160,38 @@ export const AppProvider = ({ children }) => {
             console.error("Chat API Error:", error);
             const errorMessage = { id: Date.now() + 1, text: "❌ Connection Error", type: 'bot', timestamp: new Date() };
             setChatMessages(prev => [...prev, errorMessage]);
-        } finally {
-            setIsTyping(false);
         }
     };
     const openChatbot = () => setIsChatbotOpen(true);
     const closeChatbot = () => setIsChatbotOpen(false);
-    const toggleChatbotVisibility = () => { /* ...your existing logic... */ };
+    const toggleChatbotVisibility = () => setShowChatbot(prev => !prev);
+
+    // --- Authentication Functions ---
+    const login = (email, password) => supabase.auth.signInWithPassword({ email, password });
+    const register = (email, password) => supabase.auth.signUp({ email, password });
+    const logout = () => supabase.auth.signOut();
 
     // --- Updated Context Value ---
     const value = {
-        isChatbotOpen, openChatbot, closeChatbot, chatMessages, isTyping, sendMessage, showChatbot,
+        // Authentication
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        // Chatbot and other existing functionality
+        isChatbotOpen, openChatbot, closeChatbot, chatMessages, sendMessage, showChatbot,
         liveData, isLoadingData, locationError,
         citiesData, isCitiesLoading,
-        // --- NEW Values to export ---
+        // User Preferences
         userPreferences,
-        saveUserPreferences
+        saveUserPreferences,
+        toggleChatbotVisibility
     };
 
-    return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+    return (
+        <AppContext.Provider value={value}>
+            {!loading && children}
+        </AppContext.Provider>
+    );
 };
