@@ -40,8 +40,28 @@ const Header = () => {
       public: true
     },
     {
+      path: '/iot-hub',
+      label: { ar: 'مركز IoT', en: 'IoT Hub' },
+      public: true
+    },
+    {
+      path: '/voice-agent',
+      label: { ar: 'المساعد الصوتي', en: 'Voice Assistant' },
+      public: true
+    },
+    {
+      path: '/about',
+      label: { ar: 'حول', en: 'About' },
+      public: true
+    },
+    {
       path: '/my-plan',
       label: { ar: 'خطتي', en: 'My Plan' },
+      public: false
+    },
+    {
+      path: '/itinerary',
+      label: { ar: 'المسار السياحي', en: 'Itinerary' },
       public: false
     },
     {

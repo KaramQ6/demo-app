@@ -117,7 +117,7 @@ export const AppProvider = ({ children }) => {
         if (!userLocation) return;
         const fetchUserLiveData = async () => {
             setIsLoadingData(true);
-            const chatbotApiUrl = `https://karamq6.app.n8n.cloud/webhook/Simple-Weather-API-ChatBot?lat=${userLocation.lat}&lon=${userLocation.lon}&lang=${language}`;
+            const chatbotApiUrl = `https://n8n.smart-tour.app/webhook/Simple-Weather-API-ChatBot?lat=${userLocation.lat}&lon=${userLocation.lon}&lang=${language}`;
             try {
                 const response = await fetch(chatbotApiUrl);
                 if (!response.ok) throw new Error(`API Error: ${response.status}`);
@@ -153,7 +153,7 @@ export const AppProvider = ({ children }) => {
             setIsCitiesLoading(true);
 
             const cityPromises = cities.map(async (city) => {
-                const liveDataApiUrl = `https://karamq6.app.n8n.cloud/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
+                const liveDataApiUrl = `https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data?city=${city}&lang=${language}`;
                 try {
                     const response = await fetch(liveDataApiUrl);
                     if (!response.ok) {
@@ -203,7 +203,7 @@ export const AppProvider = ({ children }) => {
 
         let sessionId = localStorage.getItem('chatSessionId') || `session_${Date.now()}`;
         localStorage.setItem('chatSessionId', sessionId);
-        const chatbotUrl = "https://karamq6.app.n8n.cloud/webhook/gemini-tour-chat";
+        const chatbotUrl = "https://n8n.smart-tour.app/webhook/gemini-tour-chat";
 
         try {
             const response = await fetch(chatbotUrl, {

@@ -56,7 +56,7 @@
 ### 2. إعداد Webhook في n8n
 إنشاء webhook جديد بالرابط:
 ```
-https://karamq6.app.n8n.cloud/webhook/addToItinerary
+https://n8n.smart-tour.app/webhook/addToItinerary
 ```
 
 **المطلوب في الـ workflow:**
