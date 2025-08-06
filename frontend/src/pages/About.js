@@ -40,7 +40,7 @@ const About = () => {
     {
       icon: Brain,
       title: { ar: 'ذكاء اصطناعي متطور', en: 'Advanced AI' },
-      description: { 
+      description: {
         ar: 'مرشد ذكي يتعلم من تفضيلاتك ويقدم توصيات شخصية',
         en: 'Smart guide that learns from your preferences and provides personal recommendations'
       }
@@ -48,7 +48,7 @@ const About = () => {
     {
       icon: Users,
       title: { ar: 'تجنب الازدحام', en: 'Crowd Avoidance' },
-      description: { 
+      description: {
         ar: 'نظام ذكي يساعدك في تجنب الأوقات والأماكن المزدحمة',
         en: 'Smart system that helps you avoid crowded times and places'
       }
@@ -56,7 +56,7 @@ const About = () => {
     {
       icon: Leaf,
       title: { ar: 'سياحة مستدامة', en: 'Sustainable Tourism' },
-      description: { 
+      description: {
         ar: 'نشجع الممارسات البيئية والاجتماعية المسؤولة',
         en: 'We encourage responsible environmental and social practices'
       }
@@ -64,7 +64,7 @@ const About = () => {
     {
       icon: MapPin,
       title: { ar: 'اكتشاف أماكن جديدة', en: 'Discover New Places' },
-      description: { 
+      description: {
         ar: 'نكشف لك الكنوز المخفية والأماكن الأقل شهرة',
         en: 'We reveal hidden treasures and lesser-known places'
       }
@@ -72,7 +72,7 @@ const About = () => {
     {
       icon: Lightbulb,
       title: { ar: 'تجارب تفاعلية', en: 'Interactive Experiences' },
-      description: { 
+      description: {
         ar: 'تقنيات الواقع المعزز وأدوات تفاعلية متطورة',
         en: 'Augmented reality technologies and advanced interactive tools'
       }
@@ -80,7 +80,7 @@ const About = () => {
     {
       icon: Heart,
       title: { ar: 'دعم المجتمع المحلي', en: 'Local Community Support' },
-      description: { 
+      description: {
         ar: 'نساهم في دعم الاقتصاد المحلي والحرف التراثية',
         en: 'We contribute to supporting the local economy and traditional crafts'
       }
@@ -112,9 +112,9 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen py-16 px-6">
-      <div className="max-w-6xl mx-auto">
-        
+    <div className="relative min-h-screen py-16 px-6">
+      <div className="max-w-6xl mx-auto relative z-10">
+
         {/* Hero Section */}
         <div className="text-center mb-20 animate-slide-up">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 font-['Montserrat']">
@@ -143,7 +143,7 @@ const About = () => {
               </p>
             </CardContent>
           </Card>
-          
+
           <Card className="glass-card border-l-4 border-l-secondary interactive-card animate-scale-in" style={{ animationDelay: '0.1s' }}>
             <CardContent className="p-12">
               <div className="flex items-center space-x-4 rtl:space-x-reverse mb-6">
@@ -224,7 +224,7 @@ const About = () => {
               {t({ ar: 'مدعوم بأحدث التقنيات', en: 'Powered by Latest Technology' })}
             </h3>
             <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mx-auto font-['Open_Sans']">
-              {t({ 
+              {t({
                 ar: 'نجمع بين الذكاء الاصطناعي وإنترنت الأشياء والواقع المعزز لتقديم تجربة سياحية لا مثيل لها في العالم العربي',
                 en: 'We combine AI, IoT, and augmented reality to deliver an unparalleled tourism experience in the Arab world'
               })}
@@ -246,6 +246,11 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+      <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
     </div>
   );
 };

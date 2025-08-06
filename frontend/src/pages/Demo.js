@@ -56,9 +56,9 @@ const Demo = () => {
   };
 
   return (
-    <div className="min-h-screen py-16 px-6">
-      <div className="max-w-6xl mx-auto">
-        
+    <div className="relative min-h-screen py-16 px-6">
+      <div className="max-w-6xl mx-auto relative z-10">
+
         {/* Page Header */}
         <div className="text-center mb-16 animate-slide-up">
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 font-['Montserrat']">
@@ -66,15 +66,15 @@ const Demo = () => {
           </h1>
           <div className="w-24 h-1 gradient-purple mx-auto rounded-full mb-8"></div>
           <p className="text-xl text-muted-foreground font-['Open_Sans'] max-w-4xl mx-auto">
-            {t({ 
-              ar: 'استكشف تقنياتنا المتطورة لتجربة سياحية فريدة تجمع بين الذكاء الاصطناعي والواقع المعزز', 
-              en: 'Explore our advanced technologies for a unique tourism experience combining AI and augmented reality' 
+            {t({
+              ar: 'استكشف تقنياتنا المتطورة لتجربة سياحية فريدة تجمع بين الذكاء الاصطناعي والواقع المعزز',
+              en: 'Explore our advanced technologies for a unique tourism experience combining AI and augmented reality'
             })}
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          
+
           {/* Interactive AR Guide Section */}
           <Card className="glass-card overflow-hidden border-white/10 interactive-card animate-scale-in">
             <CardHeader className="border-b border-white/10">
@@ -86,7 +86,7 @@ const Demo = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 p-8">
-              
+
               {/* Artifact Image */}
               <div className="relative">
                 <img
@@ -94,12 +94,11 @@ const Demo = () => {
                   alt={t({ ar: 'عمود من البتراء', en: 'Column from Petra' })}
                   className="w-full h-72 object-cover rounded-xl shadow-lg transition-all duration-500"
                 />
-                <Badge 
-                  className={`absolute top-4 right-4 px-4 py-2 text-base ${
-                    selectedImage === 'reconstructed' ? 'bg-primary text-white' : 'glass bg-white/10 text-white border-white/20'
-                  }`}
+                <Badge
+                  className={`absolute top-4 right-4 px-4 py-2 text-base ${selectedImage === 'reconstructed' ? 'bg-primary text-white' : 'glass bg-white/10 text-white border-white/20'
+                    }`}
                 >
-                  {selectedImage === 'reconstructed' 
+                  {selectedImage === 'reconstructed'
                     ? t({ ar: 'الشكل الأصلي', en: 'Original Form' })
                     : t({ ar: 'الوضع الحالي', en: 'Current State' })
                   }
@@ -163,7 +162,7 @@ const Demo = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-8 p-8">
-              
+
               {/* Chat Snippet */}
               <div className="glass rounded-xl p-6 border border-white/10">
                 <div className="flex items-start space-x-4 rtl:space-x-reverse">
@@ -186,7 +185,7 @@ const Demo = () => {
                     <p className="text-muted-foreground leading-relaxed font-['Open_Sans'] text-lg">
                       {t(chatSnippet)}
                     </p>
-                    
+
                     {/* Hotel Details */}
                     <div className="mt-6 p-4 glass rounded-lg">
                       <div className="flex items-center justify-between mb-3">
@@ -263,7 +262,7 @@ const Demo = () => {
               {t({ ar: 'تقنيات متطورة لتجربة فريدة', en: 'Advanced Technologies for Unique Experience' })}
             </h3>
             <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mx-auto font-['Open_Sans'] mb-8">
-              {t({ 
+              {t({
                 ar: 'نجمع بين الذكاء الاصطناعي والواقع المعزز وإنترنت الأشياء لتقديم تجربة سياحية تفاعلية لا مثيل لها',
                 en: 'We combine artificial intelligence, augmented reality, and IoT to deliver an unparalleled interactive tourism experience'
               })}
@@ -290,7 +289,7 @@ const Demo = () => {
           <DialogContent className="sm:max-w-md glass-strong border border-primary/30">
             <DialogHeader>
               <DialogTitle className="text-center font-['Montserrat'] text-white text-xl">
-                {isBooked 
+                {isBooked
                   ? t({ ar: 'تم تأكيد الحجز!', en: 'Booking Confirmed!' })
                   : t({ ar: 'تأكيد الحجز', en: 'Confirm Booking' })
                 }
@@ -307,9 +306,9 @@ const Demo = () => {
                       {t({ ar: 'تهانينا!', en: 'Congratulations!' })}
                     </h3>
                     <p className="text-muted-foreground font-['Open_Sans'] text-lg">
-                      {t({ 
-                        ar: 'تم تأكيد حجزك بنجاح. (هذه نسخة تجريبية)', 
-                        en: 'Your booking has been confirmed successfully. (This is a demo version)' 
+                      {t({
+                        ar: 'تم تأكيد حجزك بنجاح. (هذه نسخة تجريبية)',
+                        en: 'Your booking has been confirmed successfully. (This is a demo version)'
                       })}
                     </p>
                   </div>
@@ -321,9 +320,9 @@ const Demo = () => {
                   </div>
                   <div>
                     <p className="text-muted-foreground mb-6 font-['Open_Sans'] text-lg">
-                      {t({ 
-                        ar: 'هل أنت متأكد من رغبتك في حجز فندق الغابات الخضراء؟', 
-                        en: 'Are you sure you want to book Green Forest Hotel?' 
+                      {t({
+                        ar: 'هل أنت متأكد من رغبتك في حجز فندق الغابات الخضراء؟',
+                        en: 'Are you sure you want to book Green Forest Hotel?'
                       })}
                     </p>
                     <Button
@@ -340,6 +339,11 @@ const Demo = () => {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+      <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
     </div>
   );
 };

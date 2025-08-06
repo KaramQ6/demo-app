@@ -19,8 +19,8 @@ const Destinations = () => {
   }
 
   return (
-    <div className="min-h-screen py-20 px-6">
-      <div className="container mx-auto max-w-6xl">
+    <div className="relative min-h-screen py-20 px-6">
+      <div className="container mx-auto max-w-6xl relative z-10">
         <div className="text-center mb-16 animate-fade-in-up">
           <h1 className="text-4xl md:text-5xl font-bold font-['Montserrat'] text-white mb-6">
             {t({ ar: 'استكشف وجهاتنا', en: 'Explore Our Destinations' })}
@@ -69,11 +69,10 @@ const Destinations = () => {
                         {t({ ar: 'الأردن', en: 'Jordan' })}
                       </span>
                     </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
-                      destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
+                    <div className={`px-3 py-1 rounded-full text-xs font-semibold ${destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
+                        destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-red-500/20 text-red-400'
+                      }`}>
                       {t({
                         ar: destination.crowdLevel === 'low' ? 'هادئ' : destination.crowdLevel === 'medium' ? 'متوسط' : 'مزدحم',
                         en: destination.crowdLevel
@@ -86,6 +85,11 @@ const Destinations = () => {
           ))}
         </div>
       </div>
+
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+      <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
     </div>
   );
 };

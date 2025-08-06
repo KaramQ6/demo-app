@@ -45,8 +45,8 @@ const Itinerary = () => {
   }
 
   return (
-    <div className="min-h-screen py-20 px-6 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
-      <div className="container mx-auto max-w-4xl bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+    <div className="relative min-h-screen py-20 px-6">
+      <div className="container mx-auto max-w-4xl glass-card border-white/10 p-8 rounded-lg relative z-10">
         <h1 className="text-4xl font-bold mb-6 text-center text-purple-600 dark:text-purple-400">
           {t({ ar: 'خطتك الذكية للرحلة', en: 'Your Smart Trip Plan' })}
         </h1>
@@ -102,6 +102,11 @@ const Itinerary = () => {
           </div>
         )}
       </div>
+
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+      <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
     </div>
   );
 };

@@ -6,14 +6,14 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  MapPin, 
-  Star, 
-  Clock, 
-  Users, 
-  Thermometer, 
+import {
+  ArrowLeft,
+  ArrowRight,
+  MapPin,
+  Star,
+  Clock,
+  Users,
+  Thermometer,
   Cloud,
   MessageCircle,
   Lightbulb,
@@ -74,13 +74,13 @@ const DestinationDetail = () => {
       timestamp: new Date().toISOString(),
       destinationId: id
     };
-    
+
     setCrowdFeedback(feedback);
     setHasGivenFeedback(true);
-    
+
     // Save to localStorage
     localStorage.setItem(`feedback_${id}`, JSON.stringify(feedback));
-    
+
     // Update IoT data
     const crowdValue = level === 'low' ? 25 : level === 'medium' ? 55 : 85;
     setIotData(prev => ({
@@ -129,9 +129,9 @@ const DestinationDetail = () => {
   };
 
   return (
-    <div className="min-h-screen py-20">
+    <div className="relative min-h-screen py-20">
       {/* Breadcrumb */}
-      <div className="container mx-auto px-6 mb-8">
+      <div className="container mx-auto px-6 mb-8 relative z-10">
         <div className="flex items-center space-x-2 rtl:space-x-reverse text-sm text-muted-foreground font-['Open_Sans']">
           <Link to="/" className="hover:text-primary transition-colors">
             {t({ ar: 'الرئيسية', en: 'Home' })}
@@ -146,7 +146,7 @@ const DestinationDetail = () => {
       </div>
 
       {/* Hero Section with Image Gallery */}
-      <div className="container mx-auto px-6 mb-12">
+      <div className="container mx-auto px-6 mb-12 relative z-10">
         <div className="relative h-96 md:h-[32rem] rounded-2xl overflow-hidden glass-card animate-fade-in-up">
           <img
             src={imageGallery[currentImageIndex]}
@@ -154,7 +154,7 @@ const DestinationDetail = () => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-          
+
           {/* Image Navigation */}
           <button
             onClick={() => setCurrentImageIndex(prev => prev === 0 ? imageGallery.length - 1 : prev - 1)}
@@ -168,20 +168,19 @@ const DestinationDetail = () => {
           >
             <ArrowRight className="w-5 h-5" />
           </button>
-          
+
           {/* Image Indicators */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
             {imageGallery.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`w-3 h-3 rounded-full transition-all ${
-                  index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                }`}
+                className={`w-3 h-3 rounded-full transition-all ${index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                  }`}
               />
             ))}
           </div>
-          
+
           {/* Overlay Content */}
           <div className="absolute bottom-8 left-8 right-8">
             <div className="flex items-center justify-between">
@@ -200,7 +199,7 @@ const DestinationDetail = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Ask Jawad Button */}
               <Button
                 onClick={handleAskJawad}
@@ -215,7 +214,7 @@ const DestinationDetail = () => {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 relative z-10">
         <Tabs defaultValue="overview" className="w-full">
           <TabsList className="grid w-full grid-cols-3 glass mb-8">
             <TabsTrigger value="overview" className="font-['Open_Sans']">
@@ -244,7 +243,7 @@ const DestinationDetail = () => {
                     <p className="text-muted-foreground font-['Open_Sans'] leading-relaxed text-lg mb-6">
                       {t(destination.description)}
                     </p>
-                    
+
                     {/* Features */}
                     <div className="mb-6">
                       <h3 className="text-lg font-semibold font-['Montserrat'] text-white mb-4">
@@ -287,14 +286,13 @@ const DestinationDetail = () => {
                             {t({ ar: 'الازدحام', en: 'Crowd Level' })}
                           </span>
                         </div>
-                        <span className={`text-sm font-semibold ${
-                          destination.crowdLevel === 'low' ? 'text-green-400' :
-                          destination.crowdLevel === 'medium' ? 'text-yellow-400' :
-                          'text-red-400'
-                        }`}>
+                        <span className={`text-sm font-semibold ${destination.crowdLevel === 'low' ? 'text-green-400' :
+                            destination.crowdLevel === 'medium' ? 'text-yellow-400' :
+                              'text-red-400'
+                          }`}>
                           {destination.crowdLevel === 'low' ? t({ ar: 'هادئ', en: 'Quiet' }) :
-                           destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :
-                           t({ ar: 'مزدحم', en: 'Busy' })}
+                            destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :
+                              t({ ar: 'مزدحم', en: 'Busy' })}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
@@ -352,7 +350,7 @@ const DestinationDetail = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="glass p-6 rounded-lg">
                   <p className="text-lg text-white font-['Open_Sans'] leading-relaxed">
                     {smartTips[id] ? t(smartTips[id]) : t({
@@ -361,10 +359,10 @@ const DestinationDetail = () => {
                     })}
                   </p>
                 </div>
-                
+
                 <div className="mt-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
                   <p className="text-sm text-blue-200 font-['Open_Sans']">
-                    💡 {t({ 
+                    💡 {t({
                       ar: 'هذه النصيحة مبنية على البيانات الحية وتجارب الزوار السابقين',
                       en: 'This tip is based on live data and previous visitors\' experiences'
                     })}
@@ -381,16 +379,16 @@ const DestinationDetail = () => {
                 <h2 className="text-2xl font-bold font-['Montserrat'] text-white mb-6">
                   {t({ ar: 'مستوى الازدحام الآن', en: 'Current Crowd Level' })}
                 </h2>
-                
+
                 {!hasGivenFeedback ? (
                   <div>
                     <p className="text-muted-foreground font-['Open_Sans'] mb-6">
-                      {t({ 
+                      {t({
                         ar: 'ساعدنا في تحديث البيانات الحية - كيف وجدت مستوى الازدحام؟',
                         en: 'Help us update live data - how did you find the crowd level?'
                       })}
                     </p>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <Button
                         onClick={() => handleCrowdFeedback('low')}
@@ -427,7 +425,7 @@ const DestinationDetail = () => {
                       {t({ ar: 'شكراً لمساهمتك!', en: 'Thanks for your contribution!' })}
                     </h3>
                     <p className="text-muted-foreground font-['Open_Sans']">
-                      {t({ 
+                      {t({
                         ar: 'تم تحديث البيانات الحية بنجاح وستساعد الزوار الآخرين',
                         en: 'Live data has been updated successfully and will help other visitors'
                       })}
@@ -439,6 +437,11 @@ const DestinationDetail = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* Background Elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+      <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
     </div>
   );
 };

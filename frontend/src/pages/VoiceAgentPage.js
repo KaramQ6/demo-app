@@ -19,24 +19,30 @@ const VoiceAgentPage = () => {
     }, []);
 
     return (
-        <div
-            style={{
-                width: '100vw',
-                height: '100vh',
-                overflow: 'hidden',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: '#000'
-            }}
-        >
-            <elevenlabs-convai
-                agent-id="agent_4501k1tw42v5eac9stmjr5670gwh"
+        <div className="relative min-h-screen">
+            <div
                 style={{
-                    width: '100%',
-                    height: '100%'
+                    width: '100vw',
+                    height: '100vh',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
                 }}
-            ></elevenlabs-convai>
+            >
+                <elevenlabs-convai
+                    agent-id="agent_4501k1tw42v5eac9stmjr5670gwh"
+                    style={{
+                        width: '100%',
+                        height: '100%'
+                    }}
+                ></elevenlabs-convai>
+            </div>
+
+            {/* Background Elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+            <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
         </div>
     );
 };
