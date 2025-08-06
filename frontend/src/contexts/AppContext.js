@@ -32,6 +32,10 @@ export const AppProvider = ({ children }) => {
         travelsWith: 'Solo'
     });
 
+    // --- NEW: States for Suggested Itinerary ---
+    const [suggestedItinerary, setSuggestedItinerary] = useState(null);
+    const [isSuggestingItinerary, setIsSuggestingItinerary] = useState(true); // تبدأ true لتعرض التحميل
+
     const saveUserPreferences = async (preferences) => {
         setUserPreferences(preferences);
         localStorage.setItem('userPreferences', JSON.stringify(preferences));
@@ -260,6 +264,44 @@ export const AppProvider = ({ children }) => {
     const register = (email, password) => supabase.auth.signUp({ email, password });
     const logout = () => supabase.auth.signOut();
 
+    // --- NEW: Fetch Suggested Itinerary Function ---
+    const fetchSuggestedItinerary = async () => {
+        // لا نجلب خطة جديدة إذا كانت موجودة بالفعل أو قيد التحميل
+        if (!user || suggestedItinerary || isSuggestingItinerary) {
+            setIsSuggestingItinerary(false);
+            return;
+        }
+
+        setIsSuggestingItinerary(true);
+        const webhookUrl = 'https://n8n.smart-tour.app/webhook/suggestItinerary';
+
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    // أرسل كل البيانات التي قد يحتاجها جواد
+                    preferences: userPreferences,
+                    liveData: liveData,
+                    user: { email: user.email }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setSuggestedItinerary(data);
+
+        } catch (error) {
+            console.error("Error fetching suggested itinerary:", error);
+            setSuggestedItinerary(null);
+        } finally {
+            setIsSuggestingItinerary(false);
+        }
+    };
+
     // --- Updated Context Value ---
     const value = {
         // Authentication
@@ -275,7 +317,11 @@ export const AppProvider = ({ children }) => {
         // User Preferences
         userPreferences,
         saveUserPreferences,
-        toggleChatbotVisibility
+        toggleChatbotVisibility,
+        // Suggested Itinerary
+        suggestedItinerary,
+        isSuggestingItinerary,
+        fetchSuggestedItinerary
     };
 
     return (

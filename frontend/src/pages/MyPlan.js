@@ -3,53 +3,53 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { supabase } from '../supabaseClient';
-import { destinations } from '../mock';
+import { destinations } from '../mock'; // تأكد من أن المسار صحيح
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { MapPin, Star, Users, Calendar, Trash2, Loader2 } from 'lucide-react';
+import { MapPin, Star, Users, Trash2, Loader2, Bot } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const MyPlan = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage(); //  <-- أضف language هنا
     const { user } = useApp();
     const { toast } = useToast();
+    const [itineraryItems, setItineraryItems] = useState([]); //  <-- لتخزين items من supabase
     const [itineraryDestinations, setItineraryDestinations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState(null);
 
-    // جلب الوجهات المحفوظة للمستخدم
+    // حالات جديدة للمخطط الذكي
+    const [smartPlan, setSmartPlan] = useState(null);
+    const [isPlanning, setIsPlanning] = useState(false);
+
     const fetchUserItinerary = async () => {
         if (!user) {
             setLoading(false);
             return;
         }
-
+        setLoading(true);
         try {
             const { data, error } = await supabase
                 .from('itineraries')
-                .select('destination_id')
+                .select('id, destination_id') //  <-- جلب الـ id أيضًا للحذف
                 .eq('user_id', user.id);
 
-            if (error) {
-                console.error('Error fetching itinerary:', error);
-                return;
-            }
+            if (error) throw error;
 
-            // فلترة الوجهات من mock.js بناءً على destination_ids
+            setItineraryItems(data); //  <-- حفظ البيانات الأصلية
             const userDestinationIds = data.map(item => item.destination_id);
             const userDestinations = destinations.filter(dest =>
                 userDestinationIds.includes(dest.id)
             );
-
             setItineraryDestinations(userDestinations);
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error fetching itinerary:', error);
+            toast({ title: t({ ar: "خطأ", en: "Error" }), description: t({ ar: "فشل في جلب الخطة", en: "Failed to fetch plan" }), variant: "destructive" });
         } finally {
             setLoading(false);
         }
     };
 
-    // حذف وجهة من المسار
     const removeFromItinerary = async (destinationId) => {
         if (!user) return;
 
@@ -88,6 +88,40 @@ const MyPlan = () => {
         }
     };
 
+    //  <<<<< الدالة الجديدة والمهمة >>>>>
+    const handleGenerateSmartPlan = async () => {
+        setIsPlanning(true);
+        setSmartPlan(null);
+
+        const webhookUrl = 'https://n8n.smart-tour.app/webhook/generateSmartPlan'; //  <-- تأكد من أن هذا هو رابط الـ Webhook الصحيح
+
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ destinations: itineraryDestinations })
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const plan = await response.json();
+
+            // تحقق من أن الرد يحتوي على itinerary
+            if (plan.itinerary) {
+                setSmartPlan(plan.itinerary);
+                toast({ title: t({ ar: "تم إنشاء الخطة!", en: "Plan Generated!" }) });
+            } else {
+                throw new Error("Invalid plan format received from server.");
+            }
+
+        } catch (error) {
+            console.error("Error generating smart plan:", error);
+            toast({ title: t({ ar: 'حدث خطأ', en: 'An error occurred' }), description: t({ ar: "لم يتمكن جواد من التخطيط الآن، حاول مرة أخرى.", en: "Jawad couldn't plan right now, please try again." }), variant: "destructive" });
+        } finally {
+            setIsPlanning(false);
+        }
+    };
+
     useEffect(() => {
         if (user) {
             fetchUserItinerary();
@@ -95,9 +129,8 @@ const MyPlan = () => {
             setLoading(false);
             setItineraryDestinations([]);
         }
-    }, [user?.id]); // نستمع فقط لـ user.id بدلاً من user كاملاً
+    }, [user?.id]);
 
-    // إذا لم يكن المستخدم مسجلاً دخوله
     if (!user) {
         return (
             <div className="relative min-h-screen pt-20">
@@ -131,6 +164,29 @@ const MyPlan = () => {
                             {t({ ar: 'الوجهات التي أضفتها إلى خطتك', en: 'Destinations you\'ve added to your plan' })}
                         </p>
                     </div>
+
+                    {/*  <<<<< الزر الجديد للمخطط الذكي >>>>> */}
+                    {itineraryDestinations.length > 1 && !smartPlan && (
+                        <div className="text-center my-8">
+                            <Button
+                                onClick={handleGenerateSmartPlan}
+                                disabled={isPlanning}
+                                className="gradient-purple px-8 py-6 text-lg"
+                            >
+                                {isPlanning ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                                        {t({ ar: 'جواد يخطط لك...', en: 'Jawad is planning...' })}
+                                    </>
+                                ) : (
+                                    <>
+                                        <Bot className="w-5 h-5 mr-2" />
+                                        {t({ ar: 'خطط لي يا جواد!', en: 'Plan for me, Jawad!' })}
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    )}
 
                     {loading ? (
                         <div className="flex items-center justify-center py-20">
@@ -214,6 +270,36 @@ const MyPlan = () => {
                                     </CardContent>
                                 </Card>
                             ))}
+                        </div>
+                    )}
+
+                    {/*  <<<<< القسم الجديد لعرض الخطة الذكية >>>>> */}
+                    {isPlanning && (
+                        <div className="text-center py-10">
+                            <Loader2 className="w-8 h-8 text-purple-400 animate-spin mx-auto" />
+                        </div>
+                    )}
+
+                    {smartPlan && (
+                        <div className="mt-12 animate-fade-in-up">
+                            <h2 className="text-2xl font-bold text-white text-center mb-6">{t({ ar: 'خطتك الذكية المقترحة', en: 'Your Suggested Smart Plan' })}</h2>
+                            <div className="space-y-6">
+                                {Object.keys(smartPlan).sort().map(day => (
+                                    <div key={day} className="glass-card p-6 rounded-lg border-white/10">
+                                        <h3 className="text-xl font-semibold text-purple-400 mb-4 border-b border-white/10 pb-3">
+                                            {t({ ar: `اليوم ${day}`, en: `Day ${day}` })}
+                                        </h3>
+                                        <ul className="space-y-4">
+                                            {smartPlan[day].map(destination => (
+                                                <li key={destination.id} className="text-white flex items-center">
+                                                    <MapPin className="w-4 h-4 mr-3 text-purple-400" />
+                                                    {destination.name[language]}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
