@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Chatbot from "./components/Chatbot";
 import ProtectedRoute from "./components/ProtectedRoute";
+import SmartToolsSidebar from "./components/SmartToolsSidebar";
 
 // Lazy-loaded Pages
 const Homepage = React.lazy(() => import("./pages/Homepage"));
