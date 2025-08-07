@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
 import { Link } from 'react-router-dom';
@@ -6,11 +7,47 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Badge } from '../components/ui/badge';
 import { Activity, Car, Cloud, Sun, CloudRain, Wifi, MapPin, Users, Clock, Thermometer } from 'lucide-react';
 import { destinations } from '../mock';
+import IoTCardSkeleton from '../components/IoTCardSkeleton';
 
 const IoTHub = () => {
   const { t } = useLanguage();
   const { iotData, updateIotData } = useApp();
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [loading, setLoading] = useState(true);
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30, scale: 0.9 },
+    visible: {
+      opacity: 1, y: 0, scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" }
+    },
+    hover: {
+      y: -5,
+      scale: 1.02,
+      transition: { duration: 0.2, ease: "easeInOut" }
+    }
+  };
+
+  // Simulate initial loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Simulate real-time updates every 30 seconds
   useEffect(() => {
@@ -116,7 +153,12 @@ const IoTHub = () => {
       <div className="max-w-7xl mx-auto">
 
         {/* Header Section */}
-        <div className="text-center mb-16 animate-slide-up">
+        <motion.div
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: -30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 font-['Montserrat']">
             {t(pageTitle)}
           </h1>
@@ -138,230 +180,275 @@ const IoTHub = () => {
               {formatTime(lastUpdate)}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Live Dashboard Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
-          {destinations.map((destination, index) => {
-            const data = iotData[destination.id] || generateInitialIoTData(destination.id);
-            const { crowdLevel, parkingAvailable, weatherIcon, temperature, airQuality, visitors } = data;
+        {loading ? (
+          // Skeleton Loading State
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            {Array.from({ length: 6 }, (_, index) => (
+              <IoTCardSkeleton key={`skeleton-${index}`} />
+            ))}
+          </motion.div>
+        ) : (
+          // Actual Content with Animations
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {destinations.map((destination, index) => {
+              const data = iotData[destination.id] || generateInitialIoTData(destination.id);
+              const { crowdLevel, parkingAvailable, weatherIcon, temperature, airQuality, visitors } = data;
 
-            // Get the appropriate weather icon component
-            const getWeatherIcon = (iconName) => {
-              switch (iconName) {
-                case 'Sun': return Sun;
-                case 'Cloud': return Cloud;
-                case 'CloudRain': return CloudRain;
-                default: return Sun;
-              }
-            };
+              // Get the appropriate weather icon component
+              const getWeatherIcon = (iconName) => {
+                switch (iconName) {
+                  case 'Sun': return Sun;
+                  case 'Cloud': return Cloud;
+                  case 'CloudRain': return CloudRain;
+                  default: return Sun;
+                }
+              };
 
-            const WeatherIconComponent = getWeatherIcon(weatherIcon);
+              const WeatherIconComponent = getWeatherIcon(weatherIcon);
 
-            return (
-              <Card
-                key={destination.id}
-                className="glass-card interactive-card border-white/10 animate-scale-in overflow-hidden"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center justify-between text-white font-['Montserrat']">
-                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                      <MapPin className="w-6 h-6 text-primary" />
-                      <span className="text-xl">{t(destination.name)}</span>
-                    </div>
-                    <Badge className="bg-primary/20 text-primary border-primary/30">
-                      <Activity className="w-3 h-3 mr-1 rtl:mr-0 rtl:ml-1" />
-                      {t({ ar: 'مباشر', en: 'Live' })}
-                    </Badge>
-                  </CardTitle>
-                </CardHeader>
+              return (
+                <motion.div
+                  key={destination.id}
+                  variants={cardVariants}
+                  whileHover="hover"
+                >
+                  <Card className="glass-card interactive-card border-white/10 overflow-hidden">
+                    <CardHeader className="pb-4">
+                      <CardTitle className="flex items-center justify-between text-white font-['Montserrat']">
+                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                          <MapPin className="w-6 h-6 text-primary" />
+                          <span className="text-xl">{t(destination.name)}</span>
+                        </div>
+                        <Badge className="bg-primary/20 text-primary border-primary/30">
+                          <Activity className="w-3 h-3 mr-1 rtl:mr-0 rtl:ml-1" />
+                          {t({ ar: 'مباشر', en: 'Live' })}
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
 
-                <CardContent className="space-y-6">
-                  {/* Congestion Gauge */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-center">
-                      <CircularProgress percentage={crowdLevel} />
-                      <p className="text-xs text-muted-foreground mt-3 font-['Open_Sans']">
-                        {t({ ar: 'مستوى الازدحام', en: 'Congestion Level' })}
-                      </p>
-                    </div>
+                    <CardContent className="space-y-6">
+                      {/* Congestion Gauge */}
+                      <div className="flex items-center justify-between">
+                        <div className="text-center">
+                          <CircularProgress percentage={crowdLevel} />
+                          <p className="text-xs text-muted-foreground mt-3 font-['Open_Sans']">
+                            {t({ ar: 'مستوى الازدحام', en: 'Congestion Level' })}
+                          </p>
+                        </div>
 
-                    <div className="space-y-4 flex-1 ml-8 rtl:ml-0 rtl:mr-8">
-                      {/* Parking Availability */}
+                        <div className="space-y-4 flex-1 ml-8 rtl:ml-0 rtl:mr-8">
+                          {/* Parking Availability */}
+                          <div className="flex items-center justify-between glass p-4 rounded-lg">
+                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                              <Car className="w-5 h-5 text-primary" />
+                              <span className="text-sm text-muted-foreground font-['Open_Sans']">
+                                {t({ ar: 'مواقف السيارات', en: 'Parking' })}
+                              </span>
+                            </div>
+                            <span className="text-sm font-semibold text-white">
+                              {Math.round(parkingAvailable)}% {t({ ar: 'متاح', en: 'Available' })}
+                            </span>
+                          </div>
+
+                          {/* Weather */}
+                          <div className="flex items-center justify-between glass p-4 rounded-lg">
+                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                              <WeatherIconComponent className="w-5 h-5 text-primary" />
+                              <span className="text-sm text-muted-foreground font-['Open_Sans']">
+                                {t({ ar: 'الطقس', en: 'Weather' })}
+                              </span>
+                            </div>
+                            <span className="text-sm font-semibold text-white">{Math.round(temperature)}°C</span>
+                          </div>
+
+                          {/* Air Quality */}
+                          <div className="flex items-center justify-between glass p-4 rounded-lg">
+                            <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                              <Cloud className="w-5 h-5 text-primary" />
+                              <span className="text-sm text-muted-foreground font-['Open_Sans']">
+                                {t({ ar: 'جودة الهواء', en: 'Air Quality' })}
+                              </span>
+                            </div>
+                            <span className="text-sm font-semibold text-white">{Math.round(airQuality)} AQI</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Visitors Count */}
                       <div className="flex items-center justify-between glass p-4 rounded-lg">
                         <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                          <Car className="w-5 h-5 text-primary" />
+                          <Users className="w-5 h-5 text-primary" />
                           <span className="text-sm text-muted-foreground font-['Open_Sans']">
-                            {t({ ar: 'مواقف السيارات', en: 'Parking' })}
+                            {t({ ar: 'الزوار الحاليون', en: 'Current Visitors' })}
                           </span>
                         </div>
                         <span className="text-sm font-semibold text-white">
-                          {Math.round(parkingAvailable)}% {t({ ar: 'متاح', en: 'Available' })}
+                          {Math.round(visitors)}
                         </span>
                       </div>
 
-                      {/* Weather */}
-                      <div className="flex items-center justify-between glass p-4 rounded-lg">
-                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                          <WeatherIconComponent className="w-5 h-5 text-primary" />
-                          <span className="text-sm text-muted-foreground font-['Open_Sans']">
-                            {t({ ar: 'الطقس', en: 'Weather' })}
-                          </span>
-                        </div>
-                        <span className="text-sm font-semibold text-white">{Math.round(temperature)}°C</span>
+                      {/* Last Update */}
+                      <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse pt-4 border-t border-white/10">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground font-['Open_Sans']">
+                          {t({ ar: 'آخر تحديث: الآن', en: 'Last updated: Now' })}
+                        </span>
                       </div>
-
-                      {/* Air Quality */}
-                      <div className="flex items-center justify-between glass p-4 rounded-lg">
-                        <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                          <Cloud className="w-5 h-5 text-primary" />
-                          <span className="text-sm text-muted-foreground font-['Open_Sans']">
-                            {t({ ar: 'جودة الهواء', en: 'Air Quality' })}
-                          </span>
-                        </div>
-                        <span className="text-sm font-semibold text-white">{Math.round(airQuality)} AQI</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Visitors Count */}
-                  <div className="flex items-center justify-between glass p-4 rounded-lg">
-                    <div className="flex items-center space-x-3 rtl:space-x-reverse">
-                      <Users className="w-5 h-5 text-primary" />
-                      <span className="text-sm text-muted-foreground font-['Open_Sans']">
-                        {t({ ar: 'الزوار الحاليون', en: 'Current Visitors' })}
-                      </span>
-                    </div>
-                    <span className="text-sm font-semibold text-white">
-                      {Math.round(visitors)}
-                    </span>
-                  </div>
-
-                  {/* Last Update */}
-                  <div className="flex items-center justify-center space-x-2 rtl:space-x-reverse pt-4 border-t border-white/10">
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground font-['Open_Sans']">
-                      {t({ ar: 'آخر تحديث: الآن', en: 'Last updated: Now' })}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
 
         {/* Smart Features Section */}
         <div className="mt-16">
-          <div className="text-center mb-8">
+          <motion.div
+            className="text-center mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
             <h2 className="text-3xl font-bold text-white mb-4 font-['Montserrat']">
               {t({ ar: 'الميزات الذكية', en: 'Smart Features' })}
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-['Open_Sans']">
               {t({
-                ar: 'استكشف أدواتنا المتقدمة التي تعتمد على الذكاء الاصطناعي لتحسين تجربة سفركم',
-                en: 'Explore our AI-powered advanced tools to enhance your travel experience'
+                ar: 'استكشف أدواتنا المتقدمة لتحسين تجربة سفركم',
+                en: 'Explore our advanced smart tools to enhance your travel experience'
               })}
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
             {/* Weather Station */}
-            <Link to="/weather" className="block group">
-              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <Sun className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
-                    {t({ ar: 'محطة الطقس', en: 'Weather Station' })}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
-                    {t({
-                      ar: 'تنبؤات دقيقة ومحدثة للطقس في جميع المواقع السياحية',
-                      en: 'Accurate real-time weather forecasts for all tourist locations'
-                    })}
-                  </p>
-                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 mt-3">
-                    {t({ ar: 'مباشر', en: 'Live' })}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </Link>
+            <motion.div variants={cardVariants}>
+              <Link to="/weather" className="block group">
+                <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Sun className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                      {t({ ar: 'محطة الطقس', en: 'Weather Station' })}
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                      {t({
+                        ar: 'تنبؤات دقيقة ومحدثة للطقس في جميع المواقع السياحية',
+                        en: 'Accurate real-time weather forecasts for all tourist locations'
+                      })}
+                    </p>
+                    <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 mt-3">
+                      {t({ ar: 'مباشر', en: 'Live' })}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
 
             {/* Crowd Prediction */}
-            <Link to="/crowd-prediction" className="block group">
-              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <Users className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
-                    {t({ ar: 'توقع الازدحام', en: 'Crowd Prediction' })}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
-                    {t({
-                      ar: 'تنبؤات ذكية بمستويات الازدحام لتخطيط زيارتكم الأمثل',
-                      en: 'Smart crowd level predictions for optimal visit planning'
-                    })}
-                  </p>
-                  <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 mt-3">
-                    {t({ ar: 'ذكي', en: 'AI' })}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </Link>
+            <motion.div variants={cardVariants}>
+              <Link to="/crowd-prediction" className="block group">
+                <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Users className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                      {t({ ar: 'توقع الازدحام', en: 'Crowd Prediction' })}
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                      {t({
+                        ar: 'تنبؤات ذكية بمستويات الازدحام لتخطيط زيارتكم الأمثل',
+                        en: 'Smart crowd level predictions for optimal visit planning'
+                      })}
+                    </p>
+                    <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 mt-3">
+                      {t({ ar: 'ذكي', en: 'AI' })}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
 
             {/* Smart Recommendations */}
-            <Link to="/smart-recommendations" className="block group">
-              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <Activity className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
-                    {t({ ar: 'التوصيات الذكية', en: 'Smart Recommendations' })}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
-                    {t({
-                      ar: 'اقتراحات مخصصة بناءً على تفضيلاتكم وسلوككم',
-                      en: 'Personalized suggestions based on your preferences and behavior'
-                    })}
-                  </p>
-                  <Badge className="bg-green-500/20 text-green-300 border-green-500/30 mt-3">
-                    {t({ ar: 'مخصص', en: 'Personal' })}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </Link>
+            <motion.div variants={cardVariants}>
+              <Link to="/smart-recommendations" className="block group">
+                <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Activity className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                      {t({ ar: 'التوصيات الذكية', en: 'Smart Recommendations' })}
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                      {t({
+                        ar: 'اقتراحات مخصصة بناءً على تفضيلاتكم وسلوككم',
+                        en: 'Personalized suggestions based on your preferences and behavior'
+                      })}
+                    </p>
+                    <Badge className="bg-green-500/20 text-green-300 border-green-500/30 mt-3">
+                      {t({ ar: 'مخصص', en: 'Personal' })}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
 
             {/* Voice Assistant */}
-            <Link to="/voice-assistant" className="block group">
-              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
-                <CardContent className="p-6 text-center">
-                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <Wifi className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
-                    {t({ ar: 'المساعد الصوتي', en: 'Voice Assistant' })}
-                  </h3>
-                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
-                    {t({
-                      ar: 'تفاعل صوتي ذكي للحصول على إجابات فورية ومساعدة شخصية',
-                      en: 'Smart voice interaction for instant answers and personal assistance'
-                    })}
-                  </p>
-                  <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30 mt-3">
-                    {t({ ar: 'صوتي', en: 'Voice' })}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </Link>
-          </div>
+            <motion.div variants={cardVariants}>
+              <Link to="/voice-assistant" className="block group">
+                <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                      <Wifi className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                      {t({ ar: 'المساعد الصوتي', en: 'Voice Assistant' })}
+                    </h3>
+                    <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                      {t({
+                        ar: 'تفاعل صوتي ذكي للحصول على إجابات فورية ومساعدة شخصية',
+                        en: 'Smart voice interaction for instant answers and personal assistance'
+                      })}
+                    </p>
+                    <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30 mt-3">
+                      {t({ ar: 'صوتي', en: 'Voice' })}
+                    </Badge>
+                  </CardContent>
+                </Card>
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* Statistics Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-4 gap-8 mt-16"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+        >
           <Card className="glass-card border-white/10 text-center">
             <CardContent className="p-8">
               <Activity className="w-10 h-10 text-primary mx-auto mb-4" />
@@ -386,7 +473,7 @@ const IoTHub = () => {
             <CardContent className="p-8">
               <Users className="w-10 h-10 text-primary mx-auto mb-4" />
               <div className="text-3xl font-bold text-white font-['Montserrat'] mb-2">
-                {Object.values(iotData).reduce((sum, data) => sum + (data.visitors || 0), 0)}
+                {Object.values(iotData).reduce((sum, data) => sum + (data.visitors || 0), 0) || 1250}
               </div>
               <div className="text-sm text-muted-foreground font-['Open_Sans']">
                 {t({ ar: 'زائر اليوم', en: 'Today\'s Visitors' })}
@@ -403,7 +490,7 @@ const IoTHub = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -1,17 +1,64 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { Loader2, Info, CheckCircle, XCircle, Users } from 'lucide-react';
+import { Loader2, Info, CheckCircle, XCircle, Users, Save, RefreshCw, Plus } from 'lucide-react';
 
 const Itinerary = () => {
   const { t } = useLanguage();
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
   // استورد المتغيرات الجديدة من السياق
-  const { suggestedItinerary, isSuggestingItinerary, fetchSuggestedItinerary } = useApp();
+  const {
+    suggestedItinerary,
+    isSuggestingItinerary,
+    fetchSuggestedItinerary,
+    user,
+    userPreferences,
+    language
+  } = useApp();
 
   // استدعِ الدالة مرة واحدة فقط عند تحميل المكون
   useEffect(() => {
     fetchSuggestedItinerary();
   }, []); // [] تضمن أن هذا يعمل مرة واحدة فقط
+
+  // دالة حفظ الخطة إلى قاعدة البيانات
+  const saveToItinerary = async () => {
+    if (!suggestedItinerary || isSaving) return;
+
+    setIsSaving(true);
+    setSaveSuccess(false);
+
+    try {
+      const response = await fetch('https://n8n.smart-tour.app/webhook/addToItinerary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          user: user ? { id: user.id, email: user.email } : null,
+          itinerary: suggestedItinerary,
+          preferences: userPreferences || {},
+          language: language || 'en',
+          timestamp: new Date().toISOString()
+        })
+      });
+
+      if (response.ok) {
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      } else {
+        throw new Error(`Save failed: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Error saving itinerary:', error);
+      // يمكن إضافة toast notification هنا
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const getCrowdLevelColor = (level) => {
     if (!level) return 'text-gray-400';
@@ -72,13 +119,61 @@ const Itinerary = () => {
         )}
 
         {/* Main Plan Details */}
-        <div className="mb-8 p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
+        <div className="mb-6 p-6 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
           <h2 className="text-2xl font-semibold mb-3 text-gray-800 dark:text-white">
             {t({ ar: 'تفاصيل الخطة', en: 'Plan Details' })}
           </h2>
           <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
             {tripPlan?.details || tripPlan || t({ ar: 'لا توجد تفاصيل خطة متاحة.', en: 'No plan details available.' })}
           </p>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8">
+          <button
+            onClick={saveToItinerary}
+            disabled={isSaving || !user}
+            className={`flex items-center justify-center px-6 py-3 font-semibold rounded-md shadow-md transition-all ${saveSuccess
+                ? 'bg-green-600 text-white'
+                : 'bg-purple-600 hover:bg-purple-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2'
+              } ${(!user || isSaving) ? 'opacity-50 cursor-not-allowed' : ''} dark:focus:ring-offset-gray-800`}
+          >
+            {isSaving ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : saveSuccess ? (
+              <CheckCircle className="w-5 h-5 mr-2" />
+            ) : (
+              <Save className="w-5 h-5 mr-2" />
+            )}
+            {isSaving
+              ? t({ ar: 'جاري الحفظ...', en: 'Saving...' })
+              : saveSuccess
+                ? t({ ar: 'تم الحفظ!', en: 'Saved!' })
+                : t({ ar: 'حفظ الخطة', en: 'Save Plan' })
+            }
+          </button>
+
+          <button
+            onClick={() => {
+              setSaveSuccess(false);
+              fetchSuggestedItinerary();
+            }}
+            disabled={isSuggestingItinerary}
+            className="flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSuggestingItinerary ? (
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+            ) : (
+              <RefreshCw className="w-5 h-5 mr-2" />
+            )}
+            {t({ ar: 'خطة جديدة', en: 'New Plan' })}
+          </button>
+
+          {!user && (
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
+              {t({ ar: 'سجل دخولك لحفظ الخطة', en: 'Login to save your plan' })}
+            </div>
+          )}
         </div>
 
         {/* Suggestion Box */}

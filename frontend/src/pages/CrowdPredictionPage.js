@@ -147,9 +147,9 @@ const CrowdPredictionPage = () => {
                                 {item.visitors} people
                             </div>
                             <div className={`w-16 text-xs font-medium px-2 py-1 rounded-full text-center ${item.recommendation === 'Perfect' ? 'bg-green-100 text-green-700' :
-                                    item.recommendation === 'Good' ? 'bg-blue-100 text-blue-700' :
-                                        item.recommendation === 'Busy' ? 'bg-yellow-100 text-yellow-700' :
-                                            'bg-red-100 text-red-700'
+                                item.recommendation === 'Good' ? 'bg-blue-100 text-blue-700' :
+                                    item.recommendation === 'Busy' ? 'bg-yellow-100 text-yellow-700' :
+                                        'bg-red-100 text-red-700'
                                 }`}>
                                 {item.recommendation}
                             </div>
@@ -173,7 +173,7 @@ const CrowdPredictionPage = () => {
                                 🔮 Crowd Prediction Dashboard
                             </h1>
                             <p className="text-gray-600">
-                                AI-powered crowd forecasting to help you plan the perfect visit
+                                Smart crowd forecasting to help you plan the perfect visit
                             </p>
                         </div>
                         <div className="text-6xl">📊</div>
@@ -193,8 +193,8 @@ const CrowdPredictionPage = () => {
                                     <label
                                         key={destination.id}
                                         className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${selectedDestination === destination.id
-                                                ? 'border-blue-500 bg-blue-50'
-                                                : 'border-gray-300 hover:border-gray-400'
+                                            ? 'border-blue-500 bg-blue-50'
+                                            : 'border-gray-300 hover:border-gray-400'
                                             }`}
                                     >
                                         <input
@@ -219,8 +219,8 @@ const CrowdPredictionPage = () => {
                             </label>
                             <div className="space-y-2">
                                 <label className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${timeRange === 'week'
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-300 hover:border-gray-400'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-300 hover:border-gray-400'
                                     }`}>
                                     <input
                                         type="radio"
@@ -238,8 +238,8 @@ const CrowdPredictionPage = () => {
                                 </label>
 
                                 <label className={`flex items-center p-3 border rounded-lg cursor-pointer transition-all ${timeRange === 'day'
-                                        ? 'border-blue-500 bg-blue-50'
-                                        : 'border-gray-300 hover:border-gray-400'
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-300 hover:border-gray-400'
                                     }`}>
                                     <input
                                         type="radio"
@@ -372,12 +372,12 @@ const CrowdPredictionPage = () => {
                     </div>
                 </div>
 
-                {/* AI Predictions */}
+                {/* Smart Predictions */}
                 <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg p-6 mb-8">
                     <div className="flex items-start justify-between">
                         <div className="flex-1">
                             <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                🤖 AI Prediction Analysis
+                                🤖 Smart Prediction Analysis
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div>

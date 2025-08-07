@@ -61,7 +61,7 @@ frontend/src/pages/
 ├── 📄 IoTHub.js                      # مركز إنترنت الأشياء
 ├── 📄 Demo.js                        # صفحة العرض التفاعلي
 ├── 📄 ARView.js                      # عرض الواقع المعزز
-├── 📄 VoiceAgentPage.js              # صفحة الوكيل الصوتي
+├── 📄 VoiceAgentPage.js              # صفحة الصوت
 ├── 📄 VoiceAssistantPage.js          # مساعد صوتي متقدم
 ├── 📄 WeatherStationPage.js          # محطة الطقس
 ├── 📄 CrowdPredictionPage.js         # توقع الازدحام
@@ -88,7 +88,7 @@ frontend/src/pages/
 frontend/src/components/
 ├── 📄 Header.js                      # رأس الصفحة
 ├── 📄 Footer.js                      # تذييل الصفحة
-├── 📄 Chatbot.js                     # روبوت المحادثة الذكي
+├── 📄 Chatbot.js                     # روبوت المحادثة
 ├── 📄 NotificationSystem.js          # نظام الإشعارات
 ├── 📄 ProtectedRoute.js              # الصفحات المحمية
 └── 📄 SmartToolsSidebar.js           # شريط الأدوات الذكية
@@ -318,7 +318,7 @@ frontend/build/
 4. **📊 Data Hub** - مركز البيانات المباشرة
 5. **🔧 IoT Hub** - لوحة تحكم إنترنت الأشياء
 6. **🎬 Demo** - عرض تفاعلي للميزات
-7. **🤖 AI Chatbot** - محادثة ذكية متقدمة
+7. **🤖 Smart Chatbot** - محادثة ذكية متقدمة
 8. **🎫 Booking Engine** - نظام حجز من 4 خطوات
 9. **👥 User Management** - إدارة شاملة للمستخدمين
 10. **🛡️ Admin Dashboard** - لوحة تحكم إدارية كاملة

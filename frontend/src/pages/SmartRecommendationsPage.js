@@ -196,7 +196,7 @@ const SmartRecommendationsPage = () => {
                                 🎯 Smart Recommendations
                             </h1>
                             <p className="text-gray-600">
-                                AI-powered suggestions tailored to your interests and preferences
+                                Personalized suggestions tailored to your interests and preferences
                             </p>
                         </div>
                         <div className="text-6xl">🤖</div>
@@ -219,8 +219,8 @@ const SmartRecommendationsPage = () => {
                                         <label
                                             key={interest.id}
                                             className={`flex items-center p-2 rounded-md cursor-pointer transition-colors ${userPreferences.interests.includes(interest.id)
-                                                    ? 'bg-blue-50 text-blue-700'
-                                                    : 'hover:bg-gray-50'
+                                                ? 'bg-blue-50 text-blue-700'
+                                                : 'hover:bg-gray-50'
                                                 }`}
                                         >
                                             <input
@@ -312,8 +312,8 @@ const SmartRecommendationsPage = () => {
                                         key={tab.id}
                                         onClick={() => setActiveTab(tab.id)}
                                         className={`flex-1 py-4 px-6 text-center transition-colors ${activeTab === tab.id
-                                                ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50'
-                                                : 'text-gray-600 hover:text-gray-800'
+                                            ? 'border-b-2 border-blue-600 text-blue-600 bg-blue-50'
+                                            : 'text-gray-600 hover:text-gray-800'
                                             }`}
                                     >
                                         <div className="font-medium">{tab.name}</div>
@@ -409,10 +409,10 @@ const SmartRecommendationsPage = () => {
                             )}
                         </div>
 
-                        {/* AI Insights */}
+                        {/* Smart Insights */}
                         <div className="bg-gradient-to-r from-purple-100 to-blue-100 rounded-lg p-6 mt-8">
                             <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                                🧠 AI Insights
+                                🧠 Smart Insights
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                                 <div className="bg-white rounded-md p-3">

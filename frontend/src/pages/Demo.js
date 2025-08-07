@@ -264,7 +264,7 @@ const Demo = () => {
             <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl mx-auto font-['Open_Sans'] mb-8">
               {t({
                 ar: 'نجمع بين الذكاء الاصطناعي والواقع المعزز وإنترنت الأشياء لتقديم تجربة سياحية تفاعلية لا مثيل لها',
-                en: 'We combine artificial intelligence, augmented reality, and IoT to deliver an unparalleled interactive tourism experience'
+                en: 'We combine smart technology, augmented reality, and IoT to deliver an unparalleled interactive tourism experience'
               })}
             </p>
             <div className="flex items-center justify-center space-x-8 rtl:space-x-reverse text-base text-muted-foreground">

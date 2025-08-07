@@ -201,13 +201,11 @@ const Chatbot = () => {
       return enhanced;
     };
 
-    // Get enhanced details from original user input
     const userInput = localChatMessages[localChatMessages.length - 2]?.text || '';
     const enhancedDetails = extractEnhancedDetails(userInput);
 
     let response = "🎯 Perfect! I understand you want to book a trip. ";
 
-    // Build detailed response based on extracted information
     if (enhancedDetails.destination) {
       const destName = enhancedDetails.destination.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
       response += `You're interested in visiting ${destName}. `;
@@ -233,7 +231,6 @@ const Chatbot = () => {
 
     response += "\n\n💡 Based on your request, I can help you find the perfect tour options!";
 
-    // Add bot response with enhanced booking context
     const botResponse = {
       id: Date.now() + 1,
       text: response,
@@ -262,7 +259,6 @@ const Chatbot = () => {
         }
       ];
 
-      // Add specific actions based on extracted details
       if (enhancedDetails.destination) {
         actions.push({
           text: `📍 ${enhancedDetails.destination.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Specials`,

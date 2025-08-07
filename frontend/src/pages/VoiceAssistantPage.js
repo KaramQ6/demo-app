@@ -103,26 +103,23 @@ const VoiceAssistantPage = () => {
         // Simulate processing delay
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        // Generate AI response based on command
-        const aiResponse = generateAIResponse(command.toLowerCase());
+        const assistantResponse = generateResponse(command.toLowerCase());
 
         const assistantMessage = {
             id: Date.now() + 1,
             type: 'assistant',
-            text: aiResponse,
+            text: assistantResponse,
             timestamp: new Date().toLocaleTimeString()
         };
 
         setConversationHistory(prev => [...prev, assistantMessage]);
-        setResponse(aiResponse);
+        setResponse(assistantResponse);
 
-        // Speak the response
-        speakText(aiResponse);
+        speakText(assistantResponse);
         setIsProcessing(false);
     };
 
-    // Generate AI responses based on voice commands
-    const generateAIResponse = (command) => {
+    const generateResponse = (command) => {
         // Tourism and travel related responses
         if (command.includes('petra') || command.includes('treasury')) {
             return "Petra is Jordan's most famous archaeological site! The Treasury is best viewed in the morning light around 9 AM. Would you like me to help you plan a visit or book a guided tour?";
@@ -244,7 +241,7 @@ const VoiceAssistantPage = () => {
                                 🎤 Voice Assistant
                             </h1>
                             <p className="text-gray-600">
-                                Your AI-powered Jordan travel companion - just speak naturally!
+                                Your smart Jordan travel companion - just speak naturally!
                             </p>
                         </div>
                         <div className="text-6xl">🤖</div>
@@ -278,8 +275,8 @@ const VoiceAssistantPage = () => {
                                         onClick={toggleListening}
                                         disabled={micPermission === 'denied' || micPermission === 'not-supported'}
                                         className={`w-24 h-24 rounded-full text-4xl transition-all duration-300 ${isListening
-                                                ? 'bg-red-500 text-white shadow-lg scale-110'
-                                                : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'
+                                            ? 'bg-red-500 text-white shadow-lg scale-110'
+                                            : 'bg-blue-500 text-white hover:bg-blue-600 hover:scale-105'
                                             } ${micPermission === 'denied' || micPermission === 'not-supported'
                                                 ? 'opacity-50 cursor-not-allowed'
                                                 : 'cursor-pointer'
@@ -348,8 +345,8 @@ const VoiceAssistantPage = () => {
                                     conversationHistory.map(message => (
                                         <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                                             <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.type === 'user'
-                                                    ? 'bg-blue-600 text-white'
-                                                    : 'bg-gray-200 text-gray-800'
+                                                ? 'bg-blue-600 text-white'
+                                                : 'bg-gray-200 text-gray-800'
                                                 }`}>
                                                 <p className="text-sm">{message.text}</p>
                                                 <p className={`text-xs mt-1 ${message.type === 'user' ? 'text-blue-200' : 'text-gray-500'

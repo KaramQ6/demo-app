@@ -120,7 +120,6 @@ const Header = () => {
     return location.pathname.startsWith(path);
   };
 
-  // Handle Plan Trip click - opens chatbot for now
   const handlePlanTripClick = (e) => {
     if (location.pathname !== '/plan-trip') {
       e.preventDefault();

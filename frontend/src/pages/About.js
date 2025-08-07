@@ -232,7 +232,7 @@ const About = () => {
             <div className="flex items-center justify-center space-x-8 rtl:space-x-reverse mt-8 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Brain className="w-5 h-5 text-primary" />
-                <span>{t({ ar: 'ذكاء اصطناعي', en: 'Artificial Intelligence' })}</span>
+                <span>{t({ ar: 'تقنية ذكية', en: 'Smart Technology' })}</span>
               </div>
               <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Activity className="w-5 h-5 text-primary" />

@@ -10,7 +10,8 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Chatbot from "./components/Chatbot";
 import ProtectedRoute from "./components/ProtectedRoute";
-import SmartToolsSidebar from "./components/SmartToolsSidebar";
+import SmartToolsSidebar from "./components/SmartToolsSidebarSimple";
+import GlobalError from "./components/GlobalError";
 
 // Lazy-loaded Pages
 const Homepage = React.lazy(() => import("./pages/Homepage"));
@@ -19,7 +20,7 @@ const DestinationDetail = React.lazy(() => import("./pages/DestinationDetail"));
 const DataHub = React.lazy(() => import("./pages/DataHub"));
 const IoTHub = React.lazy(() => import("./pages/IoTHub"));
 const About = React.lazy(() => import("./pages/About"));
-const VoiceAgentPage = React.lazy(() => import("./pages/VoiceAgentPage"));
+const VoiceAssistantPage = React.lazy(() => import("./pages/VoiceAssistantPage"));
 const UserProfile = React.lazy(() => import("./pages/UserProfile"));
 const Itinerary = React.lazy(() => import("./pages/Itinerary"));
 const MyPlan = React.lazy(() => import("./pages/MyPlan"));
@@ -41,21 +42,20 @@ const AdminDashboardPage = React.lazy(() => import('./pages/AdminDashboardPage')
 const WeatherStationPage = React.lazy(() => import('./pages/WeatherStationPage'));
 const CrowdPredictionPage = React.lazy(() => import('./pages/CrowdPredictionPage'));
 const SmartRecommendationsPage = React.lazy(() => import('./pages/SmartRecommendationsPage'));
-const VoiceAssistantPage = React.lazy(() => import('./pages/VoiceAssistantPage'));
 
 // Internal component to handle layout based on route
 function AppContent() {
   const location = useLocation();
   const isArPage = location.pathname === '/ar';
-  const isVoiceAgentPage = location.pathname === '/voice-agent';
+  const isVoiceAssistantPage = location.pathname === '/voice-assistant';
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/reset-password' || location.pathname === '/reset-password-confirm';
 
   return (
     <div className="App min-h-screen bg-background text-foreground">
       <AppProvider>
-        {!isArPage && !isAuthPage && !isVoiceAgentPage && <Header />}
-        {!isArPage && !isAuthPage && !isVoiceAgentPage && <SmartToolsSidebar />}
-        <main className={isArPage ? 'ar-main' : !isArPage && !isAuthPage && !isVoiceAgentPage ? 'ml-0 md:ml-16 transition-all duration-300' : ''}>
+        {!isArPage && !isAuthPage && !isVoiceAssistantPage && <Header />}
+        {!isArPage && !isAuthPage && !isVoiceAssistantPage && <SmartToolsSidebar />}
+        <main className={isArPage ? 'ar-main' : !isArPage && !isAuthPage && !isVoiceAssistantPage ? 'ml-0 md:ml-16 transition-all duration-300' : ''}>
           <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-lg">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Homepage />} />
@@ -64,7 +64,7 @@ function AppContent() {
               <Route path="/data" element={<DataHub />} />
               <Route path="/iot-hub" element={<IoTHub />} />
               <Route path="/about" element={<About />} />
-              <Route path="/voice-agent" element={<VoiceAgentPage />} />
+              <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
               <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
               <Route path="/itinerary" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
               <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
@@ -90,8 +90,9 @@ function AppContent() {
             </Routes>
           </Suspense>
         </main>
-        {!isArPage && !isAuthPage && !isVoiceAgentPage && <Footer />}
-        {!isArPage && !isAuthPage && !isVoiceAgentPage && <Chatbot />}
+        {!isArPage && !isAuthPage && !isVoiceAssistantPage && <Footer />}
+        {!isArPage && !isAuthPage && !isVoiceAssistantPage && <Chatbot />}
+        <GlobalError />
         <Toaster />
       </AppProvider>
     </div>

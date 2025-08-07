@@ -22,7 +22,7 @@ import {
     Target,
     Lightbulb
 } from 'lucide-react';
-import { aiAPI } from '../api';
+import { weatherAPI } from '../api';
 
 const PredictivePlanner = () => {
     const [preferences, setPreferences] = useState({
@@ -158,7 +158,6 @@ const PredictivePlanner = () => {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         try {
-            // In a real implementation, this would call aiAPI.getPredictedTrip(preferences)
             setPredictedTrip(mockPredictedTrip);
             setConfidence(mockPredictedTrip.confidence);
         } catch (error) {
@@ -173,7 +172,7 @@ const PredictivePlanner = () => {
             <div className="flex-1 bg-gray-200 rounded-full h-2">
                 <div
                     className={`h-2 rounded-full transition-all duration-500 ${score >= 90 ? 'bg-green-500' :
-                            score >= 70 ? 'bg-yellow-500' : 'bg-red-500'
+                        score >= 70 ? 'bg-yellow-500' : 'bg-red-500'
                         }`}
                     style={{ width: `${score}%` }}
                 />
@@ -188,7 +187,7 @@ const PredictivePlanner = () => {
                 <div className="flex items-center justify-between">
                     <div>
                         <CardTitle className="text-xl text-blue-800">{trip.title}</CardTitle>
-                        <CardDescription>AI-Generated Perfect Trip for You</CardDescription>
+                        <CardDescription>Personalized Perfect Trip for You</CardDescription>
                     </div>
                     <div className="text-right">
                         <div className="text-2xl font-bold text-green-600">${trip.totalBudget}</div>
@@ -355,15 +354,15 @@ const PredictivePlanner = () => {
                         <Brain className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold">AI Predictive Planner</h1>
-                        <p className="text-gray-600">Let our AI create the perfect Jordan itinerary for you</p>
+                        <h1 className="text-3xl font-bold">Smart Trip Planner</h1>
+                        <p className="text-gray-600">Let us create the perfect Jordan itinerary for you</p>
                     </div>
                 </div>
 
                 <div className="flex items-center space-x-4 text-sm">
                     <div className="flex items-center space-x-1">
                         <Zap className="w-4 h-4 text-yellow-500" />
-                        <span>Powered by advanced AI</span>
+                        <span>Powered by smart algorithms</span>
                     </div>
                     <div className="flex items-center space-x-1">
                         <Target className="w-4 h-4 text-green-500" />
@@ -561,7 +560,7 @@ const PredictivePlanner = () => {
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-600">Ready to Plan Your Perfect Trip?</h3>
                                     <p className="text-gray-500">
-                                        Set your preferences on the left and click "Generate My Perfect Trip" to see AI-powered recommendations.
+                                        Set your preferences on the left and click "Generate My Perfect Trip" to see personalized recommendations.
                                     </p>
                                 </div>
                             </div>

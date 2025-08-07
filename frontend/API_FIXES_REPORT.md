@@ -69,15 +69,15 @@ console.error(`JSON parsing error for ${city}:`, jsonError, "Response:", text.su
 // معالجة شاملة للشات بوت
 const text = await response.text();
 if (!text || text.trim() === '') {
-    throw new Error('Empty response from chatbot');
+    throw new Error('Empty response from chat service');
 }
 
 let data;
 try {
     data = JSON.parse(text);
 } catch (jsonError) {
-    console.error("Chatbot JSON parsing error:", jsonError, "Response:", text);
-    throw new Error('Invalid JSON response from chatbot');
+    console.error("Chat JSON parsing error:", jsonError, "Response:", text);
+    throw new Error('Invalid JSON response from chat service');
 }
 ```
 

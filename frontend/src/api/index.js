@@ -73,18 +73,18 @@ export const destinationsAPI = {
     getRecommendedDestinations: (userId) => apiRequest(`/destinations/recommended/${userId}`),
 };
 
-// AI & Prediction APIs
-export const aiAPI = {
-    getPredictedTrip: (preferences) => apiRequest('/ai/predict-trip', {
+// Weather & Data APIs
+export const weatherAPI = {
+    getWeatherData: (preferences) => apiRequest('/weather/data', {
         method: 'POST',
         body: JSON.stringify(preferences),
     }),
-    getCrowdPredictionData: (destinationId) => apiRequest(`/ai/crowd-prediction/${destinationId}`),
-    processNaturalLanguage: (query) => apiRequest('/ai/nlp', {
+    getCrowdData: (destinationId) => apiRequest(`/weather/crowd/${destinationId}`),
+    processLocation: (query) => apiRequest('/weather/location', {
         method: 'POST',
         body: JSON.stringify({ query }),
     }),
-    getChatbotResponse: (message, context) => apiRequest('/ai/chatbot', {
+    getWeatherResponse: (message, context) => apiRequest('/weather/info', {
         method: 'POST',
         body: JSON.stringify({ message, context }),
     }),
@@ -174,16 +174,16 @@ export const itineraryAPI = {
     }),
 };
 
-// Voice Agent APIs
-export const voiceAPI = {
-    processVoiceCommand: (audioData) => apiRequest('/voice/process', {
+// Audio Processing APIs
+export const audioAPI = {
+    processAudioCommand: (audioData) => apiRequest('/audio/process', {
         method: 'POST',
         body: audioData,
         headers: {
             'Content-Type': 'audio/wav',
         },
     }),
-    getVoiceResponse: (text) => apiRequest('/voice/synthesize', {
+    getAudioResponse: (text) => apiRequest('/audio/synthesize', {
         method: 'POST',
         body: JSON.stringify({ text }),
     }),
@@ -200,12 +200,12 @@ export default {
     auth: authAPI,
     profile: profileAPI,
     destinations: destinationsAPI,
-    ai: aiAPI,
+    weather: weatherAPI,
     booking: bookingAPI,
     partnership: partnershipAPI,
     community: communityAPI,
     admin: adminAPI,
     itinerary: itineraryAPI,
-    voice: voiceAPI,
+    audio: audioAPI,
     handleError: handleAPIError,
 };
