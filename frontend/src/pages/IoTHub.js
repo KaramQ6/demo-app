@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Activity, Car, Cloud, Sun, CloudRain, Wifi, MapPin, Users, Clock, Thermometer } from 'lucide-react';
@@ -15,7 +16,7 @@ const IoTHub = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setLastUpdate(new Date());
-      
+
       // Update IoT data for all destinations with slight variations
       destinations.forEach(destination => {
         const currentData = iotData[destination.id] || generateInitialIoTData(destination.id);
@@ -58,10 +59,10 @@ const IoTHub = () => {
     const crowdLevels = [25, 45, 65, 85, 30, 55];
     const parkingLevels = [80, 60, 45, 25, 75, 90];
     const weatherIcons = ['Sun', 'Cloud', 'CloudRain'];
-    
+
     const index = destinations.findIndex(d => d.id === destinationId);
     const baseIndex = index >= 0 ? index : 0;
-    
+
     return {
       crowdLevel: crowdLevels[baseIndex % crowdLevels.length] + Math.floor(Math.random() * 10),
       parkingAvailable: parkingLevels[baseIndex % parkingLevels.length] + Math.floor(Math.random() * 10),
@@ -77,7 +78,7 @@ const IoTHub = () => {
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const strokeDasharray = `${(percentage / 100) * circumference} ${circumference}`;
-    
+
     let colorClass = 'progress-low';
     if (percentage > 70) colorClass = 'progress-high';
     else if (percentage > 40) colorClass = 'progress-medium';
@@ -113,7 +114,7 @@ const IoTHub = () => {
   return (
     <div className="min-h-screen py-16 px-6">
       <div className="max-w-7xl mx-auto">
-        
+
         {/* Header Section */}
         <div className="text-center mb-16 animate-slide-up">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 font-['Montserrat']">
@@ -123,7 +124,7 @@ const IoTHub = () => {
           <p className="text-xl text-muted-foreground max-w-4xl mx-auto font-['Open_Sans'] mb-12">
             {t(pageDescription)}
           </p>
-          
+
           {/* Live Status Indicator */}
           <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse glass-card p-6 max-w-lg mx-auto rounded-2xl">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
@@ -144,22 +145,22 @@ const IoTHub = () => {
           {destinations.map((destination, index) => {
             const data = iotData[destination.id] || generateInitialIoTData(destination.id);
             const { crowdLevel, parkingAvailable, weatherIcon, temperature, airQuality, visitors } = data;
-            
+
             // Get the appropriate weather icon component
             const getWeatherIcon = (iconName) => {
-              switch(iconName) {
+              switch (iconName) {
                 case 'Sun': return Sun;
                 case 'Cloud': return Cloud;
                 case 'CloudRain': return CloudRain;
                 default: return Sun;
               }
             };
-            
+
             const WeatherIconComponent = getWeatherIcon(weatherIcon);
-            
+
             return (
-              <Card 
-                key={destination.id} 
+              <Card
+                key={destination.id}
                 className="glass-card interactive-card border-white/10 animate-scale-in overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
@@ -175,7 +176,7 @@ const IoTHub = () => {
                     </Badge>
                   </CardTitle>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-6">
                   {/* Congestion Gauge */}
                   <div className="flex items-center justify-between">
@@ -185,7 +186,7 @@ const IoTHub = () => {
                         {t({ ar: 'مستوى الازدحام', en: 'Congestion Level' })}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-4 flex-1 ml-8 rtl:ml-0 rtl:mr-8">
                       {/* Parking Availability */}
                       <div className="flex items-center justify-between glass p-4 rounded-lg">
@@ -250,6 +251,115 @@ const IoTHub = () => {
           })}
         </div>
 
+        {/* Smart Features Section */}
+        <div className="mt-16">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-white mb-4 font-['Montserrat']">
+              {t({ ar: 'الميزات الذكية', en: 'Smart Features' })}
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-['Open_Sans']">
+              {t({
+                ar: 'استكشف أدواتنا المتقدمة التي تعتمد على الذكاء الاصطناعي لتحسين تجربة سفركم',
+                en: 'Explore our AI-powered advanced tools to enhance your travel experience'
+              })}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {/* Weather Station */}
+            <Link to="/weather" className="block group">
+              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Sun className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                    {t({ ar: 'محطة الطقس', en: 'Weather Station' })}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                    {t({
+                      ar: 'تنبؤات دقيقة ومحدثة للطقس في جميع المواقع السياحية',
+                      en: 'Accurate real-time weather forecasts for all tourist locations'
+                    })}
+                  </p>
+                  <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 mt-3">
+                    {t({ ar: 'مباشر', en: 'Live' })}
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Crowd Prediction */}
+            <Link to="/crowd-prediction" className="block group">
+              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Users className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                    {t({ ar: 'توقع الازدحام', en: 'Crowd Prediction' })}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                    {t({
+                      ar: 'تنبؤات ذكية بمستويات الازدحام لتخطيط زيارتكم الأمثل',
+                      en: 'Smart crowd level predictions for optimal visit planning'
+                    })}
+                  </p>
+                  <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/30 mt-3">
+                    {t({ ar: 'ذكي', en: 'AI' })}
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Smart Recommendations */}
+            <Link to="/smart-recommendations" className="block group">
+              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Activity className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                    {t({ ar: 'التوصيات الذكية', en: 'Smart Recommendations' })}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                    {t({
+                      ar: 'اقتراحات مخصصة بناءً على تفضيلاتكم وسلوككم',
+                      en: 'Personalized suggestions based on your preferences and behavior'
+                    })}
+                  </p>
+                  <Badge className="bg-green-500/20 text-green-300 border-green-500/30 mt-3">
+                    {t({ ar: 'مخصص', en: 'Personal' })}
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+
+            {/* Voice Assistant */}
+            <Link to="/voice-assistant" className="block group">
+              <Card className="glass-card border-white/10 h-full hover:scale-105 transition-all duration-300 cursor-pointer">
+                <CardContent className="p-6 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Wifi className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2 font-['Montserrat']">
+                    {t({ ar: 'المساعد الصوتي', en: 'Voice Assistant' })}
+                  </h3>
+                  <p className="text-sm text-muted-foreground font-['Open_Sans']">
+                    {t({
+                      ar: 'تفاعل صوتي ذكي للحصول على إجابات فورية ومساعدة شخصية',
+                      en: 'Smart voice interaction for instant answers and personal assistance'
+                    })}
+                  </p>
+                  <Badge className="bg-orange-500/20 text-orange-300 border-orange-500/30 mt-3">
+                    {t({ ar: 'صوتي', en: 'Voice' })}
+                  </Badge>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </div>
+
         {/* Statistics Summary */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <Card className="glass-card border-white/10 text-center">
@@ -261,7 +371,7 @@ const IoTHub = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="glass-card border-white/10 text-center">
             <CardContent className="p-8">
               <Wifi className="w-10 h-10 text-primary mx-auto mb-4" />
@@ -271,7 +381,7 @@ const IoTHub = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="glass-card border-white/10 text-center">
             <CardContent className="p-8">
               <Users className="w-10 h-10 text-primary mx-auto mb-4" />
@@ -283,7 +393,7 @@ const IoTHub = () => {
               </div>
             </CardContent>
           </Card>
-          
+
           <Card className="glass-card border-white/10 text-center">
             <CardContent className="p-8">
               <MapPin className="w-10 h-10 text-primary mx-auto mb-4" />

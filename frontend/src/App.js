@@ -31,6 +31,18 @@ const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
 const ResetPasswordConfirmPage = React.lazy(() => import('./pages/ResetPasswordConfirmPage'));
 const PlanTripPlaceholder = React.lazy(() => import('./pages/PlanTripPlaceholder'));
 
+// New scaffold pages
+const ProfilePage = React.lazy(() => import('./pages/ProfilePage'));
+const CommunityPage = React.lazy(() => import('./pages/CommunityPage'));
+const BookingPage = React.lazy(() => import('./pages/BookingPage'));
+const AdminDashboardPage = React.lazy(() => import('./pages/AdminDashboardPage'));
+
+// IoT and Smart Features pages
+const WeatherStationPage = React.lazy(() => import('./pages/WeatherStationPage'));
+const CrowdPredictionPage = React.lazy(() => import('./pages/CrowdPredictionPage'));
+const SmartRecommendationsPage = React.lazy(() => import('./pages/SmartRecommendationsPage'));
+const VoiceAssistantPage = React.lazy(() => import('./pages/VoiceAssistantPage'));
+
 // Internal component to handle layout based on route
 function AppContent() {
   const location = useLocation();
@@ -63,6 +75,18 @@ function AppContent() {
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/reset-password-confirm" element={<ResetPasswordConfirmPage />} />
               <Route path="/plan-trip" element={<PlanTripPlaceholder />} />
+
+              {/* New scaffold routes */}
+              <Route path="/profile-page" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/booking" element={<BookingPage />} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+
+              {/* IoT and Smart Features routes */}
+              <Route path="/weather" element={<WeatherStationPage />} />
+              <Route path="/crowd-prediction" element={<CrowdPredictionPage />} />
+              <Route path="/smart-recommendations" element={<SmartRecommendationsPage />} />
+              <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
             </Routes>
           </Suspense>
         </main>
