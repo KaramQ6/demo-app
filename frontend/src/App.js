@@ -28,6 +28,7 @@ const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage'));
 const ResetPasswordConfirmPage = React.lazy(() => import('./pages/ResetPasswordConfirmPage'));
+const PlanTripPlaceholder = React.lazy(() => import('./pages/PlanTripPlaceholder'));
 
 // Internal component to handle layout based on route
 function AppContent() {
@@ -59,6 +60,7 @@ function AppContent() {
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/reset-password" element={<ResetPasswordPage />} />
               <Route path="/reset-password-confirm" element={<ResetPasswordConfirmPage />} />
+              <Route path="/plan-trip" element={<PlanTripPlaceholder />} />
             </Routes>
           </Suspense>
         </main>

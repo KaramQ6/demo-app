@@ -55,34 +55,198 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen">
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* OPTIMIZED MOBILE HERO SECTION */}
+      <section className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
         <div ref={heroRef} className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1574082512734-8336f25bb9d8" alt="Wadi Rum Desert" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73e0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Wadi Rum Desert Jordan" className="w-full h-full object-cover" />
         </div>
-        <div className="relative z-20 text-center px-6 max-w-5xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">{t({ ar: 'اكتشف الأردن الحقيقي، بعيداً عن الزحام', en: 'Discover the Real Jordan, Away from the Crowds' })}</h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">{t({ ar: 'خطط لرحلتك بذكاء مع مرشدك الشخصي جواد', en: 'Plan your trip intelligently with your personal guide Jawad' })}</p>
-          <Button onClick={handleCTAClick} size="lg" className="gradient-purple text-white px-8 py-4 text-lg font-semibold">
-            {t({ ar: 'خطط لرحلتك الآن', en: 'Plan Your Trip Now' })} {isRTL ? <ArrowLeft className="ml-2" /> : <ArrowRight className="ml-2" />}
-          </Button>
+        
+        <div className="relative z-20 text-center px-4 md:px-6 max-w-5xl mx-auto">
+          {/* MOBILE-OPTIMIZED HERO CONTENT */}
+          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight">
+            {t({ 
+              ar: 'اكتشف كنوز الأردن المخفية مع جواد', 
+              en: 'Discover Jordan\'s Hidden Gems with AI Guide Jawad' 
+            })}
+          </h1>
+          
+          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
+            {t({ 
+              ar: 'خطط رحلتك المثالية بالذكاء الاصطناعي واكتشف الأردن كما لم تره من قبل', 
+              en: 'Plan your perfect trip with AI and discover Jordan like never before' 
+            })}
+          </p>
+
+          {/* CRITICAL: MOBILE CTA ABOVE FOLD */}
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-8">
+            <Button 
+              onClick={handleCTAClick} 
+              size="lg" 
+              className="gradient-purple text-white px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] hover:scale-105 transition-transform shadow-2xl"
+            >
+              {t({ ar: 'خطط رحلتك الآن', en: 'Plan Your Trip Now' })} 
+              {isRTL ? <ArrowLeft className="ml-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
+            </Button>
+            
+            <Link to="/destinations">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="border-white/30 text-white hover:bg-white/10 px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] backdrop-blur-sm"
+              >
+                {t({ ar: 'استكشف الوجهات', en: 'Explore Destinations' })}
+              </Button>
+            </Link>
+          </div>
         </div>
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xs md:max-w-sm px-6 z-20">
+
+        {/* SIMPLIFIED LOCATION STATUS */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xs md:max-w-sm px-4 z-20">
           <button onClick={handleLocationStatusClick} className="w-full glass-card hover:bg-white/10 transition-all rounded-2xl p-3 border border-white/20 animate-fade-in-up group">
             {isLoadingData ? (
-              <div className="flex items-center justify-center text-white text-sm"><Loader2 className="w-4 h-4 mr-2 animate-spin" /><span>{t({ ar: 'جاري تحديد الموقع...', en: 'Detecting location...' })}</span></div>
+              <div className="flex items-center justify-center text-white text-sm">
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <span>{t({ ar: 'جاري تحديد الموقع...', en: 'Detecting location...' })}</span>
+              </div>
             ) : liveData && liveData.cityName ? (
               <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
-                <div className="flex items-center space-x-1 rtl:space-x-reverse"><MapPin className="w-4 h-4 text-blue-400" /><span className="text-sm font-medium">{liveData.cityName}</span></div>
-                <div className="flex items-center space-x-1 rtl:space-x-reverse"><Thermometer className="w-4 h-4 text-orange-400" /><span className="text-sm font-medium">{liveData.temperature}°م</span></div>
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <MapPin className="w-4 h-4 text-blue-400" />
+                  <span className="text-sm font-medium">{liveData.cityName}</span>
+                </div>
+                <div className="flex items-center space-x-1 rtl:space-x-reverse">
+                  <Thermometer className="w-4 h-4 text-orange-400" />
+                  <span className="text-sm font-medium">{liveData.temperature}°C</span>
+                </div>
               </div>
             ) : (
-              <div className="text-center text-xs text-red-400">{t({ ar: 'فشل تحديد الموقع', en: 'Location access failed' })}</div>
+              <div className="text-center text-xs text-red-400">
+                {t({ ar: 'فشل تحديد الموقع', en: 'Location access failed' })}
+              </div>
             )}
           </button>
         </div>
       </section>
-      {/* ... Other sections remain the same ... */}
+
+      {/* HOW IT WORKS SECTION - MOBILE OPTIMIZED */}
+      <section className="py-16 md:py-20 px-4 md:px-6 relative">
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold font-['Montserrat'] text-white mb-4 md:mb-6">
+              {t({ ar: 'كيف يعمل SmartTour.Jo', en: 'How SmartTour.Jo Works' })}
+            </h2>
+            <p className="text-base md:text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
+              {t({ ar: 'ثلاث خطوات بسيطة لرحلة لا تُنسى', en: 'Three simple steps to an unforgettable journey' })}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {howItWorksSteps.map((step, index) => (
+              <div key={index} className="text-center animate-fade-in-up" style={{ animationDelay: `${index * 0.2}s` }}>
+                <div className="w-16 h-16 md:w-20 md:h-20 gradient-purple rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+                  <step.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                </div>
+                <h3 className="text-lg md:text-xl font-bold font-['Montserrat'] text-white mb-2 md:mb-3">
+                  {t(step.title)}
+                </h3>
+                <p className="text-sm md:text-base text-muted-foreground font-['Open_Sans'] leading-relaxed">
+                  {t(step.description)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20 pointer-events-none" />
+        <div className="absolute top-40 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-40 right-10 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl" />
+      </section>
+
+      {/* FEATURED DESTINATIONS - MOBILE OPTIMIZED */}
+      <section className="py-16 md:py-20 px-4 md:px-6 relative">
+        <div className="container mx-auto max-w-6xl relative z-10">
+          <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold font-['Montserrat'] text-white mb-4 md:mb-6">
+              {t({ ar: 'وجهات مميزة', en: 'Featured Destinations' })}
+            </h2>
+            <p className="text-base md:text-xl text-muted-foreground font-['Open_Sans'] max-w-2xl mx-auto">
+              {t({ ar: 'استكشف أشهر الوجهات السياحية في الأردن', en: 'Explore Jordan\'s most famous tourist destinations' })}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {featuredDestinations.map((destination, index) => (
+              <Link
+                key={destination.id}
+                to={`/destinations/${destination.id}`}
+                className="group animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <Card className="glass-card interactive-card h-full overflow-hidden border-white/10">
+                  <div className="relative h-48 md:h-56 overflow-hidden">
+                    <img
+                      src={destination.image}
+                      alt={t(destination.name)}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute top-4 right-4">
+                      <div className="flex items-center space-x-1 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1">
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-white text-sm font-semibold">{destination.rating}</span>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <h3 className="text-xl font-bold font-['Montserrat'] text-white mb-2">
+                        {t(destination.name)}
+                      </h3>
+                    </div>
+                  </div>
+                  <CardContent className="p-4 md:p-6">
+                    <p className="text-muted-foreground font-['Open_Sans'] mb-4 leading-relaxed text-sm md:text-base">
+                      {t(destination.shortDescription)}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                        <MapPin className="w-4 h-4" />
+                        <span className="font-['Open_Sans']">
+                          {t({ ar: 'الأردن', en: 'Jordan' })}
+                        </span>
+                      </div>
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                        destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
+                        destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-red-500/20 text-red-400'
+                      }`}>
+                        {t({
+                          ar: destination.crowdLevel === 'low' ? 'هادئ' : destination.crowdLevel === 'medium' ? 'متوسط' : 'مزدحم',
+                          en: destination.crowdLevel
+                        })}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8 md:mt-12">
+            <Link to="/destinations">
+              <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 px-6 py-3">
+                {t({ ar: 'عرض جميع الوجهات', en: 'View All Destinations' })}
+                {isRTL ? <ArrowLeft className="ml-2" /> : <ArrowRight className="ml-2" />}
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Background Elements */}
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-900/20 via-purple-900/20 to-blue-900/20 pointer-events-none" />
+        <div className="absolute top-20 right-10 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+      </section>
     </div>
   );
 };

@@ -23,7 +23,8 @@ const Header = () => {
     }
   };
 
-  const navigation = [
+  // SIMPLIFIED NAVIGATION STRUCTURE
+  const primaryNavigation = [
     {
       path: '/',
       label: { ar: 'الرئيسية', en: 'Home' },
@@ -35,6 +36,20 @@ const Header = () => {
       public: true
     },
     {
+      path: '/plan-trip',
+      label: { ar: 'خطط رحلتك', en: 'Plan Trip' },
+      public: true
+    },
+    {
+      path: '/about',
+      label: { ar: 'حول', en: 'About' },
+      public: true
+    }
+  ];
+
+  // SECONDARY NAVIGATION (Hamburger Menu)
+  const secondaryNavigation = [
+    {
       path: '/data',
       label: { ar: 'البيانات الحية', en: 'Live Data' },
       public: true
@@ -45,10 +60,16 @@ const Header = () => {
       public: true
     },
     {
-      path: '/about',
-      label: { ar: 'حول', en: 'About' },
+      path: '/demo',
+      label: { ar: 'Demo', en: 'Demo' },
       public: true
     },
+    {
+      path: '/ar',
+      label: { ar: 'AR View', en: 'AR View' },
+      public: true
+    },
+    // User-specific items
     {
       path: '/my-plan',
       label: { ar: 'خطتي', en: 'My Plan' },
@@ -63,16 +84,6 @@ const Header = () => {
       path: '/profile',
       label: { ar: 'ملفي الشخصي', en: 'My Profile' },
       public: false
-    },
-    {
-      path: '/demo',
-      label: { ar: 'Demo', en: 'Demo' },
-      public: true
-    },
-    {
-      path: '/ar',
-      label: { ar: 'AR View', en: 'AR View' },
-      public: true
     }
   ];
 
@@ -83,9 +94,17 @@ const Header = () => {
     return location.pathname.startsWith(path);
   };
 
+  // Handle Plan Trip click - opens chatbot for now
+  const handlePlanTripClick = (e) => {
+    if (location.pathname !== '/plan-trip') {
+      e.preventDefault();
+      openChatbot();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 glass-card border-b border-white/10">
-      <div className="container mx-auto px-6 py-4">
+      <div className="container mx-auto px-4 md:px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse group">
@@ -102,18 +121,22 @@ const Header = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* SIMPLIFIED PRIMARY NAVIGATION - Desktop */}
           <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {navigation
-              .filter(item => item.public || user) // إظهار الروابط العامة أو الروابط الخاصة للمستخدمين المسجلين
+            {primaryNavigation
+              .filter(item => item.public || user)
               .map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
-                    ? 'gradient-purple text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                    }`}
+                  onClick={item.path === '/plan-trip' ? handlePlanTripClick : undefined}
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium text-center ${
+                    isActivePath(item.path)
+                      ? 'gradient-purple text-white shadow-lg'
+                      : item.path === '/plan-trip'
+                      ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md hover:shadow-lg hover:from-purple-600 hover:to-blue-600'
+                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                  }`}
                 >
                   {t(item.label)}
                 </Link>
@@ -211,23 +234,53 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* MOBILE NAVIGATION - ALL ITEMS IN HAMBURGER */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-white/10">
             <nav className="flex flex-col space-y-2 mt-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
-                    ? 'gradient-purple text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-white hover:bg-white/5'
+              {/* Primary Navigation on Mobile */}
+              {primaryNavigation
+                .filter(item => item.public || user)
+                .map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={(e) => {
+                      setIsMobileMenuOpen(false);
+                      if (item.path === '/plan-trip') handlePlanTripClick(e);
+                    }}
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
+                      isActivePath(item.path)
+                        ? 'gradient-purple text-white shadow-lg'
+                        : item.path === '/plan-trip'
+                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
+                        : 'text-muted-foreground hover:text-white hover:bg-white/5'
                     }`}
-                >
-                  {t(item.label)}
-                </Link>
-              ))}
+                  >
+                    {t(item.label)}
+                  </Link>
+                ))}
+              
+              {/* Divider */}
+              <div className="border-t border-white/10 my-2"></div>
+              
+              {/* Secondary Navigation on Mobile */}
+              {secondaryNavigation
+                .filter(item => item.public || user)
+                .map((item) => (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
+                      isActivePath(item.path)
+                        ? 'gradient-purple text-white shadow-lg'
+                        : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    {t(item.label)}
+                  </Link>
+                ))}
             </nav>
           </div>
         )}
