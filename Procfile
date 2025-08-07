@@ -1,1 +1,1 @@
-web: cd frontend && serve -s build -p 8080
+web: cd frontend && npm start
