@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { Globe, Menu, X, User, LogOut, MapPin } from 'lucide-react';
+import { Globe, Menu, X, User, LogOut, MapPin, Shield } from 'lucide-react';
 import { useState } from 'react';
 
 const Header = () => {
@@ -23,6 +23,9 @@ const Header = () => {
     }
   };
 
+  // Check if user is admin
+  const isAdmin = user?.email === 'admin@smarttour.jo' || user?.role === 'admin' || process.env.NODE_ENV === 'development';
+
   // SIMPLIFIED NAVIGATION STRUCTURE
   const primaryNavigation = [
     {
@@ -32,44 +35,62 @@ const Header = () => {
     },
     {
       path: '/destinations',
-      label: { ar: 'وجهاتنا', en: 'Destinations' },
+      label: { ar: 'الوجهات', en: 'Destinations' },
       public: true
     },
     {
-      path: '/plan-trip',
-      label: { ar: 'خطط رحلتك', en: 'Plan Trip' },
-      public: true
+      path: '/booking',
+      label: { ar: 'حجز رحلة', en: 'Book Tour' },
+      public: true,
+      featured: true
     },
     {
       path: '/about',
       label: { ar: 'حول', en: 'About' },
       public: true
-    }
+    },
+    // Add admin link if user is admin
+    ...(isAdmin ? [{
+      path: '/admin',
+      label: { ar: 'لوحة الإدارة', en: 'Admin Panel' },
+      public: false,
+      isAdmin: true
+    }] : [])
   ];
 
   // SECONDARY NAVIGATION (Hamburger Menu)
   const secondaryNavigation = [
+    {
+      path: '/booking',
+      label: { ar: 'الحجوزات', en: 'Booking' },
+      public: true
+    },
+    {
+      path: '/community',
+      label: { ar: 'المجتمع', en: 'Community' },
+      public: true
+    },
     {
       path: '/data',
       label: { ar: 'البيانات الحية', en: 'Live Data' },
       public: true
     },
     {
-      path: '/voice-agent',
-      label: { ar: 'المساعد الصوتي', en: 'Voice Assistant' },
+      path: '/weather-crowds',
+      label: { ar: 'الطقس والازدحام الحية', en: 'Real-time weather & crowds' },
       public: true
     },
     {
-      path: '/demo',
-      label: { ar: 'Demo', en: 'Demo' },
-      public: true
-    },
-    {
-      path: '/ar',
-      label: { ar: 'AR View', en: 'AR View' },
+      path: '/discover',
+      label: { ar: 'اكتشف المزيد', en: 'Discover More' },
       public: true
     },
     // User-specific items
+    {
+      path: '/admin',
+      label: { ar: 'لوحة الإدارة', en: 'Admin Dashboard' },
+      public: false
+    },
     {
       path: '/my-plan',
       label: { ar: 'خطتي', en: 'My Plan' },
@@ -83,6 +104,11 @@ const Header = () => {
     {
       path: '/profile',
       label: { ar: 'ملفي الشخصي', en: 'My Profile' },
+      public: false
+    },
+    {
+      path: '/profile-page',
+      label: { ar: 'صفحة الملف الشخصي', en: 'Profile Page' },
       public: false
     }
   ];
@@ -130,14 +156,18 @@ const Header = () => {
                   key={item.path}
                   to={item.path}
                   onClick={item.path === '/plan-trip' ? handlePlanTripClick : undefined}
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium text-center ${
-                    isActivePath(item.path)
-                      ? 'gradient-purple text-white shadow-lg'
+                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium text-center ${isActivePath(item.path)
+                    ? 'gradient-purple text-white shadow-lg'
+                    : item.featured || item.path === '/booking'
+                      ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-md hover:shadow-lg hover:from-green-600 hover:to-teal-600'
                       : item.path === '/plan-trip'
-                      ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md hover:shadow-lg hover:from-purple-600 hover:to-blue-600'
-                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                  }`}
+                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md hover:shadow-lg hover:from-purple-600 hover:to-blue-600'
+                        : item.isAdmin
+                          ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-md hover:shadow-lg hover:from-red-600 hover:to-orange-600'
+                          : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                    }`}
                 >
+                  {item.isAdmin && <Shield className="w-4 h-4 ml-1" />}
                   {t(item.label)}
                 </Link>
               ))}
@@ -249,21 +279,20 @@ const Header = () => {
                       setIsMobileMenuOpen(false);
                       if (item.path === '/plan-trip') handlePlanTripClick(e);
                     }}
-                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
-                      isActivePath(item.path)
-                        ? 'gradient-purple text-white shadow-lg'
-                        : item.path === '/plan-trip'
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
+                      ? 'gradient-purple text-white shadow-lg'
+                      : item.path === '/plan-trip'
                         ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md'
                         : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                    }`}
+                      }`}
                   >
                     {t(item.label)}
                   </Link>
                 ))}
-              
+
               {/* Divider */}
               <div className="border-t border-white/10 my-2"></div>
-              
+
               {/* Secondary Navigation on Mobile */}
               {secondaryNavigation
                 .filter(item => item.public || user)
@@ -272,11 +301,10 @@ const Header = () => {
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${
-                      isActivePath(item.path)
-                        ? 'gradient-purple text-white shadow-lg'
-                        : 'text-muted-foreground hover:text-white hover:bg-white/5'
-                    }`}
+                    className={`px-4 py-3 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium ${isActivePath(item.path)
+                      ? 'gradient-purple text-white shadow-lg'
+                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                      }`}
                   >
                     {t(item.label)}
                   </Link>

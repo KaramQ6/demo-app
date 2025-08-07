@@ -4,7 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { ArrowRight, ArrowLeft, MapPin, Clock, Bot, Brain, Zap, Star, Thermometer, Loader2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft, MapPin, Clock, Bot, Brain, Zap, Star, Thermometer, Loader2, Calendar, Users } from 'lucide-react';
 import { destinations } from '../mock';
 
 const Homepage = () => {
@@ -61,38 +61,38 @@ const Homepage = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
           <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73e0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Wadi Rum Desert Jordan" className="w-full h-full object-cover" />
         </div>
-        
+
         <div className="relative z-20 text-center px-4 md:px-6 max-w-5xl mx-auto">
           {/* MOBILE-OPTIMIZED HERO CONTENT */}
           <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight">
-            {t({ 
-              ar: 'اكتشف كنوز الأردن المخفية مع جواد', 
-              en: 'Discover Jordan\'s Hidden Gems with AI Guide Jawad' 
+            {t({
+              ar: 'اكتشف كنوز الأردن المخفية مع جواد',
+              en: 'Discover Jordan\'s Hidden Gems with AI Guide Jawad'
             })}
           </h1>
-          
+
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
-            {t({ 
-              ar: 'خطط رحلتك المثالية بالذكاء الاصطناعي واكتشف الأردن كما لم تره من قبل', 
-              en: 'Plan your perfect trip with AI and discover Jordan like never before' 
+            {t({
+              ar: 'خطط رحلتك المثالية بالذكاء الاصطناعي واكتشف الأردن كما لم تره من قبل',
+              en: 'Plan your perfect trip with AI and discover Jordan like never before'
             })}
           </p>
 
           {/* CRITICAL: MOBILE CTA ABOVE FOLD */}
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-8">
-            <Button 
-              onClick={handleCTAClick} 
-              size="lg" 
+            <Button
+              onClick={handleCTAClick}
+              size="lg"
               className="gradient-purple text-white px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] hover:scale-105 transition-transform shadow-2xl"
             >
-              {t({ ar: 'خطط رحلتك الآن', en: 'Plan Your Trip Now' })} 
+              {t({ ar: 'خطط رحلتك الآن', en: 'Plan Your Trip Now' })}
               {isRTL ? <ArrowLeft className="ml-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
             </Button>
-            
+
             <Link to="/destinations">
-              <Button 
-                variant="outline" 
-                size="lg" 
+              <Button
+                variant="outline"
+                size="lg"
                 className="border-white/30 text-white hover:bg-white/10 px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] backdrop-blur-sm"
               >
                 {t({ ar: 'استكشف الوجهات', en: 'Explore Destinations' })}
@@ -215,11 +215,10 @@ const Homepage = () => {
                           {t({ ar: 'الأردن', en: 'Jordan' })}
                         </span>
                       </div>
-                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
+                      <div className={`px-3 py-1 rounded-full text-xs font-semibold ${destination.crowdLevel === 'low' ? 'bg-green-500/20 text-green-400' :
                         destination.crowdLevel === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-red-500/20 text-red-400'
-                      }`}>
+                          'bg-red-500/20 text-red-400'
+                        }`}>
                         {t({
                           ar: destination.crowdLevel === 'low' ? 'هادئ' : destination.crowdLevel === 'medium' ? 'متوسط' : 'مزدحم',
                           en: destination.crowdLevel
@@ -239,6 +238,62 @@ const Homepage = () => {
                 {isRTL ? <ArrowLeft className="ml-2" /> : <ArrowRight className="ml-2" />}
               </Button>
             </Link>
+          </div>
+
+          {/* Quick Access Section */}
+          <div className="mt-16 mb-16">
+            <h3 className="text-2xl md:text-3xl font-bold text-center text-white mb-8">
+              {t({ ar: 'اكتشف المزيد', en: 'Discover More' })}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+              <Link to="/booking" className="group">
+                <Card className="glass-card interactive-card border-white/10 hover:border-green-400/30 transition-all">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center">
+                      <Calendar className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2 text-lg">
+                      {t({ ar: 'احجز رحلة', en: 'Book Tour' })}
+                    </h4>
+                    <p className="text-sm text-gray-300">
+                      {t({ ar: 'احجز رحلتك الآن', en: 'Book your trip now' })}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link to="/community" className="group">
+                <Card className="glass-card interactive-card border-white/10 hover:border-blue-400/30 transition-all">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                      <Users className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2 text-lg">
+                      {t({ ar: 'المجتمع', en: 'Community' })}
+                    </h4>
+                    <p className="text-sm text-gray-300">
+                      {t({ ar: 'شارك التجارب', en: 'Share experiences' })}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+
+              <Link to="/data" className="group">
+                <Card className="glass-card interactive-card border-white/10 hover:border-orange-400/30 transition-all">
+                  <CardContent className="p-6 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                      <Zap className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="font-semibold text-white mb-2 text-lg">
+                      {t({ ar: 'البيانات المباشرة', en: 'Live Data' })}
+                    </h4>
+                    <p className="text-sm text-gray-300">
+                      {t({ ar: 'الطقس والازدحام والبيانات الذكية', en: 'Weather, crowds & smart data' })}
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
           </div>
         </div>
 

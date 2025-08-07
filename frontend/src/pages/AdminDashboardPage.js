@@ -4,6 +4,7 @@ import { AppContext } from '../contexts/AppContext';
 import ViewBookings from '../components/Admin/ViewBookings';
 import ManageUsers from '../components/Admin/ManageUsers';
 import PlatformAnalytics from '../components/Admin/PlatformAnalytics';
+import AdminTools from '../components/Admin/AdminTools';
 
 const AdminDashboardPage = () => {
     const { user } = useContext(AppContext);
@@ -53,7 +54,8 @@ const AdminDashboardPage = () => {
     const tabs = [
         { id: 'bookings', name: 'View Bookings', icon: '📅' },
         { id: 'users', name: 'Manage Users', icon: '👥' },
-        { id: 'analytics', name: 'Platform Analytics', icon: '📊' }
+        { id: 'analytics', name: 'Platform Analytics', icon: '📊' },
+        { id: 'admin-tools', name: 'Admin Tools', icon: '🛠️' }
     ];
 
     const renderTabContent = () => {
@@ -64,6 +66,8 @@ const AdminDashboardPage = () => {
                 return <ManageUsers />;
             case 'analytics':
                 return <PlatformAnalytics />;
+            case 'admin-tools':
+                return <AdminTools />;
             default:
                 return <ViewBookings />;
         }
@@ -112,8 +116,8 @@ const AdminDashboardPage = () => {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-colors ${activeTab === tab.id
-                                        ? 'border-blue-500 text-blue-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-blue-500 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 <span className="text-lg">{tab.icon}</span>
