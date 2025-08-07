@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Plus } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Copy, Check, Power, Loader2, MapPin, Thermometer, Plus, Brain } from 'lucide-react';
+import { parseBookingRequest, generateResponseSuggestions, enhancedTravelParsing } from '../utils/nlpUtils';
 
 const Chatbot = () => {
   const { t, language, isRTL } = useLanguage();
@@ -108,6 +109,10 @@ const Chatbot = () => {
       const userMessage = { id: Date.now(), text: userInput, type: 'user', timestamp: new Date() };
       setLocalChatMessages(prev => [...prev, userMessage]);
 
+      // Process with NLP
+      const nlpResult = enhancedTravelParsing(userInput);
+      console.log('NLP Analysis:', nlpResult);
+
       // Add typing indicator message
       const typingMessage = { id: 'typing-indicator', text: '...', type: 'bot', timestamp: new Date() };
       setLocalChatMessages(prev => [...prev, typingMessage]);
@@ -115,8 +120,20 @@ const Chatbot = () => {
       setInputValue('');
 
       try {
-        // Call the global sendMessage function
-        await sendMessage(userInput);
+        // Handle natural language booking requests
+        if (nlpResult.intent === 'booking') {
+          const bookingResult = parseBookingRequest(userInput);
+          console.log('Booking Analysis:', bookingResult);
+
+          if (bookingResult.isBookingRequest) {
+            await handleNaturalLanguageBooking(bookingResult);
+          } else {
+            await sendMessage(userInput);
+          }
+        } else {
+          // Call the global sendMessage function
+          await sendMessage(userInput);
+        }
 
         // Remove typing indicator after response
         setLocalChatMessages(prev => prev.filter(msg => msg.id !== 'typing-indicator'));
@@ -128,6 +145,301 @@ const Chatbot = () => {
         setIsTyping(false);
       }
     }
+  };
+
+  // Natural Language Booking Handler with Enhanced Regex Extraction
+  const handleNaturalLanguageBooking = async (bookingResult) => {
+    const { bookingDetails } = bookingResult;
+
+    // Enhanced regex patterns for better extraction
+    const extractEnhancedDetails = (text) => {
+      const patterns = {
+        // Days pattern: "3 days", "for 5 days", "2-day trip"
+        days: /(?:for\s+)?(\d+)[-\s]*days?(?:\s+trip)?/i,
+        // People pattern: "2 people", "for 4 persons", "group of 5"
+        people: /(?:for\s+)?(?:group\s+of\s+)?(\d+)\s+(?:people|persons?|guests?|travelers?)/i,
+        // Type pattern: "adventure tour", "cultural trip", "hiking expedition"
+        type: /(adventure|cultural|historical|nature|relaxing|luxury|budget|family|romantic|solo)\s+(?:tour|trip|experience|package)/i,
+        // Budget pattern: "$200", "budget of 150", "under $300"
+        budget: /(?:budget\s+(?:of\s+)?)?\$?(\d+)(?:\s*dollars?)?/i,
+        // Destination pattern: enhanced to catch Jordan locations
+        destination: /(petra|wadi\s+rum|dead\s+sea|jerash|aqaba|amman|jordan)/i
+      };
+
+      const enhanced = { ...bookingDetails };
+
+      // Extract days
+      const daysMatch = text.match(patterns.days);
+      if (daysMatch) {
+        enhanced.duration = { value: parseInt(daysMatch[1]), unit: 'days' };
+      }
+
+      // Extract people count
+      const peopleMatch = text.match(patterns.people);
+      if (peopleMatch) {
+        enhanced.groupSize = parseInt(peopleMatch[1]);
+      }
+
+      // Extract trip type
+      const typeMatch = text.match(patterns.type);
+      if (typeMatch) {
+        enhanced.tripType = typeMatch[1].toLowerCase();
+      }
+
+      // Extract budget
+      const budgetMatch = text.match(patterns.budget);
+      if (budgetMatch) {
+        enhanced.budget = parseInt(budgetMatch[1]);
+      }
+
+      // Extract destination
+      const destMatch = text.match(patterns.destination);
+      if (destMatch) {
+        enhanced.destination = destMatch[1].toLowerCase().replace(/\s+/g, '-');
+      }
+
+      return enhanced;
+    };
+
+    // Get enhanced details from original user input
+    const userInput = localChatMessages[localChatMessages.length - 2]?.text || '';
+    const enhancedDetails = extractEnhancedDetails(userInput);
+
+    let response = "🎯 Perfect! I understand you want to book a trip. ";
+
+    // Build detailed response based on extracted information
+    if (enhancedDetails.destination) {
+      const destName = enhancedDetails.destination.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+      response += `You're interested in visiting ${destName}. `;
+    }
+
+    if (enhancedDetails.duration) {
+      response += `For ${enhancedDetails.duration.value} ${enhancedDetails.duration.unit}. `;
+    }
+
+    if (enhancedDetails.groupSize > 1) {
+      response += `For ${enhancedDetails.groupSize} ${enhancedDetails.groupSize === 2 ? 'people' : 'travelers'}. `;
+    } else if (enhancedDetails.groupSize === 1) {
+      response += `Solo travel adventure! `;
+    }
+
+    if (enhancedDetails.tripType) {
+      response += `Looking for ${enhancedDetails.tripType} experiences. `;
+    }
+
+    if (enhancedDetails.budget) {
+      response += `With a budget around $${enhancedDetails.budget}. `;
+    }
+
+    response += "\n\n💡 Based on your request, I can help you find the perfect tour options!";
+
+    // Add bot response with enhanced booking context
+    const botResponse = {
+      id: Date.now() + 1,
+      text: response,
+      type: 'bot',
+      timestamp: new Date(),
+      bookingContext: enhancedDetails,
+      hasBookingActions: true
+    };
+
+    setLocalChatMessages(prev => [...prev, botResponse]);
+
+    // Generate contextual quick action buttons for booking
+    setTimeout(() => {
+      const actions = [
+        {
+          text: '🎟️ View Available Tours',
+          action: 'view-tours',
+          data: enhancedDetails,
+          description: 'Browse all matching tours'
+        },
+        {
+          text: '🔧 Customize Your Search',
+          action: 'customize-search',
+          data: enhancedDetails,
+          description: 'Fine-tune your preferences'
+        }
+      ];
+
+      // Add specific actions based on extracted details
+      if (enhancedDetails.destination) {
+        actions.push({
+          text: `📍 ${enhancedDetails.destination.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Specials`,
+          action: 'destination-specials',
+          data: enhancedDetails,
+          description: 'View destination-specific offers'
+        });
+      }
+
+      if (enhancedDetails.budget) {
+        actions.push({
+          text: `💰 Budget-Friendly Options`,
+          action: 'budget-options',
+          data: enhancedDetails,
+          description: `Tours under $${enhancedDetails.budget}`
+        });
+      }
+
+      const actionButtons = {
+        id: 'booking-actions-' + Date.now(),
+        type: 'actions',
+        actions: actions.slice(0, 4), // Limit to 4 actions for clean UI
+        timestamp: new Date(),
+        title: 'What would you like to do next?'
+      };
+
+      setLocalChatMessages(prev => [...prev, actionButtons]);
+
+      // Add a helpful summary card
+      setTimeout(() => {
+        const summaryCard = {
+          id: 'booking-summary-' + Date.now(),
+          type: 'booking-summary',
+          details: enhancedDetails,
+          timestamp: new Date()
+        };
+        setLocalChatMessages(prev => [...prev, summaryCard]);
+      }, 800);
+    }, 600);
+  };
+
+  // Handle action button clicks with enhanced functionality
+  const handleActionClick = (action, data) => {
+    // Add user feedback message first
+    const feedbackMessage = {
+      id: Date.now(),
+      text: `🎯 Selected: ${action.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
+      type: 'user',
+      timestamp: new Date(),
+      isActionFeedback: true
+    };
+    setLocalChatMessages(prev => [...prev, feedbackMessage]);
+
+    // Add typing indicator
+    const typingMessage = { id: 'action-typing', text: '...', type: 'bot', timestamp: new Date() };
+    setLocalChatMessages(prev => [...prev, typingMessage]);
+    setIsTyping(true);
+
+    // Process different actions
+    setTimeout(() => {
+      let response = '';
+      let hasSpecialContent = false;
+
+      switch (action) {
+        case 'view-tours':
+          response = `🎟️ Here are the available tours`;
+          if (data.destination) {
+            response += ` for ${data.destination.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
+          }
+          response += `:\n\n`;
+          response += `🏛️ **Classic Petra Day Tour** - $75/person\n`;
+          response += `⏰ Duration: 8 hours | 👥 Max 15 people\n`;
+          response += `✨ Includes: Guide, transport, lunch\n\n`;
+          response += `🏜️ **Wadi Rum Desert Experience** - $95/person\n`;
+          response += `⏰ Duration: 2 days | 🏕️ Camping included\n`;
+          response += `✨ Includes: Camel ride, Bedouin dinner\n\n`;
+          response += `🌊 **Dead Sea Relaxation Package** - $65/person\n`;
+          response += `⏰ Duration: 6 hours | 🧖‍♀️ Spa treatments\n`;
+          response += `✨ Includes: Mud therapy, resort access`;
+          break;
+
+        case 'customize-search':
+          response = `🔧 Let's customize your search! I can help you filter by:\n\n`;
+          response += `📅 **Dates**: When do you want to travel?\n`;
+          response += `💰 **Budget**: What's your price range?\n`;
+          response += `🎯 **Interests**: Adventure, culture, relaxation?\n`;
+          response += `👥 **Group Size**: How many travelers?\n`;
+          response += `⭐ **Rating**: Minimum star rating?\n\n`;
+          response += `Just tell me your preferences and I'll find perfect matches!`;
+          break;
+
+        case 'destination-specials':
+          const dest = data.destination?.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Jordan';
+          response = `📍 **${dest} Special Offers:**\n\n`;
+          response += `🎉 **Early Bird Special**: 15% off bookings made 7+ days in advance\n`;
+          response += `👨‍👩‍👧‍👦 **Family Package**: Kids under 12 get 50% discount\n`;
+          response += `🏕️ **Adventure Combo**: Book 2+ destinations, save 20%\n`;
+          response += `⭐ **Premium Experience**: Upgrade to private guide for +$30\n\n`;
+          response += `💡 *Limited time offers - book now to secure these deals!*`;
+          break;
+
+        case 'budget-options':
+          response = `💰 **Budget-Friendly Tours under $${data.budget || 100}:**\n\n`;
+          response += `🏛️ **Jerash Half-Day** - $45/person\n`;
+          response += `• 4-hour guided tour of Roman ruins\n`;
+          response += `• Transport from Amman included\n\n`;
+          response += `🏰 **Ajloun Castle Visit** - $35/person\n`;
+          response += `• Medieval fortress exploration\n`;
+          response += `• Forest reserve nature walk\n\n`;
+          response += `🌊 **Dead Sea Day Trip** - $55/person\n`;
+          response += `• Float experience + mud therapy\n`;
+          response += `• Beach resort access included`;
+          break;
+
+        case 'get-recommendations':
+          response = `🤖 **AI Personalized Recommendations:**\n\n`;
+          response += `Based on your preferences, I recommend:\n\n`;
+          response += `🥇 **Top Pick**: Petra + Wadi Rum Combo (3 days)\n`;
+          response += `• Perfect for ${data.groupSize || 2} travelers\n`;
+          response += `• Matches your ${data.tripType || 'adventure'} interest\n`;
+          response += `• Within your $${data.budget || 200} budget\n\n`;
+          response += `🎯 **Confidence Score**: 94% match\n`;
+          response += `⭐ **User Rating**: 4.9/5 (based on similar travelers)`;
+          hasSpecialContent = true;
+          break;
+
+        default:
+          response = `I'm processing your request for: ${action}. Let me get that information for you!`;
+      }
+
+      // Remove typing indicator and add response
+      setLocalChatMessages(prev => prev.filter(msg => msg.id !== 'action-typing'));
+
+      const botResponse = {
+        id: Date.now() + 1,
+        text: response,
+        type: 'bot',
+        timestamp: new Date(),
+        hasSpecialContent,
+        actionData: data
+      };
+
+      setLocalChatMessages(prev => [...prev, botResponse]);
+
+      // Add follow-up actions for certain responses
+      if (action === 'view-tours' || action === 'get-recommendations') {
+        setTimeout(() => {
+          const followUpActions = {
+            id: 'followup-actions-' + Date.now(),
+            type: 'actions',
+            actions: [
+              {
+                text: '📞 Contact Support',
+                action: 'contact-support',
+                data: data
+              },
+              {
+                text: '💾 Save to Wishlist',
+                action: 'save-wishlist',
+                data: data
+              },
+              {
+                text: '📅 Check Availability',
+                action: 'check-availability',
+                data: data
+              }
+            ],
+            title: 'Next Steps:',
+            timestamp: new Date()
+          };
+
+          setLocalChatMessages(prev => [...prev, followUpActions]);
+        }, 1000);
+      }
+
+      setIsTyping(false);
+    }, 1500); // Simulate processing time
   };
 
   const handleStarterClick = (starterText) => {
@@ -237,6 +549,28 @@ const Chatbot = () => {
               localChatMessages.map((message) => {
                 const destinationId = message.type === 'bot' ? extractDestinationFromMessage(message.text) : null;
 
+                // Handle action buttons separately
+                if (message.type === 'actions') {
+                  return (
+                    <div key={message.id} className="flex justify-start">
+                      <div className="max-w-xs lg:max-w-md">
+                        <div className="flex flex-wrap gap-2">
+                          {message.actions.map((action, index) => (
+                            <button
+                              key={index}
+                              onClick={() => handleActionClick(action.action, action.data)}
+                              className="px-3 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white text-xs rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all flex items-center space-x-1"
+                            >
+                              <Brain className="w-3 h-3" />
+                              <span>{action.text}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
                   <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${message.type === 'user'
@@ -257,6 +591,24 @@ const Chatbot = () => {
                       ) : (
                         <>
                           <div className="mb-2">{message.text}</div>
+                          {/* Enhanced NLP context display */}
+                          {message.bookingContext && (
+                            <div className="mt-2 p-2 bg-blue-50 rounded text-xs">
+                              <div className="font-semibold text-blue-700 mb-1">Detected booking details:</div>
+                              {message.bookingContext.destination && (
+                                <div>📍 Destination: {message.bookingContext.destination}</div>
+                              )}
+                              {message.bookingContext.duration && (
+                                <div>⏰ Duration: {message.bookingContext.duration.value} {message.bookingContext.duration.unit}</div>
+                              )}
+                              {message.bookingContext.groupSize > 1 && (
+                                <div>👥 Group: {message.bookingContext.groupSize} people</div>
+                              )}
+                              {message.bookingContext.budget && (
+                                <div>💰 Budget: ${message.bookingContext.budget}</div>
+                              )}
+                            </div>
+                          )}
                           {/* إضافة زر "أضف إلى خطتي" إذا كانت الرسالة تحتوي على اقتراح وجهة */}
                           {destinationId && message.type === 'bot' && (
                             <button
