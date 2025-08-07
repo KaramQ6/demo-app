@@ -42,7 +42,8 @@ function AppContent() {
     <div className="App min-h-screen bg-background text-foreground">
       <AppProvider>
         {!isArPage && !isAuthPage && !isVoiceAgentPage && <Header />}
-        <main className={isArPage ? 'ar-main' : ''}>
+        {!isArPage && !isAuthPage && !isVoiceAgentPage && <SmartToolsSidebar />}
+        <main className={isArPage ? 'ar-main' : !isArPage && !isAuthPage && !isVoiceAgentPage ? 'ml-0 md:ml-16 transition-all duration-300' : ''}>
           <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-lg">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Homepage />} />
