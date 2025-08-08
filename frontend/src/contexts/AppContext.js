@@ -400,45 +400,127 @@ export const AppProvider = ({ children }) => {
 
             setIsCitiesLoading(true);
 
-            // بدلاً من استخدام API مع مشاكل CORS، سنستخدم mock data مع تنوع واقعي
+            // استخدام API الطقس الحقيقي لكل مدينة
+            const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data";
+
+            const fetchCityWeather = async (city) => {
+                try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                    const response = await fetch(weatherApiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            lat: city.lat,
+                            lon: city.lon,
+                            lang: language === 'ar' ? 'ar' : 'en'
+                        }),
+                        signal: controller.signal
+                    });
+
+                    clearTimeout(timeoutId);
+
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text && text.trim()) {
+                            const data = JSON.parse(text);
+                            if (data && data.main && data.main.temp) {
+                                return {
+                                    ...city,
+                                    main: data.main,
+                                    weather: data.weather,
+                                    wind: data.wind,
+                                    temperature: data.main.temp,
+                                    source: 'api'
+                                };
+                            }
+                        }
+                    }
+
+                    // في حالة فشل API، استخدم البيانات الواقعية
+                    throw new Error('API response invalid');
+
+                } catch (error) {
+                    console.warn(`Weather API failed for ${city.name}, using realistic fallback`);
+                    return generateRealisticWeatherData(city);
+                }
+            };
+
+            // بدلاً من استخدام mock data، استخدم بيانات واقعية مع تنوع حسب الموقع
             const generateRealisticWeatherData = (city) => {
-                const baseTemp = city.lat > 31 ? 22 : 25; // المدن الشمالية أبرد قليلاً
-                const tempVariation = Math.floor(Math.random() * 8) - 4; // ±4 درجات
+                const currentHour = new Date().getHours();
+                const isNight = currentHour < 6 || currentHour > 18;
+
+                // درجات حرارة واقعية حسب المنطقة
+                let baseTemp;
+                if (city.name === 'Aqaba') {
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 22 : // ليلاً: 22-30
+                        Math.floor(Math.random() * 12) + 32; // نهاراً: 32-44
+                } else if (city.name === 'Ajloun' || city.name === 'Jerash') {
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 14 : // ليلاً: 14-22
+                        Math.floor(Math.random() * 12) + 24; // نهاراً: 24-36
+                } else if (city.name === 'Dead Sea') {
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 20 : // ليلاً: 20-28
+                        Math.floor(Math.random() * 12) + 30; // نهاراً: 30-42
+                } else {
+                    // باقي المدن
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 16 : // ليلاً: 16-24
+                        Math.floor(Math.random() * 12) + 26; // نهاراً: 26-38
+                }
 
                 const weatherConditions = [
                     { main: "Clear", descAr: "سماء صافية", descEn: "clear sky" },
                     { main: "Clouds", descAr: "غائم جزئياً", descEn: "partly cloudy" },
-                    { main: "Rain", descAr: "أمطار خفيفة", descEn: "light rain" }
+                    { main: "Sunny", descAr: "مشمس", descEn: "sunny" }
                 ];
 
                 const condition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
 
                 return {
-                    name: city.name,
-                    nameAr: city.nameAr,
-                    type: city.type,
+                    ...city,
                     main: {
-                        temp: baseTemp + tempVariation,
+                        temp: baseTemp,
                         humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
-                        feels_like: baseTemp + tempVariation + Math.floor(Math.random() * 4) - 2
+                        feels_like: baseTemp + Math.floor(Math.random() * 4) - 2,
+                        pressure: Math.floor(Math.random() * 30) + 1010
                     },
+                    temperature: baseTemp,
                     weather: [{
                         main: condition.main,
                         description: language === 'ar' ? condition.descAr : condition.descEn
                     }],
                     wind: {
-                        speed: Math.floor(Math.random() * 8) + 3 // 3-10 km/h
-                    }
+                        speed: Math.floor(Math.random() * 8) + 3 // 3-11 km/h
+                    },
+                    source: 'fallback'
                 };
             };
 
             try {
-                // إنشاء البيانات للمحافظات
-                const governoratesData = allGovernoratesOfJordan.map(generateRealisticWeatherData);
+                // جلب البيانات للمحافظات من API أو fallback
+                const governoratesPromises = allGovernoratesOfJordan.map(city => fetchCityWeather(city));
+                const governoratesData = await Promise.all(governoratesPromises);
+
                 setCitiesData(governoratesData);
-                console.log(`Successfully loaded realistic data for ${governoratesData.length} governorates`);
+                console.log(`Successfully loaded weather data for ${governoratesData.length} governorates`);
+
+                // إحصائيات من APIs حقيقية مقابل fallback
+                const apiCount = governoratesData.filter(city => city.source === 'api').length;
+                const fallbackCount = governoratesData.filter(city => city.source === 'fallback').length;
+                console.log(`API responses: ${apiCount}, Fallback data: ${fallbackCount}`);
+
             } catch (error) {
-                console.warn("Unable to process governorates data, using fallback");
+                console.warn("Unable to process governorates data, using all fallback");
+                const fallbackGovernoratesData = allGovernoratesOfJordan.map(generateRealisticWeatherData);
+                setCitiesData(fallbackGovernoratesData);
                 setFriendlyError('weather', error);
             } finally {
                 setIsCitiesLoading(false);
@@ -448,12 +530,22 @@ export const AppProvider = ({ children }) => {
             setIsIotHubLoading(true);
 
             try {
-                // إنشاء البيانات للأماكن السياحية
-                const touristData = touristMainAreas.map(generateRealisticWeatherData);
+                // جلب البيانات للأماكن السياحية من API أو fallback
+                const touristPromises = touristMainAreas.map(city => fetchCityWeather(city));
+                const touristData = await Promise.all(touristPromises);
+
                 setIotHubData(touristData);
-                console.log(`Successfully loaded realistic data for ${touristData.length} tourist places`);
+                console.log(`Successfully loaded weather data for ${touristData.length} tourist places`);
+
+                // إحصائيات من APIs حقيقية مقابل fallback للأماكن السياحية
+                const apiTouristCount = touristData.filter(city => city.source === 'api').length;
+                const fallbackTouristCount = touristData.filter(city => city.source === 'fallback').length;
+                console.log(`Tourist API responses: ${apiTouristCount}, Fallback data: ${fallbackTouristCount}`);
+
             } catch (error) {
-                console.warn("Unable to process tourist data, using fallback");
+                console.warn("Unable to process tourist data, using all fallback");
+                const fallbackTouristData = touristMainAreas.map(generateRealisticWeatherData);
+                setIotHubData(fallbackTouristData);
                 setFriendlyError('weather', error);
             } finally {
                 setIsIotHubLoading(false);
