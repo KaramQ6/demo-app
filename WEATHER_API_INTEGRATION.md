@@ -4,9 +4,21 @@
 
 تم تحديث AppContext.js لاستخدام Weather API الجديد من n8n:
 
-### الـ API الجديد:
+### الـ APIs المستخدمة:
+
+#### للصفحة الرئيسية والبيانات العامة:
 ```
-https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data
+https://n8n.smart-tour.app/webhook/Simple-Weather-API-ChatBot
+```
+
+#### للشات بوت والمحادثات:
+```
+https://n8n.smart-tour.app/webhook/gemini-tour-chat
+```
+
+#### للتخطيط الذكي للرحلات:
+```
+https://n8n.smart-tour.app/webhook/Smart-Itinerary-Planner
 ```
 
 ### التغييرات المطبقة:
@@ -15,13 +27,24 @@ https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data
 - **قبل**: استخدام بيانات محاكاة فقط
 - **بعد**: استدعاء Weather API الحقيقي مع fallback للبيانات المحاكاة
 
-**الطلب المرسل**:
+**الطلب المرسل للطقس**:
 ```javascript
-POST https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data
+POST https://n8n.smart-tour.app/webhook/Simple-Weather-API-ChatBot
 {
   "lat": userLocation.lat,
   "lon": userLocation.lon,
   "lang": language === 'ar' ? 'ar' : 'en'
+}
+```
+
+**الطلب المرسل للشات بوت**:
+```javascript
+POST https://n8n.smart-tour.app/webhook/gemini-tour-chat
+{
+  "message": userInput,
+  "sessionId": sessionId,
+  "user": user ? { id: user.id, email: user.email } : null,
+  "language": language || 'ar'
 }
 ```
 

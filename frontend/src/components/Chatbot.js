@@ -489,29 +489,29 @@ const Chatbot = () => {
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="w-4 h-4 text-white animate-spin" />
               </div>
-            ) : liveData && liveData.cityName ? (
+            ) : liveData && (liveData.cityName || liveData.name) ? (
               <div className="flex items-center justify-between text-sm animate-fade-in">
-                {/* Location - Reads from the correct 'cityName' property */}
+                {/* Location - يقرأ من cityName أو name */}
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <MapPin className="w-4 h-4 text-blue-400" />
                   <span className="text-white font-medium">
-                    {liveData.cityName}
+                    {liveData.cityName || liveData.name}
                   </span>
                 </div>
 
-                {/* Temperature & Weather Icon - Reads from 'weather.iconUrl' */}
+                {/* Temperature & Weather Icon */}
                 <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <Thermometer className="w-4 h-4 text-orange-400" />
                   <span className="text-white font-medium">
-                    {liveData.temperature}°م
+                    {liveData.temperature || (liveData.main && liveData.main.temp)}°C
                   </span>
-                  {/* Defensive check for iconUrl */}
-                  {liveData.weather && liveData.weather.iconUrl && (
-                    <img
-                      src={liveData.weather.iconUrl}
-                      alt={liveData.weather.description || 'Weather icon'}
-                      className="w-6 h-6"
-                    />
+                  {/* معالجة أفضل للأيقونة */}
+                  {liveData.weather && liveData.weather[0] && (
+                    <span className="text-lg">
+                      {liveData.weather[0].main === 'Clear' ? '☀️' :
+                        liveData.weather[0].main === 'Clouds' ? '☁️' :
+                          liveData.weather[0].main === 'Rain' ? '🌧️' : '🌤️'}
+                    </span>
                   )}
                 </div>
               </div>

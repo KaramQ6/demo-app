@@ -204,8 +204,8 @@ export const AppProvider = ({ children }) => {
         const fetchUserLiveData = async () => {
             setIsLoadingData(true);
 
-            // استخدام n8n Weather API الجديد
-            const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data";
+            // استخدام n8n Weather API للشات بوت (للصفحة الرئيسية والبيانات العامة)
+            const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-ChatBot";
 
             // معالجة ذكية لمشاكل CORS والـ APIs غير المتاحة
             const generateRealisticWeatherData = () => {
