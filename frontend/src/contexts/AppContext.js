@@ -220,14 +220,63 @@ export const AppProvider = ({ children }) => {
                 const currentHour = new Date().getHours();
                 const isNight = currentHour < 6 || currentHour > 18;
 
-                // درجة حرارة واقعية للأردن حسب الوقت
-                let baseTemp = isNight ?
-                    Math.floor(Math.random() * 10) + 15 : // ليلاً: 15-25
-                    Math.floor(Math.random() * 15) + 25; // نهاراً: 25-40
+                // تحديد المدينة بناءً على الموقع الحقيقي
+                const getCityFromCoordinates = (lat, lon) => {
+                    // المدن الرئيسية في الأردن مع إحداثياتها
+                    const jordanCities = [
+                        { name: 'Amman', nameAr: 'عمان', lat: 31.9539, lon: 35.9106 },
+                        { name: 'Irbid', nameAr: 'إربد', lat: 32.5556, lon: 35.85 },
+                        { name: 'Zarqa', nameAr: 'الزرقاء', lat: 32.0728, lon: 36.0877 },
+                        { name: 'Aqaba', nameAr: 'العقبة', lat: 29.5267, lon: 35.0067 },
+                        { name: 'Karak', nameAr: 'الكرك', lat: 31.1848, lon: 35.7047 },
+                        { name: 'Madaba', nameAr: 'مأدبا', lat: 31.7194, lon: 35.7956 },
+                        { name: 'Jerash', nameAr: 'جرش', lat: 32.2744, lon: 35.8906 },
+                        { name: 'Ajloun', nameAr: 'عجلون', lat: 32.3328, lon: 35.7517 },
+                        { name: 'Tafilah', nameAr: 'الطفيلة', lat: 30.8372, lon: 35.6042 },
+                        { name: 'Mafraq', nameAr: 'المفرق', lat: 32.3426, lon: 36.2082 }
+                    ];
+
+                    // البحث عن أقرب مدينة
+                    let closestCity = jordanCities[0]; // عمان كافتراضي
+                    let minDistance = Infinity;
+
+                    jordanCities.forEach(city => {
+                        const distance = Math.sqrt(
+                            Math.pow(lat - city.lat, 2) + Math.pow(lon - city.lon, 2)
+                        );
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestCity = city;
+                        }
+                    });
+
+                    return closestCity;
+                };
+
+                const currentCity = getCityFromCoordinates(userLocation.lat, userLocation.lon);
+
+                // درجة حرارة واقعية حسب المنطقة والوقت
+                let baseTemp;
+                if (currentCity.name === 'Aqaba') {
+                    // العقبة أكثر حرارة
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 20 : // ليلاً: 20-28
+                        Math.floor(Math.random() * 12) + 30; // نهاراً: 30-42
+                } else if (currentCity.name === 'Ajloun' || currentCity.name === 'Jerash') {
+                    // المناطق الجبلية أبرد
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 8) + 12 : // ليلاً: 12-20
+                        Math.floor(Math.random() * 12) + 22; // نهاراً: 22-34
+                } else {
+                    // باقي المدن (معتدل)
+                    baseTemp = isNight ?
+                        Math.floor(Math.random() * 10) + 15 : // ليلاً: 15-25
+                        Math.floor(Math.random() * 15) + 25; // نهاراً: 25-40
+                }
 
                 return {
-                    name: language === 'ar' ? "عمان" : "Amman",
-                    cityName: language === 'ar' ? "عمان" : "Amman", // إضافة cityName للتوافق
+                    name: language === 'ar' ? currentCity.nameAr : currentCity.name,
+                    cityName: language === 'ar' ? currentCity.nameAr : currentCity.name, // إضافة cityName للتوافق
                     main: {
                         temp: baseTemp,
                         humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
@@ -245,7 +294,8 @@ export const AppProvider = ({ children }) => {
                     },
                     dt: Math.floor(Date.now() / 1000),
                     timezone: 10800, // UTC+3 للأردن
-                    locationSource: locationError ? "default" : "gps" // تحديد مصدر الموقع
+                    locationSource: locationError ? "default" : "gps", // تحديد مصدر الموقع
+                    coordinates: { lat: userLocation.lat, lon: userLocation.lon } // إضافة الإحداثيات
                 };
             };
 
@@ -284,7 +334,15 @@ export const AppProvider = ({ children }) => {
                 try {
                     const data = JSON.parse(text);
                     if (data && data.main && data.main.temp) {
-                        setLiveData(data);
+                        // إضافة معلومات الموقع للبيانات القادمة من API
+                        const enhancedData = {
+                            ...data,
+                            cityName: data.name || data.cityName,
+                            temperature: data.main.temp,
+                            locationSource: locationError ? "default" : "gps",
+                            coordinates: { lat: userLocation.lat, lon: userLocation.lon }
+                        };
+                        setLiveData(enhancedData);
                     } else {
                         console.warn("Invalid API response format, using realistic fallback");
                         setLiveData(generateRealisticWeatherData());
