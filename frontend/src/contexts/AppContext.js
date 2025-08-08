@@ -308,20 +308,22 @@ export const AppProvider = ({ children }) => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'Origin': window.location.origin // إضافة Origin header
                     },
                     body: JSON.stringify({
                         lat: userLocation.lat,
                         lon: userLocation.lon,
                         lang: language === 'ar' ? 'ar' : 'en'
                     }),
-                    signal: controller.signal
+                    signal: controller.signal,
+                    mode: 'cors' // تفعيل CORS
                 });
 
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
-                    throw new Error(`API Error: ${response.status}`);
+                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
                 }
 
                 const text = await response.text();
@@ -343,6 +345,7 @@ export const AppProvider = ({ children }) => {
                             coordinates: { lat: userLocation.lat, lon: userLocation.lon }
                         };
                         setLiveData(enhancedData);
+                        console.log("✅ Weather API success:", enhancedData.cityName);
                     } else {
                         console.warn("Invalid API response format, using realistic fallback");
                         setLiveData(generateRealisticWeatherData());
@@ -353,13 +356,21 @@ export const AppProvider = ({ children }) => {
                 }
 
             } catch (error) {
+                let errorMsg = "Weather API issue";
                 if (error.name === 'AbortError') {
-                    console.warn("Weather API request timeout, using realistic fallback");
-                } else if (error.message && error.message.includes('blocked by CORS')) {
-                    console.warn("CORS issue detected in production - using realistic weather fallback");
+                    errorMsg = "Weather API request timeout";
+                } else if (error.message && (
+                    error.message.includes('blocked by CORS') ||
+                    error.message.includes('CORS policy') ||
+                    error.message.includes('Access-Control-Allow-Origin')
+                )) {
+                    errorMsg = "CORS issue detected in production";
+                    console.warn("🚨 CORS Error Details:", error.message);
                 } else {
-                    console.warn("Weather API issue:", error.message || error);
+                    errorMsg = error.message || "Unknown error";
                 }
+
+                console.warn(`❌ ${errorMsg}, using realistic fallback`);
 
                 // في جميع الحالات، نستخدم بيانات واقعية بدلاً من إظهار خطأ للمستخدم
                 setLiveData(generateRealisticWeatherData());
@@ -412,14 +423,16 @@ export const AppProvider = ({ children }) => {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'Origin': window.location.origin // إضافة Origin header
                         },
                         body: JSON.stringify({
                             lat: city.lat,
                             lon: city.lon,
                             lang: language === 'ar' ? 'ar' : 'en'
                         }),
-                        signal: controller.signal
+                        signal: controller.signal,
+                        mode: 'cors' // تفعيل CORS
                     });
 
                     clearTimeout(timeoutId);
@@ -574,7 +587,8 @@ export const AppProvider = ({ children }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Accept': 'application/json',
+                    'Origin': window.location.origin // إضافة Origin header
                 },
                 body: JSON.stringify({
                     message: userInput,
@@ -583,7 +597,8 @@ export const AppProvider = ({ children }) => {
                     language: language || 'en',
                     location: userLocation || null,
                     liveData: liveData || null
-                })
+                }),
+                mode: 'cors' // تفعيل CORS
             });
 
             if (!response.ok) {
@@ -615,14 +630,39 @@ export const AppProvider = ({ children }) => {
             };
             setChatMessages(prev => [...prev, botMessage]);
         } catch (error) {
+            console.error("🚨 Chat API Error Details:", error.message);
+
+            let errorMessage = t({
+                ar: "❌ عذراً، حدث خطأ في الاتصال.",
+                en: "❌ Sorry, there was a connection error."
+            });
+
+            // تحديد نوع الخطأ لتشخيص أفضل
+            if (error.message && (
+                error.message.includes('CORS') ||
+                error.message.includes('Access-Control-Allow-Origin') ||
+                error.message.includes('blocked by CORS policy')
+            )) {
+                console.warn("🚨 CORS Error in Chat API - Check server configuration");
+                errorMessage = t({
+                    ar: "❌ مشكلة في الاتصال بالخادم. يرجى المحاولة لاحقاً.",
+                    en: "❌ Server connection issue. Please try again later."
+                });
+            } else if (error.message && error.message.includes('Failed to fetch')) {
+                errorMessage = t({
+                    ar: "❌ لا يمكن الوصول للخادم. تحقق من الاتصال بالإنترنت.",
+                    en: "❌ Cannot reach server. Check your internet connection."
+                });
+            }
+
             setFriendlyError('chat', error);
-            const errorMessage = {
+            const errorMsg = {
                 id: Date.now() + 1,
-                text: t({ ar: "❌ عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.", en: "❌ Sorry, there was a connection error. Please try again." }),
+                text: errorMessage,
                 type: 'bot',
                 timestamp: new Date()
             };
-            setChatMessages(prev => [...prev, errorMessage]);
+            setChatMessages(prev => [...prev, errorMsg]);
         }
     };
 

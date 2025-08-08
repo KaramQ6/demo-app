@@ -310,11 +310,28 @@ export const generateResponseSuggestions = (nlpResult) => {
 export const extractKeyPhrases = (text) => {
     const doc = travelNlp(text);
 
+    // استخراج التواريخ يدوياً باستخدام regex
+    const datePatterns = [
+        /\b\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}\b/g, // MM/DD/YYYY, DD-MM-YYYY
+        /\b(next|this)\s+(week|weekend|month|year)\b/gi,
+        /\bin\s+\d+\s+(days?|weeks?|months?)\b/gi,
+        /\b(today|tomorrow|yesterday)\b/gi,
+        /\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/gi
+    ];
+
+    let dates = [];
+    datePatterns.forEach(pattern => {
+        const matches = text.match(pattern);
+        if (matches) {
+            dates = dates.concat(matches);
+        }
+    });
+
     const phrases = {
         nouns: doc.nouns().out('array'),
         verbs: doc.verbs().out('array'),
         places: doc.places().out('array'),
-        dates: doc.dates().out('array'),
+        dates: dates, // استخدام التواريخ المستخرجة يدوياً
         money: doc.money().out('array'),
         numbers: doc.numbers().out('array')
     };
