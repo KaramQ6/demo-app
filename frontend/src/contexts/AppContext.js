@@ -194,8 +194,16 @@ export const AppProvider = ({ children }) => {
 
     useEffect(() => {
         navigator.geolocation.getCurrentPosition(
-            (position) => setUserLocation({ lat: position.coords.latitude, lon: position.coords.longitude }),
-            (error) => setLocationError("User denied location access.")
+            (position) => {
+                setUserLocation({ lat: position.coords.latitude, lon: position.coords.longitude });
+                setLocationError(null);
+            },
+            (error) => {
+                console.warn("Location access denied, using default Amman location");
+                setLocationError("Location access denied");
+                // استخدام موقع عمان كافتراضي عند رفض الإذن
+                setUserLocation({ lat: 31.9539, lon: 35.9106 });
+            }
         );
     }, []);
 
@@ -219,11 +227,13 @@ export const AppProvider = ({ children }) => {
 
                 return {
                     name: language === 'ar' ? "عمان" : "Amman",
+                    cityName: language === 'ar' ? "عمان" : "Amman", // إضافة cityName للتوافق
                     main: {
                         temp: baseTemp,
                         humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
                         pressure: Math.floor(Math.random() * 30) + 1010, // 1010-1040
                     },
+                    temperature: baseTemp, // إضافة temperature مباشرة للتوافق
                     weather: [{
                         main: isNight ? "Clear" : ["Clear", "Clouds", "Sunny"][Math.floor(Math.random() * 3)],
                         description: language === 'ar' ?
@@ -234,7 +244,8 @@ export const AppProvider = ({ children }) => {
                         speed: Math.floor(Math.random() * 8) + 3 // 3-11 km/h
                     },
                     dt: Math.floor(Date.now() / 1000),
-                    timezone: 10800 // UTC+3 للأردن
+                    timezone: 10800, // UTC+3 للأردن
+                    locationSource: locationError ? "default" : "gps" // تحديد مصدر الموقع
                 };
             };
 

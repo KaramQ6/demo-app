@@ -496,6 +496,11 @@ const Chatbot = () => {
                   <MapPin className="w-4 h-4 text-blue-400" />
                   <span className="text-white font-medium">
                     {liveData.cityName || liveData.name}
+                    {liveData.locationSource === 'default' && (
+                      <span className="text-xs text-gray-400 ml-1">
+                        ({t({ ar: '(افتراضي)', en: '(default)' })})
+                      </span>
+                    )}
                   </span>
                 </div>
 
@@ -516,8 +521,8 @@ const Chatbot = () => {
                 </div>
               </div>
             ) : (
-              <div className="text-center text-xs text-red-400">
-                {t({ ar: 'فشل تحميل البيانات', en: 'Failed to load data' })}
+              <div className="text-center text-xs text-yellow-400">
+                {t({ ar: 'استخدام الموقع الافتراضي - عمان', en: 'Using default location - Amman' })}
               </div>
             )}
           </div>
