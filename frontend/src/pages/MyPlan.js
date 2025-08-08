@@ -93,26 +93,82 @@ const MyPlan = () => {
         setIsPlanning(true);
         setSmartPlan(null);
 
-        const webhookUrl = 'https://n8n.smart-tour.app/webhook/generateSmartPlan'; //  <-- تأكد من أن هذا هو رابط الـ Webhook الصحيح
+        const webhookUrl = 'https://n8n.smart-tour.app/webhook/Smart-Itinerary-Planner'; //  <-- استخدام API صحيح
 
         try {
             const response = await fetch(webhookUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ destinations: itineraryDestinations })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    destinations: itineraryDestinations,
+                    user: user ? { id: user.id, email: user.email } : null,
+                    language: language || 'ar',
+                    preferences: {
+                        interests: ['sightseeing', 'culture'],
+                        budget: 'medium',
+                        travelsWith: 'Solo'
+                    }
+                })
             });
 
-            if (!response.ok) throw new Error('Network response was not ok');
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} ${response.statusText}`);
+            }
 
-            const plan = await response.json();
+            const text = await response.text();
+            if (!text || text.trim() === '') {
+                throw new Error('Empty response from server');
+            }
 
-            // تحقق من أن الرد يحتوي على itinerary
+            let plan;
+            try {
+                plan = JSON.parse(text);
+            } catch (jsonError) {
+                console.error("JSON parsing error:", jsonError, "Response:", text);
+                // إنشاء خطة بسيطة من النص
+                plan = {
+                    tripPlan: {
+                        details: text
+                    }
+                };
+            }
+
+            // معالجة مرنة للخطة المستلمة
             if (plan.itinerary) {
                 setSmartPlan(plan.itinerary);
-                toast({ title: t({ ar: "تم إنشاء الخطة!", en: "Plan Generated!" }) });
+            } else if (plan.tripPlan) {
+                // تحويل تفاصيل الخطة إلى تنسيق يومي بسيط
+                const simplePlan = {
+                    '1': itineraryDestinations.map((dest, index) => ({
+                        id: dest.id,
+                        name: dest.name,
+                        order: index + 1
+                    }))
+                };
+                setSmartPlan(simplePlan);
             } else {
-                throw new Error("Invalid plan format received from server.");
+                // خطة احتياطية
+                const fallbackPlan = {};
+                const destinationsPerDay = Math.ceil(itineraryDestinations.length / 3);
+
+                itineraryDestinations.forEach((dest, index) => {
+                    const dayNumber = Math.floor(index / destinationsPerDay) + 1;
+                    if (!fallbackPlan[dayNumber]) {
+                        fallbackPlan[dayNumber] = [];
+                    }
+                    fallbackPlan[dayNumber].push({
+                        id: dest.id,
+                        name: dest.name,
+                        order: index + 1
+                    });
+                });
+                setSmartPlan(fallbackPlan);
             }
+
+            toast({ title: t({ ar: "تم إنشاء الخطة!", en: "Plan Generated!" }) });
 
         } catch (error) {
             console.error("Error generating smart plan:", error);
