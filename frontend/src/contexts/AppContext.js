@@ -464,8 +464,9 @@ export const AppProvider = ({ children }) => {
 
             const fetchCityWeather = async (city) => {
                 // مؤقتاً: تعطيل API والاعتماد على البيانات الواقعية فقط
-                console.log(`✅ Using realistic data for ${city} (API temporarily disabled)`);
-                return generateRealisticWeatherData(city);
+                const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
+                console.log(`✅ Using realistic data for ${cityName} (API temporarily disabled)`);
+                return generateRealisticWeatherData(cityName);
                 
                 /* API مُعطل مؤقتاً بسبب مشكلة webhook
                 try {
