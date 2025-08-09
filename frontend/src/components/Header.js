@@ -159,17 +159,6 @@ const Header = () => {
             </h1>
           </div>
 
-          {/* Navigation */}
-          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-            {/* Homepage specific navigation */}
-            {location.pathname === '/' && (
-              <>
-                <button onClick={() => scrollToSection('home')} className="nav-link text-gray-300 hover:text-white transition-colors duration-300 font-medium">
-                  {t({ ar: 'الرئيسية', en: 'Home' })}
-                </button>
-              </>
-            )}
-
             {/* Regular navigation */}
             {primaryNavigation
               .filter(item => item.public || user)
