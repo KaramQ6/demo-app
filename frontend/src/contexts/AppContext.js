@@ -299,6 +299,13 @@ export const AppProvider = ({ children }) => {
                 };
             };
 
+            // حل سريع: تعطيل API واستخدام بيانات محلية فوراً
+            console.log('✅ Using realistic data for user location (API disabled for speed)');
+            setLiveData(generateRealisticWeatherData());
+            setIsLoadingData(false);
+            return;
+            
+            /* API معطل للسرعة
             try {
                 // محاولة الاتصال بالـ API مع timeout للتعامل مع مشاكل الشبكة
                 const controller = new AbortController();
@@ -425,6 +432,7 @@ export const AppProvider = ({ children }) => {
             } finally {
                 setIsLoadingData(false);
             }
+            */ // نهاية تعليق API
         };
         fetchUserLiveData();
     }, [userLocation, language]);
