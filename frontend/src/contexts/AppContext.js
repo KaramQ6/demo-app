@@ -463,6 +463,11 @@ export const AppProvider = ({ children }) => {
             const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data";
 
             const fetchCityWeather = async (city) => {
+                // مؤقتاً: تعطيل API والاعتماد على البيانات الواقعية فقط
+                console.log(`✅ Using realistic data for ${city} (API temporarily disabled)`);
+                return generateRealisticWeatherData(city);
+                
+                /* API مُعطل مؤقتاً بسبب مشكلة webhook
                 try {
                     const controller = new AbortController();
                     const timeoutId = setTimeout(() => controller.abort(), 8000); // زيادة timeout إلى 8 ثواني
@@ -560,26 +565,10 @@ export const AppProvider = ({ children }) => {
                     throw new Error(`API response invalid for ${city.name}`);
 
                 } catch (error) {
-                    // تشخيص مفصل للأخطاء
-                    let errorType = 'Unknown';
-                    if (error.name === 'AbortError') {
-                        errorType = 'Timeout';
-                    } else if (error.message && error.message.includes('CORS')) {
-                        errorType = 'CORS';
-                    } else if (error.message && error.message.includes('Failed to fetch')) {
-                        errorType = 'Network';
-                    } else if (error.message && error.message.includes('JSON')) {
-                        errorType = 'JSON Parse';
-                    }
-
-                    console.warn(`🚨 Weather API Error for ${city.name}:`, {
-                        type: errorType,
-                        message: error.message,
-                        stack: error.stack
-                    });
-
-                    return generateRealisticWeatherData(city);
+                    // API disabled temporarily - comment block ends
+                    console.log("API disabled for testing");
                 }
+                */ // نهاية تعطيل API المؤقت
             };
 
             // بدلاً من استخدام mock data، استخدم بيانات واقعية مع تنوع حسب الموقع
