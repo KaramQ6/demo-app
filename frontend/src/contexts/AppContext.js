@@ -394,7 +394,7 @@ export const AppProvider = ({ children }) => {
             } catch (error) {
                 let errorMsg = "Weather API issue";
                 let errorType = 'Unknown';
-                
+
                 if (error.name === 'AbortError') {
                     errorMsg = "Weather API request timeout";
                     errorType = 'Timeout';
@@ -467,7 +467,7 @@ export const AppProvider = ({ children }) => {
                 const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
                 console.log(`✅ Using realistic data for ${cityName} (API temporarily disabled)`);
                 return generateRealisticWeatherData(cityName);
-                
+
                 /* API مُعطل مؤقتاً بسبب مشكلة webhook
                 try {
                     const controller = new AbortController();
@@ -577,17 +577,20 @@ export const AppProvider = ({ children }) => {
                 const currentHour = new Date().getHours();
                 const isNight = currentHour < 6 || currentHour > 18;
 
+                // التعامل مع اسم المدينة سواء كان string أو object
+                const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
+
                 // درجات حرارة واقعية حسب المنطقة
                 let baseTemp;
-                if (city.name === 'Aqaba') {
+                if (cityName === 'Aqaba') {
                     baseTemp = isNight ?
                         Math.floor(Math.random() * 8) + 22 : // ليلاً: 22-30
                         Math.floor(Math.random() * 12) + 32; // نهاراً: 32-44
-                } else if (city.name === 'Ajloun' || city.name === 'Jerash') {
+                } else if (cityName === 'Ajloun' || cityName === 'Jerash') {
                     baseTemp = isNight ?
                         Math.floor(Math.random() * 8) + 14 : // ليلاً: 14-22
                         Math.floor(Math.random() * 12) + 24; // نهاراً: 24-36
-                } else if (city.name === 'Dead Sea') {
+                } else if (cityName === 'Dead Sea') {
                     baseTemp = isNight ?
                         Math.floor(Math.random() * 8) + 20 : // ليلاً: 20-28
                         Math.floor(Math.random() * 12) + 30; // نهاراً: 30-42
@@ -607,7 +610,8 @@ export const AppProvider = ({ children }) => {
                 const condition = weatherConditions[Math.floor(Math.random() * weatherConditions.length)];
 
                 return {
-                    ...city,
+                    name: cityName,
+                    cityName: cityName,
                     main: {
                         temp: baseTemp,
                         humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
