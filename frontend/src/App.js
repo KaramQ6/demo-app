@@ -1,7 +1,7 @@
 import React, { Suspense } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { LanguageProvider } from "./contexts/LanguageContext";
+import { LanguageProvider, useLanguage } from "./contexts/LanguageContext";
 import { AppProvider } from "./contexts/AppContext";
 import { Toaster } from "./components/ui/toaster";
 
@@ -20,7 +20,7 @@ const DestinationDetail = React.lazy(() => import("./pages/DestinationDetail"));
 const DataHub = React.lazy(() => import("./pages/DataHub"));
 const IoTHub = React.lazy(() => import("./pages/IoTHub"));
 const About = React.lazy(() => import("./pages/About"));
-const VoiceAssistantPage = React.lazy(() => import("./pages/VoiceAssistantPage"));
+const VoiceAgentPage = React.lazy(() => import("./pages/VoiceAgentPage"));
 const UserProfile = React.lazy(() => import("./pages/UserProfile"));
 const Itinerary = React.lazy(() => import("./pages/Itinerary"));
 const MyPlan = React.lazy(() => import("./pages/MyPlan"));
@@ -46,16 +46,17 @@ const SmartRecommendationsPage = React.lazy(() => import('./pages/SmartRecommend
 // Internal component to handle layout based on route
 function AppContent() {
   const location = useLocation();
+  const { language } = useLanguage();
   const isArPage = location.pathname === '/ar';
-  const isVoiceAssistantPage = location.pathname === '/voice-assistant';
+  const isVoiceAssistantPage = location.pathname === '/VoiceAgentPage';
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/reset-password' || location.pathname === '/reset-password-confirm';
 
   return (
-    <div className="App min-h-screen bg-background text-foreground">
+    <div className="App min-h-screen bg-gray-900 text-white" style={{ fontFamily: language === 'ar' ? "'Tajawal', sans-serif" : "'Inter', sans-serif" }}>
       <AppProvider>
         {!isArPage && !isAuthPage && !isVoiceAssistantPage && <Header />}
         {!isArPage && !isAuthPage && !isVoiceAssistantPage && <SmartToolsSidebar />}
-        <main className={isArPage ? 'ar-main' : !isArPage && !isAuthPage && !isVoiceAssistantPage ? 'ml-0 md:ml-16 transition-all duration-300' : ''}>
+        <main className={isArPage ? 'ar-main' : !isArPage && !isAuthPage && !isVoiceAssistantPage ? 'ml-0 md:ml-16 pt-16 transition-all duration-300' : 'pt-16'}>
           <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-lg">Loading...</div>}>
             <Routes>
               <Route path="/" element={<Homepage />} />
@@ -64,7 +65,7 @@ function AppContent() {
               <Route path="/data" element={<DataHub />} />
               <Route path="/iot-hub" element={<IoTHub />} />
               <Route path="/about" element={<About />} />
-              <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
+              <Route path="/voice-assistant" element={<VoiceAgentPage />} />
               <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
               <Route path="/itinerary" element={<ProtectedRoute><Itinerary /></ProtectedRoute>} />
               <Route path="/my-plan" element={<ProtectedRoute><MyPlan /></ProtectedRoute>} />
@@ -83,10 +84,10 @@ function AppContent() {
               <Route path="/admin" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
 
               {/* IoT and Smart Features routes */}
-              <Route path="/weather" element={<WeatherStationPage />} />
+              <Route path="/weather" element={<VoiceAgentPage />} />
               <Route path="/crowd-prediction" element={<CrowdPredictionPage />} />
               <Route path="/smart-recommendations" element={<SmartRecommendationsPage />} />
-              <Route path="/voice-assistant" element={<VoiceAssistantPage />} />
+              <Route path="/voice-assistant" element={<VoiceAgentPage />} />
             </Routes>
           </Suspense>
         </main>

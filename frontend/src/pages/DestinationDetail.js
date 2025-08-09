@@ -63,9 +63,9 @@ const DestinationDetail = () => {
   // Mock image gallery (in real app, would come from destination data)
   const imageGallery = [
     destination.image,
-    'https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e',
-    'https://images.unsplash.com/photo-1578662996442-48f60103fc96',
-    'https://images.unsplash.com/photo-1590736969955-71cc94901144'
+    'https://images.pexels.com/photos/33280395/pexels-photo-33280395.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+    'https://images.pexels.com/photos/720254/pexels-photo-720254.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
   ];
 
   const handleCrowdFeedback = (level) => {
@@ -287,8 +287,8 @@ const DestinationDetail = () => {
                           </span>
                         </div>
                         <span className={`text-sm font-semibold ${destination.crowdLevel === 'low' ? 'text-green-400' :
-                            destination.crowdLevel === 'medium' ? 'text-yellow-400' :
-                              'text-red-400'
+                          destination.crowdLevel === 'medium' ? 'text-yellow-400' :
+                            'text-red-400'
                           }`}>
                           {destination.crowdLevel === 'low' ? t({ ar: 'هادئ', en: 'Quiet' }) :
                             destination.crowdLevel === 'medium' ? t({ ar: 'متوسط', en: 'Moderate' }) :

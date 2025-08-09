@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
@@ -11,6 +11,20 @@ const Homepage = () => {
   const { t, language, isRTL } = useLanguage();
   const { openChatbot, sendMessage, liveData, isLoadingData } = useApp();
   const heroRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isVisible, setIsVisible] = useState({ home: true });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      setScrollProgress(scrollPercent);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -35,6 +49,13 @@ const Homepage = () => {
     sendMessage(message);
   };
 
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const handleLocationStatusClick = () => {
     if (!liveData || !liveData.cityName) return;
     openChatbot();
@@ -54,83 +75,79 @@ const Homepage = () => {
   const featuredDestinations = destinations.slice(0, 3);
 
   return (
-    <div className="min-h-screen">
-      {/* OPTIMIZED MOBILE HERO SECTION */}
-      <section className="relative min-h-[80vh] md:min-h-screen flex items-center justify-center overflow-hidden">
-        <div ref={heroRef} className="absolute inset-0 w-full h-full transition-transform duration-100 ease-out">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
-          <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73e0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Wadi Rum Desert Jordan" className="w-full h-full object-cover" />
-        </div>
-
-        <div className="relative z-20 text-center px-4 md:px-6 max-w-5xl mx-auto">
-          {/* MOBILE-OPTIMIZED HERO CONTENT */}
-          <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-7xl font-bold text-white mb-4 md:mb-6 leading-tight">
-            {t({
-              ar: 'اكتشف كنوز الأردن المخفية مع جواد',
-              en: 'Discover Jordan\'s Hidden Gems with AI Guide Jawad'
-            })}
-          </h1>
-
-          <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-200 mb-6 md:mb-8 max-w-3xl mx-auto leading-relaxed">
-            {t({
-              ar: 'خطط رحلتك المثالية بالذكاء الاصطناعي واكتشف الأردن كما لم تره من قبل',
-              en: 'Plan your perfect trip with AI and discover Jordan like never before'
-            })}
-          </p>
-
-          {/* CRITICAL: MOBILE CTA ABOVE FOLD */}
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-8">
-            <Button
-              onClick={handleCTAClick}
-              size="lg"
-              className="gradient-purple text-white px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] hover:scale-105 transition-transform shadow-2xl"
-            >
-              {t({ ar: 'خطط رحلتك الآن', en: 'Plan Your Trip Now' })}
-              {isRTL ? <ArrowLeft className="ml-2 w-5 h-5" /> : <ArrowRight className="ml-2 w-5 h-5" />}
-            </Button>
-
-            <Link to="/destinations">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-white/30 text-white hover:bg-white/10 px-6 py-4 text-base sm:text-lg font-semibold w-full sm:w-auto min-h-[56px] backdrop-blur-sm"
-              >
-                {t({ ar: 'استكشف الوجهات', en: 'Explore Destinations' })}
-              </Button>
-            </Link>
+    <div className="relative">
+      {/* ENHANCED HERO SECTION */}
+      <section ref={heroRef} id="home" className="relative h-screen flex items-center justify-center overflow-hidden -mt-16">
+        {/* Weather Info Widget */}
+        {liveData && (
+          <div
+            className="absolute top-20 right-4 z-40 cursor-pointer group transition-all duration-300 hover:scale-105"
+            onClick={handleLocationStatusClick}
+            style={{ pointerEvents: 'auto' }}
+          >
+            <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-3 shadow-xl">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <MapPin className="w-4 h-4 text-white/80" />
+                <span className="text-white/90 text-sm font-medium truncate max-w-32">
+                  {liveData.cityName || 'Amman'}
+                </span>
+              </div>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse mt-1">
+                <Thermometer className="w-4 h-4 text-white/80" />
+                <span className="text-white font-bold">
+                  {Math.round(liveData.temperature || liveData.main?.temp || 25)}°C
+                </span>
+              </div>
+            </div>
           </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/60 via-blue-900/40 to-indigo-900/60 z-10 animate-pulse"></div>
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat transform scale-105 transition-transform duration-1000 parallax" style={{ backgroundImage: `url(https://images.pexels.com/photos/1631665/pexels-photo-1631665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2)`, transform: `translateY(${scrollProgress * 0.5}px) scale(1.1)` }}></div>
+        <div className="absolute inset-0 z-15">
+          <div className="absolute top-20 left-10 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-full blur-xl animate-float"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-gradient-to-br from-indigo-500/15 to-purple-500/15 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
         </div>
-
-        {/* SIMPLIFIED LOCATION STATUS */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-full max-w-xs md:max-w-sm px-4 z-20">
-          <button onClick={handleLocationStatusClick} className="w-full glass-card hover:bg-white/10 transition-all rounded-2xl p-3 border border-white/20 animate-fade-in-up group">
-            {isLoadingData ? (
-              <div className="flex items-center justify-center text-white text-sm">
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                <span>{t({ ar: 'جاري تحديد الموقع...', en: 'Detecting location...' })}</span>
-              </div>
-            ) : liveData && liveData.cityName ? (
-              <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse text-white">
-                <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                  <MapPin className="w-4 h-4 text-blue-400" />
-                  <span className="text-sm font-medium">{liveData.cityName}</span>
-                </div>
-                <div className="flex items-center space-x-1 rtl:space-x-reverse">
-                  <Thermometer className="w-4 h-4 text-orange-400" />
-                  <span className="text-sm font-medium">{liveData.temperature}°C</span>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-xs text-red-400">
-                {t({ ar: 'فشل تحديد الموقع', en: 'Location access failed' })}
-              </div>
-            )}
-          </button>
+        <div className={`relative z-20 text-center px-4 sm:px-6 lg:px-8 transition-all duration-1000 ${isVisible.home ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}`}>
+          <div className="animate-fade-in-up">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent leading-tight font-poppins tracking-tight animate-glow">
+              {t({
+                ar: 'اكتشف كنوز الأردن المخفية مع جواد',
+                en: 'Discover Jordan\'s Hidden Gems with AI Guide Jawad'
+              })}
+            </h1>
+            <p className="text-lg md:text-xl lg:text-2xl mb-8 text-gray-200 max-w-4xl mx-auto leading-relaxed font-inter font-light">
+              {t({
+                ar: 'خطط رحلتك المثالية بالذكاء الاصطناعي واكتشف الأردن كما لم تره من قبل',
+                en: 'Plan your perfect trip with AI and discover Jordan like never before'
+              })}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button onClick={() => scrollToSection('features')} className="group bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-purple-500/30 font-inter relative overflow-hidden">
+                <span className="relative z-10 flex items-center">
+                  <svg className="w-5 h-5 mx-2 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                  {t({ ar: 'ابدأ التخطيط', en: 'Start Planning' })}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              </button>
+              <button onClick={() => scrollToSection('map')} className="group border-2 border-white/30 hover:border-white/60 text-white font-semibold py-4 px-8 rounded-full text-lg transition-all duration-300 transform hover:scale-105 backdrop-blur-sm hover:bg-white/10 font-inter relative overflow-hidden">
+                <span className="relative z-10 flex items-center">
+                  <svg className="w-5 h-5 mx-2 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  {t({ ar: 'استكشف الخريطة', en: 'Explore Map' })}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* HOW IT WORKS SECTION - MOBILE OPTIMIZED */}
-      <section className="py-16 md:py-20 px-4 md:px-6 relative">
+      <section id="features" className="py-16 md:py-20 px-4 md:px-6 relative">
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="text-center mb-12 md:mb-16 animate-fade-in-up">
             <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold font-['Montserrat'] text-white mb-4 md:mb-6">
@@ -247,9 +264,9 @@ const Homepage = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               <Link to="/booking" className="group">
-                <Card className="glass-card interactive-card border-white/10 hover:border-green-400/30 transition-all">
+                <Card className="glass-card interactive-card border-white/10 hover:border-purple-400/30 transition-all">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                       <Calendar className="w-8 h-8 text-white" />
                     </div>
                     <h4 className="font-semibold text-white mb-2 text-lg">

@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useApp } from '../contexts/AppContext';
-import { Globe, Menu, X, User, LogOut, MapPin, Shield } from 'lucide-react';
-import { useState } from 'react';
+import { Globe, Menu, X, User, LogOut, MapPin, Shield, MessageCircle } from 'lucide-react';
 
 const Header = () => {
   const { t, language, toggleLanguage, isRTL } = useLanguage();
@@ -12,6 +11,28 @@ const Header = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Scroll progress tracking
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      setScrollProgress(scrollPercent);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll to section function
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -28,11 +49,6 @@ const Header = () => {
 
   // SIMPLIFIED NAVIGATION STRUCTURE
   const primaryNavigation = [
-    {
-      path: '/',
-      label: { ar: 'الرئيسية', en: 'Home' },
-      public: true
-    },
     {
       path: '/destinations',
       label: { ar: 'الوجهات', en: 'Destinations' },
@@ -128,49 +144,55 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 glass-card border-b border-white/10">
-      <div className="container mx-auto px-4 md:px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 rtl:space-x-reverse group">
-            <div className="w-10 h-10 gradient-purple rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg font-['Montserrat']">S</span>
-            </div>
-            <div className="hidden md:block">
-              <h1 className="text-xl font-bold font-['Montserrat'] text-white group-hover:text-primary transition-colors">
-                SmartTour.Jo
-              </h1>
-              <p className="text-xs text-muted-foreground font-['Open_Sans']">
-                {t({ ar: 'مرشدك الذكي في الأردن', en: 'Your Smart Guide in Jordan' })}
-              </p>
-            </div>
-          </Link>
+    <nav className="fixed top-0 w-full bg-black/95 backdrop-blur-xl z-50 border-b border-gray-800/50 transition-all duration-300 shadow-xl">
+      <div className="absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-purple-600 via-purple-400 to-blue-600 transition-all duration-300 ease-out shadow-lg shadow-purple-500/50" style={{ width: `${scrollProgress}%` }}></div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-all duration-300 cursor-pointer font-poppins tracking-tight transform hover:scale-105" onClick={() => scrollToSection('home')}>
+              <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-glow">Smart</span>
+              <span className="text-white ml-1">Tour.jo</span>
+            </h1>
+          </div>
 
-          {/* SIMPLIFIED PRIMARY NAVIGATION - Desktop */}
-          <nav className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+          {/* Navigation */}
+          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+            {/* Homepage specific navigation */}
+            {location.pathname === '/' && (
+              <>
+                <button onClick={() => scrollToSection('home')} className="nav-link text-gray-300 hover:text-white transition-colors duration-300 font-medium">
+                  {t({ ar: 'الرئيسية', en: 'Home' })}
+                </button>
+              </>
+            )}
+
+            {/* Regular navigation */}
             {primaryNavigation
               .filter(item => item.public || user)
+              .slice(0, 3)
               .map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  onClick={item.path === '/plan-trip' ? handlePlanTripClick : undefined}
-                  className={`px-4 py-2 rounded-lg transition-all duration-200 font-['Open_Sans'] font-medium text-center ${isActivePath(item.path)
+                  className={`nav-link px-4 py-2 rounded-lg transition-all duration-300 font-medium text-center ${isActivePath(item.path)
                     ? 'gradient-purple text-white shadow-lg'
                     : item.featured || item.path === '/booking'
-                      ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-md hover:shadow-lg hover:from-green-600 hover:to-teal-600'
-                      : item.path === '/plan-trip'
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-md hover:shadow-lg hover:from-purple-600 hover:to-blue-600'
-                        : item.isAdmin
-                          ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-md hover:shadow-lg hover:from-red-600 hover:to-orange-600'
-                          : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md hover:shadow-lg hover:from-purple-700 hover:to-blue-700 transform hover:scale-105'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
                     }`}
                 >
-                  {item.isAdmin && <Shield className="w-4 h-4 ml-1" />}
                   {t(item.label)}
                 </Link>
               ))}
-          </nav>
+
+            {/* Enhanced Chat Button */}
+            <button
+              onClick={openChatbot}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-purple-500/30 font-medium"
+            >
+              {t({ ar: 'تحدث مع جواد', en: 'Chat with Jawad' })}
+            </button>
+          </div>
 
           {/* Language Toggle & User Menu & Mobile Menu */}
           <div className="flex items-center space-x-4 rtl:space-x-reverse">
@@ -248,18 +270,25 @@ const Header = () => {
               </span>
             </button>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-lg glass hover:bg-white/10 transition-all duration-200"
-              aria-label={t({ ar: 'فتح القائمة', en: 'Open Menu' })}
-            >
-              {isMobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
+            {/* Enhanced Mobile Menu Toggle */}
+            <div className="md:hidden flex items-center space-x-2">
+              {/* Mobile Chat Button */}
+              <button onClick={openChatbot} className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-2 rounded-full">
+                <MessageCircle className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="p-2 rounded-lg glass hover:bg-white/10 transition-all duration-200"
+                aria-label={t({ ar: 'فتح القائمة', en: 'Open Menu' })}
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -312,7 +341,7 @@ const Header = () => {
           </div>
         )}
       </div>
-    </header>
+    </nav>
   );
 };
 

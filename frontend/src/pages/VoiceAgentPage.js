@@ -31,7 +31,7 @@ const VoiceAgentPage = () => {
                 }}
             >
                 <elevenlabs-convai
-                    agent-id="agent_4501k1tw42v5eac9stmjr5670gwh"
+                    agent-id="agent_6101k289zfvxezxs06pnc7jz01pv"
                     style={{
                         width: '100%',
                         height: '100%'
