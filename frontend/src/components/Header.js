@@ -63,7 +63,6 @@ const Header = () => {
       path: '/booking',
       label: { ar: 'حجز رحلة', en: 'Book Tour' },
       public: true,
-      featured: true
     },
     {
       path: '/about',
