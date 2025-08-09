@@ -302,31 +302,48 @@ export const AppProvider = ({ children }) => {
             try {
                 // محاولة الاتصال بالـ API مع timeout للتعامل مع مشاكل الشبكة
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 ثواني timeout
+                const timeoutId = setTimeout(() => controller.abort(), 8000); // زيادة timeout إلى 8 ثواني
+
+                const requestBody = {
+                    lat: userLocation.lat,
+                    lon: userLocation.lon,
+                    lang: language === 'ar' ? 'ar' : 'en'
+                };
+
+                console.log('🌍 Calling Weather API for user location:', {
+                    url: weatherApiUrl,
+                    body: requestBody
+                });
 
                 const response = await fetch(weatherApiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                        'Origin': window.location.origin // إضافة Origin header
+                        'User-Agent': 'SmartTour-Jordan/1.0',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
-                    body: JSON.stringify({
-                        lat: userLocation.lat,
-                        lon: userLocation.lon,
-                        lang: language === 'ar' ? 'ar' : 'en'
-                    }),
+                    body: JSON.stringify(requestBody),
                     signal: controller.signal,
-                    mode: 'cors' // تفعيل CORS
+                    mode: 'cors'
                 });
 
                 clearTimeout(timeoutId);
+
+                console.log('📡 User Weather API Response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok,
+                    url: response.url
+                });
 
                 if (!response.ok) {
                     throw new Error(`API Error: ${response.status} - ${response.statusText}`);
                 }
 
                 const text = await response.text();
+                console.log('📝 Raw user weather response:', text);
+
                 if (!text || text.trim() === '') {
                     console.warn("Empty response from weather API, using realistic fallback");
                     setLiveData(generateRealisticWeatherData());
@@ -335,6 +352,8 @@ export const AppProvider = ({ children }) => {
 
                 try {
                     const data = JSON.parse(text);
+                    console.log('✅ Parsed user weather data:', data);
+
                     // تحديث الهيكل ليتوافق مع البيانات الجديدة من الـ webhook
                     if (data && (data.temperature || data.cityName)) {
                         // إضافة معلومات الموقع للبيانات القادمة من API
@@ -355,35 +374,51 @@ export const AppProvider = ({ children }) => {
                                 speed: Math.floor(Math.random() * 8) + 3
                             },
                             locationSource: locationError ? "default" : "gps",
-                            coordinates: { lat: userLocation.lat, lon: userLocation.lon }
+                            coordinates: { lat: userLocation.lat, lon: userLocation.lon },
+                            source: 'api',
+                            apiData: data // إضافة البيانات الخام للتشخيص
                         };
                         setLiveData(enhancedData);
-                        console.log("✅ Weather API success:", enhancedData.cityName);
+                        console.log("✅ User Weather API success:", enhancedData.cityName);
                     } else {
                         console.warn("Invalid API response format, using realistic fallback");
+                        console.log("Data structure received:", data);
                         setLiveData(generateRealisticWeatherData());
                     }
                 } catch (jsonError) {
-                    console.warn("JSON parsing issue, using realistic fallback data");
+                    console.error("🔥 JSON parsing error:", jsonError.message);
+                    console.log("Raw text that failed to parse:", text);
                     setLiveData(generateRealisticWeatherData());
                 }
 
             } catch (error) {
                 let errorMsg = "Weather API issue";
+                let errorType = 'Unknown';
+                
                 if (error.name === 'AbortError') {
                     errorMsg = "Weather API request timeout";
+                    errorType = 'Timeout';
                 } else if (error.message && (
                     error.message.includes('blocked by CORS') ||
                     error.message.includes('CORS policy') ||
                     error.message.includes('Access-Control-Allow-Origin')
                 )) {
                     errorMsg = "CORS issue detected in production";
+                    errorType = 'CORS';
                     console.warn("🚨 CORS Error Details:", error.message);
+                } else if (error.message && error.message.includes('Failed to fetch')) {
+                    errorMsg = "Network connection issue";
+                    errorType = 'Network';
                 } else {
                     errorMsg = error.message || "Unknown error";
                 }
 
-                console.warn(`❌ ${errorMsg}, using realistic fallback`);
+                console.error(`🚨 User Weather API Error:`, {
+                    type: errorType,
+                    message: errorMsg,
+                    originalError: error.message,
+                    stack: error.stack
+                });
 
                 // في جميع الحالات، نستخدم بيانات واقعية بدلاً من إظهار خطأ للمستخدم
                 setLiveData(generateRealisticWeatherData());
@@ -430,60 +465,119 @@ export const AppProvider = ({ children }) => {
             const fetchCityWeather = async (city) => {
                 try {
                     const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 5000);
+                    const timeoutId = setTimeout(() => controller.abort(), 8000); // زيادة timeout إلى 8 ثواني
+
+                    // تشخيص أفضل للـ API call
+                    const requestBody = {
+                        lat: city.lat,
+                        lon: city.lon,
+                        lang: language === 'ar' ? 'ar' : 'en'
+                    };
+
+                    console.log(`🌍 Calling Weather API for ${city.name}:`, {
+                        url: weatherApiUrl,
+                        body: requestBody
+                    });
 
                     const response = await fetch(weatherApiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'Origin': window.location.origin // إضافة Origin header
+                            'User-Agent': 'SmartTour-Jordan/1.0',
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
-                        body: JSON.stringify({
-                            lat: city.lat,
-                            lon: city.lon,
-                            lang: language === 'ar' ? 'ar' : 'en'
-                        }),
+                        body: JSON.stringify(requestBody),
                         signal: controller.signal,
-                        mode: 'cors' // تفعيل CORS
+                        mode: 'cors'
                     });
 
                     clearTimeout(timeoutId);
 
+                    console.log(`📡 API Response for ${city.name}:`, {
+                        status: response.status,
+                        statusText: response.statusText,
+                        ok: response.ok,
+                        headers: Object.fromEntries(response.headers.entries())
+                    });
+
                     if (response.ok) {
                         const text = await response.text();
+                        console.log(`📝 Raw response for ${city.name}:`, text);
+                        
                         if (text && text.trim()) {
-                            const data = JSON.parse(text);
-                            // تحديث الهيكل ليتوافق مع البيانات الواردة من الـ webhook
-                            if (data && (data.temperature || data.cityName)) {
-                                return {
-                                    ...city,
-                                    main: {
-                                        temp: parseFloat(data.temperature) || 25,
-                                        humidity: parseFloat(data.humidity) || 50,
-                                        feels_like: parseFloat(data.temperature) + Math.floor(Math.random() * 4) - 2,
-                                        pressure: Math.floor(Math.random() * 30) + 1010
-                                    },
-                                    weather: [{
-                                        main: "Clear",
-                                        description: data.description || (language === 'ar' ? "أجواء صافية" : "clear sky")
-                                    }],
-                                    wind: {
-                                        speed: Math.floor(Math.random() * 8) + 3 // 3-11 km/h
-                                    },
-                                    temperature: parseFloat(data.temperature) || 25,
-                                    cityName: data.cityName || city.name,
-                                    source: 'api'
-                                };
+                            try {
+                                const data = JSON.parse(text);
+                                console.log(`✅ Parsed data for ${city.name}:`, data);
+                                
+                                // تحديث الهيكل ليتوافق مع البيانات الواردة من الـ webhook
+                                if (data && (data.temperature || data.cityName)) {
+                                    const processedData = {
+                                        ...city,
+                                        main: {
+                                            temp: parseFloat(data.temperature) || 25,
+                                            humidity: parseFloat(data.humidity) || 50,
+                                            feels_like: parseFloat(data.temperature) + Math.floor(Math.random() * 4) - 2,
+                                            pressure: Math.floor(Math.random() * 30) + 1010
+                                        },
+                                        weather: [{
+                                            main: "Clear",
+                                            description: data.description || (language === 'ar' ? "أجواء صافية" : "clear sky")
+                                        }],
+                                        wind: {
+                                            speed: Math.floor(Math.random() * 8) + 3
+                                        },
+                                        temperature: parseFloat(data.temperature) || 25,
+                                        cityName: data.cityName || city.name,
+                                        source: 'api',
+                                        apiData: data // إضافة البيانات الخام للتشخيص
+                                    };
+                                    console.log(`🎯 Successfully processed API data for ${city.name}`);
+                                    return processedData;
+                                } else {
+                                    console.warn(`⚠️ Invalid data structure for ${city.name}:`, data);
+                                }
+                            } catch (parseError) {
+                                console.error(`🔥 JSON Parse Error for ${city.name}:`, parseError.message);
+                                console.log(`Raw text that failed to parse:`, text);
                             }
+                        } else {
+                            console.warn(`📭 Empty response for ${city.name}`);
+                        }
+                    } else {
+                        console.error(`❌ HTTP Error for ${city.name}:`, response.status, response.statusText);
+                        
+                        // محاولة قراءة رسالة الخطأ من الاستجابة
+                        try {
+                            const errorText = await response.text();
+                            console.log(`Error response body for ${city.name}:`, errorText);
+                        } catch (e) {
+                            console.log(`Could not read error response for ${city.name}`);
                         }
                     }
 
                     // في حالة فشل API، استخدم البيانات الواقعية
-                    throw new Error('API response invalid');
+                    throw new Error(`API response invalid for ${city.name}`);
 
                 } catch (error) {
-                    console.warn(`Weather API failed for ${city.name}, using realistic fallback`);
+                    // تشخيص مفصل للأخطاء
+                    let errorType = 'Unknown';
+                    if (error.name === 'AbortError') {
+                        errorType = 'Timeout';
+                    } else if (error.message && error.message.includes('CORS')) {
+                        errorType = 'CORS';
+                    } else if (error.message && error.message.includes('Failed to fetch')) {
+                        errorType = 'Network';
+                    } else if (error.message && error.message.includes('JSON')) {
+                        errorType = 'JSON Parse';
+                    }
+
+                    console.warn(`🚨 Weather API Error for ${city.name}:`, {
+                        type: errorType,
+                        message: error.message,
+                        stack: error.stack
+                    });
+
                     return generateRealisticWeatherData(city);
                 }
             };

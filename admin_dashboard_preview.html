@@ -34,7 +34,7 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-bold text-gray-800">SmartTour.Jo Admin Dashboard</h1>
-                        <p class="text-gray-600">Centralized platform management</p>
+                        <p class="text-gray-600">Centralized platform managnt</p>
                     </div>
                 </div>
 
@@ -85,7 +85,7 @@
             <div class="space-y-6">
                 <!-- Header -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <h2 class="text-2xl font-bold text-gray-800">Booking Management</h2>
+                    <h2 class="text-2xl font-bold text-gray-800">Booking Managnt</h2>
                     <button
                         class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                         <i data-lucide="download" class="w-4 h-4"></i>
@@ -248,7 +248,7 @@
                 <!-- Header -->
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
-                        <h2 class="text-2xl font-bold text-gray-800">User Management</h2>
+                        <h2 class="text-2xl font-bold text-gray-800">User Managnt</h2>
                         <p class="text-gray-600">Manage user accounts and permissions</p>
                     </div>
                     <div class="text-sm text-gray-500">Total: 1,247 users</div>
@@ -489,10 +489,10 @@
             });
 
             // Show selected tab content
-            document.getElementById(tabName + '-content').classList.remove('hidden');
+            document.getElntById(tabName + '-content').classList.remove('hidden');
 
             // Add active class to selected tab
-            const activeTab = document.getElementById(tabName + '-tab');
+            const activeTab = document.getElntById(tabName + '-tab');
             activeTab.classList.remove('tab-inactive', 'hover:text-gray-700', 'hover:border-gray-300');
             activeTab.classList.add('tab-active');
         }

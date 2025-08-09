@@ -50,6 +50,11 @@ const Header = () => {
   // SIMPLIFIED NAVIGATION STRUCTURE
   const primaryNavigation = [
     {
+      path: '/',
+      label: { ar: 'الرئيسية', en: 'Home' },
+      public: true
+    },
+    {
       path: '/destinations',
       label: { ar: 'الوجهات', en: 'Destinations' },
       public: true
