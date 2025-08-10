@@ -492,7 +492,7 @@ const SmartToolsSidebar = () => {
 
   return (
     <>
-      {isMobile ? <MobileFloatingMenu /> : <DesktopSidebar />}
+      {!isMobile && <DesktopSidebar />}
       <QuickSearchModal />
     </>
   );

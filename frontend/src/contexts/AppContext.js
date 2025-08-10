@@ -1,19 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
-import { supabase } from '../supabaseClient'; // استيراد Supabase
-import AlternativeCrowdDataService from '../services/alternativeCrowdDataService'; // خدمة الازدحام البديلة (بدون Google)
+import { supabase } from '../supabaseClient';
+import AlternativeCrowdDataService from '../services/alternativeCrowdDataService';
 
 export const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-    // --- States for Authentication ---
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-
-    // Global Error State
     const [globalError, setGlobalError] = useState(null);
-
     const { language, t } = useLanguage();
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
     const [chatMessages, setChatMessages] = useState([]);
@@ -22,50 +18,35 @@ export const AppProvider = ({ children }) => {
     const [isLoadingData, setIsLoadingData] = useState(true);
     const [userLocation, setUserLocation] = useState(null);
     const [locationError, setLocationError] = useState(null);
-
     const [citiesData, setCitiesData] = useState([]);
     const [isCitiesLoading, setIsCitiesLoading] = useState(true);
-
-    // IoT Hub Data - للأماكن السياحية
     const [iotHubData, setIotHubData] = useState([]);
     const [isIotHubLoading, setIsIotHubLoading] = useState(true);
-
     const [userPreferences, setUserPreferences] = useState({
         interests: [],
         budget: '',
         travelsWith: 'Solo'
     });
-
     const [suggestedItinerary, setSuggestedItinerary] = useState(null);
     const [isSuggestingItinerary, setIsSuggestingItinerary] = useState(true);
-
-    // IoT Data State
     const [iotData, setIotData] = useState({});
-
-    // Sidebar Enhanced States
     const [sidebarPinned, setSidebarPinned] = useState(() => {
         const saved = localStorage.getItem('sidebarPinned');
         return saved ? JSON.parse(saved) : false;
     });
-
     const [navigationHistory, setNavigationHistory] = useState(() => {
         const saved = localStorage.getItem('navigationHistory');
         return saved ? JSON.parse(saved) : [];
     });
-
     const [quickSearchOpen, setQuickSearchOpen] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState('online');
     const [notificationCount, setNotificationCount] = useState(0);
-
-    // Clear global error function
-    const clearGlobalError = () => setGlobalError(null);
-
-    // خدمة الازدحام البديلة (بدون Google API)
     const [crowdDataService] = useState(() => new AlternativeCrowdDataService());
     const [realCrowdData, setRealCrowdData] = useState({});
     const [crowdUpdateInterval, setCrowdUpdateInterval] = useState(null);
 
-    // Update IoT data for a specific destination
+    const clearGlobalError = () => setGlobalError(null);
+
     const updateIotData = (destinationId, newData) => {
         setIotData(prev => ({
             ...prev,
@@ -73,7 +54,6 @@ export const AppProvider = ({ children }) => {
         }));
     };
 
-    // Enhanced Sidebar Functions
     const toggleSidebarPin = () => {
         const newPinState = !sidebarPinned;
         setSidebarPinned(newPinState);
@@ -84,17 +64,15 @@ export const AppProvider = ({ children }) => {
         const newEntry = { path, title, timestamp: Date.now() };
         setNavigationHistory(prev => {
             const filtered = prev.filter(item => item.path !== path);
-            const updated = [newEntry, ...filtered].slice(0, 5); // Keep only last 5
+            const updated = [newEntry, ...filtered].slice(0, 5);
             localStorage.setItem('navigationHistory', JSON.stringify(updated));
             return updated;
         });
     };
 
     const toggleQuickSearch = () => setQuickSearchOpen(!quickSearchOpen);
-
     const updateNotificationCount = (count) => setNotificationCount(count);
 
-    // دالة لبدء تحديث بيانات الازدحام الحقيقية
     const initializeRealCrowdData = async () => {
         try {
             const destinationIds = [
@@ -102,11 +80,9 @@ export const AppProvider = ({ children }) => {
                 'ajloun-castle', 'dana-reserve', 'karak-castle', 'aqaba', 'rainbow-street'
             ];
 
-            // تحديث فوري
             const initialData = await crowdDataService.getMultipleCrowdData(destinationIds);
             setRealCrowdData(initialData);
 
-            // بدء التحديث الدوري كل 10 دقائق (أسرع من Google)
             if (crowdUpdateInterval) {
                 clearInterval(crowdUpdateInterval);
             }
@@ -115,20 +91,17 @@ export const AppProvider = ({ children }) => {
                 destinationIds,
                 (updatedData) => {
                     setRealCrowdData(updatedData);
-                    console.log('Alternative crowd data updated:', Object.keys(updatedData).length, 'destinations');
                 },
-                10 // كل 10 دقائق
+                10
             );
 
             setCrowdUpdateInterval(intervalId);
 
         } catch (error) {
             console.error('Failed to initialize real crowd data:', error);
-            setFriendlyError('crowd-data', error);
         }
     };
 
-    // دالة للحصول على بيانات الازدحام الحقيقية لوجهة محددة
     const getRealCrowdData = async (destinationId) => {
         try {
             const data = await crowdDataService.getRealCrowdData(destinationId);
@@ -139,19 +112,10 @@ export const AppProvider = ({ children }) => {
             return data;
         } catch (error) {
             console.error(`Failed to get crowd data for ${destinationId}:`, error);
-            setFriendlyError('crowd-data', error);
             return null;
         }
     };
 
-    // Helper function للإنتاج - لا نظهر أخطاء للمستخدم
-    const setFriendlyError = (context, originalError) => {
-        // في الإنتاج، نسجل warning فقط ونستخدم البيانات الاحتياطية بصمت
-        console.warn(`${context} service temporarily unavailable - using fallback data`);
-        // لا نحتاج لإظهار أخطاء للمستخدم - البيانات الاحتياطية تحل المشكلة
-    };
-
-    // Connection Status Monitoring
     useEffect(() => {
         const updateOnlineStatus = () => {
             setConnectionStatus(navigator.onLine ? 'online' : 'offline');
@@ -166,10 +130,8 @@ export const AppProvider = ({ children }) => {
         };
     }, []);
 
-    // Keyboard Shortcuts Handler
     useEffect(() => {
         const handleKeyPress = (e) => {
-            // Ctrl+K or Cmd+K for quick search
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 toggleQuickSearch();
@@ -180,22 +142,19 @@ export const AppProvider = ({ children }) => {
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, []);
 
-    // تهيئة بيانات الازدحام الحقيقية
     useEffect(() => {
         initializeRealCrowdData();
 
-        // تنظيف الـ interval عند إلغاء تحميل المكون
         return () => {
             if (crowdUpdateInterval) {
                 clearInterval(crowdUpdateInterval);
             }
         };
-    }, []); // تشغيل مرة واحدة فقط
+    }, []);
 
     const saveUserPreferences = async (preferences) => {
         setUserPreferences(preferences);
         localStorage.setItem('userPreferences', JSON.stringify(preferences));
-        console.log("Preferences saved to localStorage:", preferences);
 
         if (user) {
             try {
@@ -208,8 +167,6 @@ export const AppProvider = ({ children }) => {
 
                 if (error) {
                     console.warn('Unable to save preferences to database');
-                } else {
-                    console.log('Preferences saved to Supabase successfully');
                 }
             } catch (error) {
                 console.warn('Unable to save preferences to Supabase');
@@ -217,7 +174,6 @@ export const AppProvider = ({ children }) => {
         }
     };
 
-    // --- Effect for Supabase Authentication ---
     useEffect(() => {
         setLoading(true);
 
@@ -269,7 +225,6 @@ export const AppProvider = ({ children }) => {
             (error) => {
                 console.warn("Location access denied, using default Amman location");
                 setLocationError("Location access denied");
-                // استخدام موقع عمان كافتراضي عند رفض الإذن
                 setUserLocation({ lat: 31.9539, lon: 35.9106 });
             }
         );
@@ -280,17 +235,13 @@ export const AppProvider = ({ children }) => {
         const fetchUserLiveData = async () => {
             setIsLoadingData(true);
 
-            // استخدام نفس API لجميع البيانات للتوافق
             const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data";
 
-            // معالجة ذكية لمشاكل CORS والـ APIs غير المتاحة
             const generateRealisticWeatherData = () => {
                 const currentHour = new Date().getHours();
                 const isNight = currentHour < 6 || currentHour > 18;
 
-                // تحديد المدينة بناءً على الموقع الحقيقي
                 const getCityFromCoordinates = (lat, lon) => {
-                    // المدن الرئيسية في الأردن مع إحداثياتها
                     const jordanCities = [
                         { name: 'Amman', nameAr: 'عمان', lat: 31.9539, lon: 35.9106 },
                         { name: 'Irbid', nameAr: 'إربد', lat: 32.5556, lon: 35.85 },
@@ -304,8 +255,7 @@ export const AppProvider = ({ children }) => {
                         { name: 'Mafraq', nameAr: 'المفرق', lat: 32.3426, lon: 36.2082 }
                     ];
 
-                    // البحث عن أقرب مدينة
-                    let closestCity = jordanCities[0]; // عمان كافتراضي
+                    let closestCity = jordanCities[0];
                     let minDistance = Infinity;
 
                     jordanCities.forEach(city => {
@@ -323,34 +273,30 @@ export const AppProvider = ({ children }) => {
 
                 const currentCity = getCityFromCoordinates(userLocation.lat, userLocation.lon);
 
-                // درجة حرارة واقعية حسب المنطقة والوقت
                 let baseTemp;
                 if (currentCity.name === 'Aqaba') {
-                    // العقبة أكثر حرارة
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 20 : // ليلاً: 20-28
-                        Math.floor(Math.random() * 12) + 30; // نهاراً: 30-42
+                        Math.floor(Math.random() * 8) + 20 :
+                        Math.floor(Math.random() * 12) + 30;
                 } else if (currentCity.name === 'Ajloun' || currentCity.name === 'Jerash') {
-                    // المناطق الجبلية أبرد
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 12 : // ليلاً: 12-20
-                        Math.floor(Math.random() * 12) + 22; // نهاراً: 22-34
+                        Math.floor(Math.random() * 8) + 12 :
+                        Math.floor(Math.random() * 12) + 22;
                 } else {
-                    // باقي المدن (معتدل)
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 10) + 15 : // ليلاً: 15-25
-                        Math.floor(Math.random() * 15) + 25; // نهاراً: 25-40
+                        Math.floor(Math.random() * 10) + 15 :
+                        Math.floor(Math.random() * 15) + 25;
                 }
 
                 return {
                     name: language === 'ar' ? currentCity.nameAr : currentCity.name,
-                    cityName: language === 'ar' ? currentCity.nameAr : currentCity.name, // إضافة cityName للتوافق
+                    cityName: language === 'ar' ? currentCity.nameAr : currentCity.name,
                     main: {
                         temp: baseTemp,
-                        humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
-                        pressure: Math.floor(Math.random() * 30) + 1010, // 1010-1040
+                        humidity: Math.floor(Math.random() * 30) + 40,
+                        pressure: Math.floor(Math.random() * 30) + 1010,
                     },
-                    temperature: baseTemp, // إضافة temperature مباشرة للتوافق
+                    temperature: baseTemp,
                     weather: [{
                         main: isNight ? "Clear" : ["Clear", "Clouds", "Sunny"][Math.floor(Math.random() * 3)],
                         description: language === 'ar' ?
@@ -358,21 +304,14 @@ export const AppProvider = ({ children }) => {
                             (isNight ? "clear sky" : "sunny weather")
                     }],
                     wind: {
-                        speed: Math.floor(Math.random() * 8) + 3 // 3-11 km/h
+                        speed: Math.floor(Math.random() * 8) + 3
                     },
                     dt: Math.floor(Date.now() / 1000),
-                    timezone: 10800, // UTC+3 للأردن
-                    locationSource: locationError ? "default" : "gps", // تحديد مصدر الموقع
-                    coordinates: { lat: userLocation.lat, lon: userLocation.lon } // إضافة الإحداثيات
+                    timezone: 10800,
+                    locationSource: locationError ? "default" : "gps",
+                    coordinates: { lat: userLocation.lat, lon: userLocation.lon }
                 };
             };
-
-            // إعادة تفعيل API مع الإحداثيات الثابتة
-            console.log('🌍 Calling Weather API for user location with coordinates:', {
-                url: weatherApiUrl,
-                lat: userLocation.lat,
-                lon: userLocation.lon
-            });
 
             try {
                 const controller = new AbortController();
@@ -381,7 +320,7 @@ export const AppProvider = ({ children }) => {
                 const requestBody = {
                     lat: userLocation.lat,
                     lon: userLocation.lon,
-                    cityName: 'User Location', // اسم افتراضي لموقع المستخدم
+                    cityName: 'User Location',
                     lang: language === 'ar' ? 'ar' : 'en'
                 };
 
@@ -398,34 +337,20 @@ export const AppProvider = ({ children }) => {
 
                 clearTimeout(timeoutId);
 
-                console.log('📡 User Weather API Response:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    ok: response.ok,
-                    headers: Object.fromEntries(response.headers.entries())
-                });
-
                 if (!response.ok) {
                     throw new Error(`API Error: ${response.status}`);
                 }
 
                 const text = await response.text();
-                console.log('📝 Raw user weather response:', text);
-                console.log('📝 Response length:', text?.length || 0);
 
                 if (!text || text.trim() === '') {
-                    console.warn('⚠️ Empty response from weather API, using realistic fallback');
-                    console.log('📊 API Status: OK but no content - n8n webhook needs fixing');
-                    console.log('🔧 Expected response format: {"temperature":"25","humidity":"60","cityName":"Amman","description":"Clear sky"}');
                     setLiveData(generateRealisticWeatherData());
                     setIsLoadingData(false);
                     return;
                 }
 
                 const data = JSON.parse(text);
-                console.log('✅ Parsed user weather data:', data);
 
-                // تحويل البيانات من API إلى الشكل المطلوب
                 if (data && (data.temperature || data.temp || data.main)) {
                     const enhancedData = {
                         name: data.cityName || 'Amman',
@@ -450,162 +375,21 @@ export const AppProvider = ({ children }) => {
                         source: 'api'
                     };
                     setLiveData(enhancedData);
-                    console.log("✅ User Weather API success:", enhancedData.cityName);
                 } else {
-                    console.warn("Invalid API response format, using realistic fallback");
-                    console.log("Data structure received:", data);
                     setLiveData(generateRealisticWeatherData());
                 }
 
             } catch (error) {
-                console.warn('❌ User Weather API failed:', error.message);
                 setLiveData(generateRealisticWeatherData());
             } finally {
                 setIsLoadingData(false);
             }
-
-            /* API معطل للسرعة
-            // حل سريع: تعطيل API واستخدام بيانات محلية فوراً
-            console.log('✅ Using realistic data for user location (API disabled for speed)');
-            setLiveData(generateRealisticWeatherData());
-            setIsLoadingData(false);
-            return;
-            
-            /* API معطل للسرعة
-            try {
-                // محاولة الاتصال بالـ API مع timeout للتعامل مع مشاكل الشبكة
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 8000); // زيادة timeout إلى 8 ثواني
-
-                const requestBody = {
-                    lat: userLocation.lat,
-                    lon: userLocation.lon,
-                    lang: language === 'ar' ? 'ar' : 'en'
-                };
-
-                console.log('🌍 Calling Weather API for user location:', {
-                    url: weatherApiUrl,
-                    body: requestBody
-                });
-
-                const response = await fetch(weatherApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'User-Agent': 'SmartTour-Jordan/1.0',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify(requestBody),
-                    signal: controller.signal,
-                    mode: 'cors'
-                });
-
-                clearTimeout(timeoutId);
-
-                console.log('📡 User Weather API Response:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    ok: response.ok,
-                    url: response.url
-                });
-
-                if (!response.ok) {
-                    throw new Error(`API Error: ${response.status} - ${response.statusText}`);
-                }
-
-                const text = await response.text();
-                console.log('📝 Raw user weather response:', text);
-
-                if (!text || text.trim() === '') {
-                    console.warn("Empty response from weather API, using realistic fallback");
-                    setLiveData(generateRealisticWeatherData());
-                    return;
-                }
-
-                try {
-                    const data = JSON.parse(text);
-                    console.log('✅ Parsed user weather data:', data);
-
-                    // تحديث الهيكل ليتوافق مع البيانات الجديدة من الـ webhook
-                    if (data && (data.temperature || data.cityName)) {
-                        // إضافة معلومات الموقع للبيانات القادمة من API
-                        const enhancedData = {
-                            name: data.cityName || 'Amman',
-                            cityName: data.cityName || 'Amman',
-                            main: {
-                                temp: parseFloat(data.temperature) || 25,
-                                humidity: parseFloat(data.humidity) || 50,
-                                pressure: Math.floor(Math.random() * 30) + 1010,
-                            },
-                            temperature: parseFloat(data.temperature) || 25,
-                            weather: [{
-                                main: "Clear",
-                                description: data.description || (language === 'ar' ? "أجواء صافية" : "clear sky")
-                            }],
-                            wind: {
-                                speed: Math.floor(Math.random() * 8) + 3
-                            },
-                            locationSource: locationError ? "default" : "gps",
-                            coordinates: { lat: userLocation.lat, lon: userLocation.lon },
-                            source: 'api',
-                            apiData: data // إضافة البيانات الخام للتشخيص
-                        };
-                        setLiveData(enhancedData);
-                        console.log("✅ User Weather API success:", enhancedData.cityName);
-                    } else {
-                        console.warn("Invalid API response format, using realistic fallback");
-                        console.log("Data structure received:", data);
-                        setLiveData(generateRealisticWeatherData());
-                    }
-                } catch (jsonError) {
-                    console.error("🔥 JSON parsing error:", jsonError.message);
-                    console.log("Raw text that failed to parse:", text);
-                    setLiveData(generateRealisticWeatherData());
-                }
-
-            } catch (error) {
-                let errorMsg = "Weather API issue";
-                let errorType = 'Unknown';
-
-                if (error.name === 'AbortError') {
-                    errorMsg = "Weather API request timeout";
-                    errorType = 'Timeout';
-                } else if (error.message && (
-                    error.message.includes('blocked by CORS') ||
-                    error.message.includes('CORS policy') ||
-                    error.message.includes('Access-Control-Allow-Origin')
-                )) {
-                    errorMsg = "CORS issue detected in production";
-                    errorType = 'CORS';
-                    console.warn("🚨 CORS Error Details:", error.message);
-                } else if (error.message && error.message.includes('Failed to fetch')) {
-                    errorMsg = "Network connection issue";
-                    errorType = 'Network';
-                } else {
-                    errorMsg = error.message || "Unknown error";
-                }
-
-                console.error(`🚨 User Weather API Error:`, {
-                    type: errorType,
-                    message: errorMsg,
-                    originalError: error.message,
-                    stack: error.stack
-                });
-
-                // في جميع الحالات، نستخدم بيانات واقعية بدلاً من إظهار خطأ للمستخدم
-                setLiveData(generateRealisticWeatherData());
-            } finally {
-                setIsLoadingData(false);
-            }
-            */ // نهاية تعليق API
         };
         fetchUserLiveData();
     }, [userLocation, language]);
 
     useEffect(() => {
         const fetchCitiesData = async () => {
-            // جميع محافظات الأردن الـ 12
             const allGovernoratesOfJordan = [
                 { name: 'Amman', nameAr: 'عمان', lat: 31.9539, lon: 35.9106, type: 'governorate' },
                 { name: 'Irbid', nameAr: 'إربد', lat: 32.5556, lon: 35.85, type: 'governorate' },
@@ -621,7 +405,6 @@ export const AppProvider = ({ children }) => {
                 { name: 'Aqaba', nameAr: 'العقبة', lat: 29.5267, lon: 35.0067, type: 'governorate' }
             ];
 
-            // الأماكن السياحية والمحافظات الرئيسية للسياح
             const touristMainAreas = [
                 { name: 'Amman', nameAr: 'عمان', lat: 31.9539, lon: 35.9106, type: 'tourist' },
                 { name: 'Petra', nameAr: 'البتراء', lat: 30.3285, lon: 35.4444, type: 'tourist' },
@@ -633,16 +416,12 @@ export const AppProvider = ({ children }) => {
 
             setIsCitiesLoading(true);
 
-            // استخدام نفس API للبيانات المباشرة كما في صفحة DataHub و IoT Hub
             const weatherApiUrl = "https://n8n.smart-tour.app/webhook/Simple-Weather-API-Live-Data";
 
             const fetchCityWeather = async (city) => {
-                // مؤقتاً: تعطيل API والاعتماد على البيانات الواقعية فقط
                 const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
                 const cityLat = city.lat || 31.9539;
                 const cityLon = city.lon || 35.9106;
-
-                console.log(`🌍 Calling Weather API for ${cityName} at (${cityLat}, ${cityLon})`);
 
                 try {
                     const response = await fetch(weatherApiUrl, {
@@ -662,15 +441,9 @@ export const AppProvider = ({ children }) => {
 
                     if (response.ok) {
                         const text = await response.text();
-                        console.log(`📝 ${cityName} API response:`, {
-                            status: response.status,
-                            length: text?.length || 0,
-                            content: text.slice(0, 100) + (text.length > 100 ? '...' : '')
-                        });
 
                         if (text && text.trim()) {
                             const data = JSON.parse(text);
-                            console.log(`✅ API success for ${cityName}:`, data);
 
                             return {
                                 name: cityName,
@@ -687,151 +460,38 @@ export const AppProvider = ({ children }) => {
                                 coordinates: { lat: cityLat, lon: cityLon },
                                 source: 'api'
                             };
-                        } else {
-                            console.warn(`⚠️ Empty response for ${cityName} - n8n webhook returning empty content`);
-                            console.log(`🔧 n8n should return: {"temperature":"25","humidity":"60","cityName":"${cityName}","description":"Clear sky"}`);
                         }
-                    } else {
-                        console.warn(`❌ ${cityName} API failed with status:`, response.status);
                     }
                 } catch (error) {
                     console.warn(`API failed for ${cityName}:`, error.message);
                 }
 
-                // fallback to realistic data
                 return generateRealisticWeatherData(cityName);
-
-                /* API مُعطل مؤقتاً بسبب مشكلة webhook
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 8000); // زيادة timeout إلى 8 ثواني
-
-                    // تشخيص أفضل للـ API call
-                    const requestBody = {
-                        lat: city.lat,
-                        lon: city.lon,
-                        lang: language === 'ar' ? 'ar' : 'en'
-                    };
-
-                    console.log(`🌍 Calling Weather API for ${city.name}:`, {
-                        url: weatherApiUrl,
-                        body: requestBody
-                    });
-
-                    const response = await fetch(weatherApiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                            'User-Agent': 'SmartTour-Jordan/1.0',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        body: JSON.stringify(requestBody),
-                        signal: controller.signal,
-                        mode: 'cors'
-                    });
-
-                    clearTimeout(timeoutId);
-
-                    console.log(`📡 API Response for ${city.name}:`, {
-                        status: response.status,
-                        statusText: response.statusText,
-                        ok: response.ok,
-                        headers: Object.fromEntries(response.headers.entries())
-                    });
-
-                    if (response.ok) {
-                        const text = await response.text();
-                        console.log(`📝 Raw response for ${city.name}:`, text);
-                        
-                        if (text && text.trim()) {
-                            try {
-                                const data = JSON.parse(text);
-                                console.log(`✅ Parsed data for ${city.name}:`, data);
-                                
-                                // تحديث الهيكل ليتوافق مع البيانات الواردة من الـ webhook
-                                if (data && (data.temperature || data.cityName)) {
-                                    const processedData = {
-                                        ...city,
-                                        main: {
-                                            temp: parseFloat(data.temperature) || 25,
-                                            humidity: parseFloat(data.humidity) || 50,
-                                            feels_like: parseFloat(data.temperature) + Math.floor(Math.random() * 4) - 2,
-                                            pressure: Math.floor(Math.random() * 30) + 1010
-                                        },
-                                        weather: [{
-                                            main: "Clear",
-                                            description: data.description || (language === 'ar' ? "أجواء صافية" : "clear sky")
-                                        }],
-                                        wind: {
-                                            speed: Math.floor(Math.random() * 8) + 3
-                                        },
-                                        temperature: parseFloat(data.temperature) || 25,
-                                        cityName: data.cityName || city.name,
-                                        source: 'api',
-                                        apiData: data // إضافة البيانات الخام للتشخيص
-                                    };
-                                    console.log(`🎯 Successfully processed API data for ${city.name}`);
-                                    return processedData;
-                                } else {
-                                    console.warn(`⚠️ Invalid data structure for ${city.name}:`, data);
-                                }
-                            } catch (parseError) {
-                                console.error(`🔥 JSON Parse Error for ${city.name}:`, parseError.message);
-                                console.log(`Raw text that failed to parse:`, text);
-                            }
-                        } else {
-                            console.warn(`📭 Empty response for ${city.name}`);
-                        }
-                    } else {
-                        console.error(`❌ HTTP Error for ${city.name}:`, response.status, response.statusText);
-                        
-                        // محاولة قراءة رسالة الخطأ من الاستجابة
-                        try {
-                            const errorText = await response.text();
-                            console.log(`Error response body for ${city.name}:`, errorText);
-                        } catch (e) {
-                            console.log(`Could not read error response for ${city.name}`);
-                        }
-                    }
-
-                    // في حالة فشل API، استخدم البيانات الواقعية
-                    throw new Error(`API response invalid for ${city.name}`);
-
-                } catch (error) {
-                    // API disabled temporarily - comment block ends
-                    console.log("API disabled for testing");
-                }
-                */ // نهاية تعطيل API المؤقت
             };
 
-            // بدلاً من استخدام mock data، استخدم بيانات واقعية مع تنوع حسب الموقع
             const generateRealisticWeatherData = (city) => {
                 const currentHour = new Date().getHours();
                 const isNight = currentHour < 6 || currentHour > 18;
 
-                // التعامل مع اسم المدينة سواء كان string أو object
                 const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
 
-                // درجات حرارة واقعية حسب المنطقة
                 let baseTemp;
                 if (cityName === 'Aqaba') {
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 22 : // ليلاً: 22-30
-                        Math.floor(Math.random() * 12) + 32; // نهاراً: 32-44
+                        Math.floor(Math.random() * 8) + 22 :
+                        Math.floor(Math.random() * 12) + 32;
                 } else if (cityName === 'Ajloun' || cityName === 'Jerash') {
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 14 : // ليلاً: 14-22
-                        Math.floor(Math.random() * 12) + 24; // نهاراً: 24-36
+                        Math.floor(Math.random() * 8) + 14 :
+                        Math.floor(Math.random() * 12) + 24;
                 } else if (cityName === 'Dead Sea') {
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 20 : // ليلاً: 20-28
-                        Math.floor(Math.random() * 12) + 30; // نهاراً: 30-42
+                        Math.floor(Math.random() * 8) + 20 :
+                        Math.floor(Math.random() * 12) + 30;
                 } else {
-                    // باقي المدن
                     baseTemp = isNight ?
-                        Math.floor(Math.random() * 8) + 16 : // ليلاً: 16-24
-                        Math.floor(Math.random() * 12) + 26; // نهاراً: 26-38
+                        Math.floor(Math.random() * 8) + 16 :
+                        Math.floor(Math.random() * 12) + 26;
                 }
 
                 const weatherConditions = [
@@ -847,7 +507,7 @@ export const AppProvider = ({ children }) => {
                     cityName: cityName,
                     main: {
                         temp: baseTemp,
-                        humidity: Math.floor(Math.random() * 30) + 40, // 40-70%
+                        humidity: Math.floor(Math.random() * 30) + 40,
                         feels_like: baseTemp + Math.floor(Math.random() * 4) - 2,
                         pressure: Math.floor(Math.random() * 30) + 1010
                     },
@@ -857,55 +517,36 @@ export const AppProvider = ({ children }) => {
                         description: language === 'ar' ? condition.descAr : condition.descEn
                     }],
                     wind: {
-                        speed: Math.floor(Math.random() * 8) + 3 // 3-11 km/h
+                        speed: Math.floor(Math.random() * 8) + 3
                     },
                     source: 'fallback'
                 };
             };
 
             try {
-                // جلب البيانات للمحافظات من API أو fallback
                 const governoratesPromises = allGovernoratesOfJordan.map(city => fetchCityWeather(city));
                 const governoratesData = await Promise.all(governoratesPromises);
 
                 setCitiesData(governoratesData);
-                console.log(`Successfully loaded weather data for ${governoratesData.length} governorates`);
-
-                // إحصائيات من APIs حقيقية مقابل fallback
-                const apiCount = governoratesData.filter(city => city.source === 'api').length;
-                const fallbackCount = governoratesData.filter(city => city.source === 'fallback').length;
-                console.log(`API responses: ${apiCount}, Fallback data: ${fallbackCount}`);
 
             } catch (error) {
-                console.warn("Unable to process governorates data, using all fallback");
                 const fallbackGovernoratesData = allGovernoratesOfJordan.map(generateRealisticWeatherData);
                 setCitiesData(fallbackGovernoratesData);
-                setFriendlyError('weather', error);
             } finally {
                 setIsCitiesLoading(false);
             }
 
-            // Fetch IoT Hub Data (Tourist Areas)
             setIsIotHubLoading(true);
 
             try {
-                // جلب البيانات للأماكن السياحية من API أو fallback
                 const touristPromises = touristMainAreas.map(city => fetchCityWeather(city));
                 const touristData = await Promise.all(touristPromises);
 
                 setIotHubData(touristData);
-                console.log(`Successfully loaded weather data for ${touristData.length} tourist places`);
-
-                // إحصائيات من APIs حقيقية مقابل fallback للأماكن السياحية
-                const apiTouristCount = touristData.filter(city => city.source === 'api').length;
-                const fallbackTouristCount = touristData.filter(city => city.source === 'fallback').length;
-                console.log(`Tourist API responses: ${apiTouristCount}, Fallback data: ${fallbackTouristCount}`);
 
             } catch (error) {
-                console.warn("Unable to process tourist data, using all fallback");
                 const fallbackTouristData = touristMainAreas.map(generateRealisticWeatherData);
                 setIotHubData(fallbackTouristData);
-                setFriendlyError('weather', error);
             } finally {
                 setIsIotHubLoading(false);
             }
@@ -925,7 +566,6 @@ export const AppProvider = ({ children }) => {
         let sessionId = localStorage.getItem('chatSessionId') || `session_${Date.now()}`;
         localStorage.setItem('chatSessionId', sessionId);
 
-        // استخدام gemini-tour-chat API الجديد
         const chatUrl = "https://n8n.smart-tour.app/webhook/gemini-tour-chat";
 
         try {
@@ -934,7 +574,7 @@ export const AppProvider = ({ children }) => {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Origin': window.location.origin // إضافة Origin header
+                    'Origin': window.location.origin
                 },
                 body: JSON.stringify({
                     message: userInput,
@@ -944,7 +584,7 @@ export const AppProvider = ({ children }) => {
                     location: userLocation || null,
                     liveData: liveData || null
                 }),
-                mode: 'cors' // تفعيل CORS
+                mode: 'cors'
             });
 
             if (!response.ok) {
@@ -960,8 +600,6 @@ export const AppProvider = ({ children }) => {
             try {
                 data = JSON.parse(text);
             } catch (jsonError) {
-                console.warn("JSON parsing issue in chat response, using text as fallback");
-                // إذا فشل تحليل JSON، استخدم النص كرد مباشر
                 data = { reply: text };
             }
 
@@ -976,20 +614,16 @@ export const AppProvider = ({ children }) => {
             };
             setChatMessages(prev => [...prev, botMessage]);
         } catch (error) {
-            console.error("🚨 Chat API Error Details:", error.message);
-
             let errorMessage = t({
                 ar: "❌ عذراً، حدث خطأ في الاتصال.",
                 en: "❌ Sorry, there was a connection error."
             });
 
-            // تحديد نوع الخطأ لتشخيص أفضل
             if (error.message && (
                 error.message.includes('CORS') ||
                 error.message.includes('Access-Control-Allow-Origin') ||
                 error.message.includes('blocked by CORS policy')
             )) {
-                console.warn("🚨 CORS Error in Chat API - Check server configuration");
                 errorMessage = t({
                     ar: "❌ مشكلة في الاتصال بالخادم. يرجى المحاولة لاحقاً.",
                     en: "❌ Server connection issue. Please try again later."
@@ -1001,7 +635,6 @@ export const AppProvider = ({ children }) => {
                 });
             }
 
-            setFriendlyError('chat', error);
             const errorMsg = {
                 id: Date.now() + 1,
                 text: errorMessage,
@@ -1023,7 +656,6 @@ export const AppProvider = ({ children }) => {
 
         setIsSuggestingItinerary(true);
 
-        // استخدام Smart Itinerary Planner API الجديد
         const itineraryApiUrl = 'https://n8n.smart-tour.app/webhook/Smart-Itinerary-Planner';
 
         try {
@@ -1031,7 +663,7 @@ export const AppProvider = ({ children }) => {
                 preferences: userPreferences || { interests: [], budget: 'medium', travelsWith: 'Solo' },
                 user: user ? { email: user.email } : null,
                 language: language || 'en',
-                location: userLocation || { lat: 31.9539, lon: 35.9106 }, // عمان كموقع افتراضي
+                location: userLocation || { lat: 31.9539, lon: 35.9106 },
                 liveData: liveData || null
             };
 
@@ -1057,19 +689,16 @@ export const AppProvider = ({ children }) => {
             try {
                 data = JSON.parse(text);
             } catch (jsonError) {
-                console.warn("JSON parsing issue in itinerary response, using fallback format");
-                // إذا فشل تحليل JSON، استخدم النص كما هو
                 data = {
                     tripPlan: {
                         details: text
                     },
                     suggestedAlternative: null,
                     planModified: "false",
-                    crowdLevel: Math.floor(Math.random() * 100) // مستوى ازدحام عشوائي
+                    crowdLevel: Math.floor(Math.random() * 100)
                 };
             }
 
-            // التأكد من وجود البيانات المطلوبة
             if (!data.tripPlan) {
                 data.tripPlan = {
                     details: data.reply || data.response || text || t({
@@ -1082,10 +711,6 @@ export const AppProvider = ({ children }) => {
             setSuggestedItinerary(data);
 
         } catch (error) {
-            console.warn('Itinerary API temporarily unavailable, please try again later');
-            setFriendlyError('itinerary', error);
-
-            // إنشاء خطة احتياطية (mock data)
             const mockItinerary = {
                 tripPlan: {
                     details: t({
@@ -1145,7 +770,7 @@ export const AppProvider = ({ children }) => {
                 },
                 suggestedAlternative: null,
                 planModified: "false",
-                crowdLevel: Math.floor(Math.random() * 60) + 20 // 20-80%
+                crowdLevel: Math.floor(Math.random() * 60) + 20
             };
 
             setSuggestedItinerary(mockItinerary);
@@ -1183,7 +808,6 @@ export const AppProvider = ({ children }) => {
         clearGlobalError,
         iotData,
         updateIotData,
-        // Enhanced Sidebar Features
         sidebarPinned,
         toggleSidebarPin,
         navigationHistory,
@@ -1193,7 +817,6 @@ export const AppProvider = ({ children }) => {
         connectionStatus,
         notificationCount,
         updateNotificationCount,
-        // Real Crowd Data Features
         realCrowdData,
         getRealCrowdData,
         initializeRealCrowdData,

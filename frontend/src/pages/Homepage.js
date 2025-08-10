@@ -264,9 +264,9 @@ const Homepage = () => {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
               <Link to="/booking" className="group">
-                <Card className="glass-card interactive-card border-white/10 hover:border-purple-400/30 transition-all">
+                <Card className="glass-card interactive-card border-white/10 hover:border-gray-400/20 transition-all">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
+                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-gray-500 to-gray-600 rounded-lg flex items-center justify-center">
                       <Calendar className="w-8 h-8 text-white" />
                     </div>
                     <h4 className="font-semibold text-white mb-2 text-lg">
