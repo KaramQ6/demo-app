@@ -299,6 +299,100 @@ export const AppProvider = ({ children }) => {
                 };
             };
 
+            // إعادة تفعيل API مع الإحداثيات الثابتة
+            console.log('🌍 Calling Weather API for user location with coordinates:', {
+                url: weatherApiUrl,
+                lat: userLocation.lat,
+                lon: userLocation.lon
+            });
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+                const requestBody = {
+                    lat: userLocation.lat,
+                    lon: userLocation.lon,
+                    cityName: 'User Location', // اسم افتراضي لموقع المستخدم
+                    lang: language === 'ar' ? 'ar' : 'en'
+                };
+
+                const response = await fetch(weatherApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody),
+                    signal: controller.signal,
+                    mode: 'cors'
+                });
+
+                clearTimeout(timeoutId);
+
+                console.log('📡 User Weather API Response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    ok: response.ok
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status}`);
+                }
+
+                const text = await response.text();
+                console.log('📝 Raw user weather response:', text);
+
+                if (!text || text.trim() === '') {
+                    console.warn('Empty response from weather API, using realistic fallback');
+                    setLiveData(generateRealisticWeatherData());
+                    setIsLoadingData(false);
+                    return;
+                }
+
+                const data = JSON.parse(text);
+                console.log('✅ Parsed user weather data:', data);
+
+                // تحويل البيانات من API إلى الشكل المطلوب
+                if (data && (data.temperature || data.temp || data.main)) {
+                    const enhancedData = {
+                        name: data.cityName || 'Amman',
+                        cityName: data.cityName || 'Amman',
+                        main: {
+                            temp: parseFloat(data.temperature || data.temp || data.main?.temp) || 25,
+                            humidity: parseFloat(data.humidity || data.main?.humidity) || 50,
+                            pressure: parseFloat(data.pressure || data.main?.pressure) || 1013,
+                            feels_like: parseFloat(data.feels_like || data.main?.feels_like) || 25
+                        },
+                        temperature: parseFloat(data.temperature || data.temp || data.main?.temp) || 25,
+                        weather: [{
+                            main: data.weather?.[0]?.main || "Clear",
+                            description: data.description || data.weather?.[0]?.description ||
+                                (language === 'ar' ? "أجواء صافية" : "clear sky")
+                        }],
+                        wind: {
+                            speed: parseFloat(data.wind_speed || data.wind?.speed) || 5
+                        },
+                        locationSource: locationError ? "default" : "gps",
+                        coordinates: { lat: userLocation.lat, lon: userLocation.lon },
+                        source: 'api'
+                    };
+                    setLiveData(enhancedData);
+                    console.log("✅ User Weather API success:", enhancedData.cityName);
+                } else {
+                    console.warn("Invalid API response format, using realistic fallback");
+                    console.log("Data structure received:", data);
+                    setLiveData(generateRealisticWeatherData());
+                }
+
+            } catch (error) {
+                console.warn('❌ User Weather API failed:', error.message);
+                setLiveData(generateRealisticWeatherData());
+            } finally {
+                setIsLoadingData(false);
+            }
+
+            /* API معطل للسرعة
             // حل سريع: تعطيل API واستخدام بيانات محلية فوراً
             console.log('✅ Using realistic data for user location (API disabled for speed)');
             setLiveData(generateRealisticWeatherData());
@@ -473,7 +567,55 @@ export const AppProvider = ({ children }) => {
             const fetchCityWeather = async (city) => {
                 // مؤقتاً: تعطيل API والاعتماد على البيانات الواقعية فقط
                 const cityName = typeof city === 'string' ? city : city.name || city.cityName || 'Unknown';
-                console.log(`✅ Using realistic data for ${cityName} (API temporarily disabled)`);
+                const cityLat = city.lat || 31.9539;
+                const cityLon = city.lon || 35.9106;
+
+                console.log(`🌍 Calling Weather API for ${cityName} at (${cityLat}, ${cityLon})`);
+
+                try {
+                    const response = await fetch(weatherApiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            lat: cityLat,
+                            lon: cityLon,
+                            cityName: cityName,
+                            lang: language === 'ar' ? 'ar' : 'en'
+                        }),
+                        mode: 'cors'
+                    });
+
+                    if (response.ok) {
+                        const text = await response.text();
+                        if (text && text.trim()) {
+                            const data = JSON.parse(text);
+                            console.log(`✅ API success for ${cityName}:`, data);
+
+                            return {
+                                name: cityName,
+                                cityName: cityName,
+                                main: {
+                                    temp: parseFloat(data.temperature || data.temp || data.main?.temp) || 25,
+                                    humidity: parseFloat(data.humidity || data.main?.humidity) || 50,
+                                },
+                                temperature: parseFloat(data.temperature || data.temp || data.main?.temp) || 25,
+                                weather: [{
+                                    main: data.weather?.[0]?.main || "Clear",
+                                    description: data.description || (language === 'ar' ? "أجواء صافية" : "clear sky")
+                                }],
+                                coordinates: { lat: cityLat, lon: cityLon },
+                                source: 'api'
+                            };
+                        }
+                    }
+                } catch (error) {
+                    console.warn(`API failed for ${cityName}:`, error.message);
+                }
+
+                // fallback to realistic data
                 return generateRealisticWeatherData(cityName);
 
                 /* API مُعطل مؤقتاً بسبب مشكلة webhook
