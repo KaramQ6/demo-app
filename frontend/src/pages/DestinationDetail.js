@@ -6,6 +6,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import RealCrowdDisplay from '../components/RealCrowdDisplay';
 import {
   ArrowLeft,
   ArrowRight,
@@ -374,10 +375,15 @@ const DestinationDetail = () => {
 
           {/* Crowd Level Tab */}
           <TabsContent value="crowd-level" className="animate-fade-in-up">
+            {/* Real-time Crowd Data */}
+            <div className="mb-6">
+              <RealCrowdDisplay destinationId={destination.id} />
+            </div>
+
             <Card className="glass-card border-white/10">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold font-['Montserrat'] text-white mb-6">
-                  {t({ ar: 'مستوى الازدحام الآن', en: 'Current Crowd Level' })}
+                  {t({ ar: 'تقييم الازدحام من الزوار', en: 'Visitor Crowd Assessment' })}
                 </h2>
 
                 {!hasGivenFeedback ? (

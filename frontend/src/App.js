@@ -42,6 +42,7 @@ const AdminDashboardPage = React.lazy(() => import('./pages/AdminDashboardPage')
 const WeatherStationPage = React.lazy(() => import('./pages/WeatherStationPage'));
 const CrowdPredictionPage = React.lazy(() => import('./pages/CrowdPredictionPage'));
 const SmartRecommendationsPage = React.lazy(() => import('./pages/SmartRecommendationsPage'));
+const AlternativeCrowdSettings = React.lazy(() => import('./pages/AlternativeCrowdSettings'));
 
 // Internal component to handle layout based on route
 function AppContent() {
@@ -88,6 +89,7 @@ function AppContent() {
               <Route path="/crowd-prediction" element={<CrowdPredictionPage />} />
               <Route path="/smart-recommendations" element={<SmartRecommendationsPage />} />
               <Route path="/voice-assistant" element={<VoiceAgentPage />} />
+              <Route path="/crowd-settings" element={<AlternativeCrowdSettings />} />
             </Routes>
           </Suspense>
         </main>

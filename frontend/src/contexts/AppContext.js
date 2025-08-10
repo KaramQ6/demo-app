@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useLanguage } from './LanguageContext';
 import { supabase } from '../supabaseClient'; // استيراد Supabase
+import AlternativeCrowdDataService from '../services/alternativeCrowdDataService'; // خدمة الازدحام البديلة (بدون Google)
 
 export const AppContext = createContext();
 export const useApp = () => useContext(AppContext);
@@ -59,6 +60,11 @@ export const AppProvider = ({ children }) => {
     // Clear global error function
     const clearGlobalError = () => setGlobalError(null);
 
+    // خدمة الازدحام البديلة (بدون Google API)
+    const [crowdDataService] = useState(() => new AlternativeCrowdDataService());
+    const [realCrowdData, setRealCrowdData] = useState({});
+    const [crowdUpdateInterval, setCrowdUpdateInterval] = useState(null);
+
     // Update IoT data for a specific destination
     const updateIotData = (destinationId, newData) => {
         setIotData(prev => ({
@@ -87,6 +93,56 @@ export const AppProvider = ({ children }) => {
     const toggleQuickSearch = () => setQuickSearchOpen(!quickSearchOpen);
 
     const updateNotificationCount = (count) => setNotificationCount(count);
+
+    // دالة لبدء تحديث بيانات الازدحام الحقيقية
+    const initializeRealCrowdData = async () => {
+        try {
+            const destinationIds = [
+                'petra', 'jerash', 'wadi-rum', 'dead-sea', 'amman-citadel',
+                'ajloun-castle', 'dana-reserve', 'karak-castle', 'aqaba', 'rainbow-street'
+            ];
+
+            // تحديث فوري
+            const initialData = await crowdDataService.getMultipleCrowdData(destinationIds);
+            setRealCrowdData(initialData);
+
+            // بدء التحديث الدوري كل 10 دقائق (أسرع من Google)
+            if (crowdUpdateInterval) {
+                clearInterval(crowdUpdateInterval);
+            }
+
+            const intervalId = crowdDataService.startPeriodicUpdates(
+                destinationIds,
+                (updatedData) => {
+                    setRealCrowdData(updatedData);
+                    console.log('Alternative crowd data updated:', Object.keys(updatedData).length, 'destinations');
+                },
+                10 // كل 10 دقائق
+            );
+
+            setCrowdUpdateInterval(intervalId);
+
+        } catch (error) {
+            console.error('Failed to initialize real crowd data:', error);
+            setFriendlyError('crowd-data', error);
+        }
+    };
+
+    // دالة للحصول على بيانات الازدحام الحقيقية لوجهة محددة
+    const getRealCrowdData = async (destinationId) => {
+        try {
+            const data = await crowdDataService.getRealCrowdData(destinationId);
+            setRealCrowdData(prev => ({
+                ...prev,
+                [destinationId]: data
+            }));
+            return data;
+        } catch (error) {
+            console.error(`Failed to get crowd data for ${destinationId}:`, error);
+            setFriendlyError('crowd-data', error);
+            return null;
+        }
+    };
 
     // Helper function للإنتاج - لا نظهر أخطاء للمستخدم
     const setFriendlyError = (context, originalError) => {
@@ -123,6 +179,18 @@ export const AppProvider = ({ children }) => {
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
     }, []);
+
+    // تهيئة بيانات الازدحام الحقيقية
+    useEffect(() => {
+        initializeRealCrowdData();
+
+        // تنظيف الـ interval عند إلغاء تحميل المكون
+        return () => {
+            if (crowdUpdateInterval) {
+                clearInterval(crowdUpdateInterval);
+            }
+        };
+    }, []); // تشغيل مرة واحدة فقط
 
     const saveUserPreferences = async (preferences) => {
         setUserPreferences(preferences);
@@ -333,7 +401,8 @@ export const AppProvider = ({ children }) => {
                 console.log('📡 User Weather API Response:', {
                     status: response.status,
                     statusText: response.statusText,
-                    ok: response.ok
+                    ok: response.ok,
+                    headers: Object.fromEntries(response.headers.entries())
                 });
 
                 if (!response.ok) {
@@ -342,9 +411,12 @@ export const AppProvider = ({ children }) => {
 
                 const text = await response.text();
                 console.log('📝 Raw user weather response:', text);
+                console.log('📝 Response length:', text?.length || 0);
 
                 if (!text || text.trim() === '') {
-                    console.warn('Empty response from weather API, using realistic fallback');
+                    console.warn('⚠️ Empty response from weather API, using realistic fallback');
+                    console.log('📊 API Status: OK but no content - n8n webhook needs fixing');
+                    console.log('🔧 Expected response format: {"temperature":"25","humidity":"60","cityName":"Amman","description":"Clear sky"}');
                     setLiveData(generateRealisticWeatherData());
                     setIsLoadingData(false);
                     return;
@@ -590,6 +662,12 @@ export const AppProvider = ({ children }) => {
 
                     if (response.ok) {
                         const text = await response.text();
+                        console.log(`📝 ${cityName} API response:`, {
+                            status: response.status,
+                            length: text?.length || 0,
+                            content: text.slice(0, 100) + (text.length > 100 ? '...' : '')
+                        });
+
                         if (text && text.trim()) {
                             const data = JSON.parse(text);
                             console.log(`✅ API success for ${cityName}:`, data);
@@ -609,7 +687,12 @@ export const AppProvider = ({ children }) => {
                                 coordinates: { lat: cityLat, lon: cityLon },
                                 source: 'api'
                             };
+                        } else {
+                            console.warn(`⚠️ Empty response for ${cityName} - n8n webhook returning empty content`);
+                            console.log(`🔧 n8n should return: {"temperature":"25","humidity":"60","cityName":"${cityName}","description":"Clear sky"}`);
                         }
+                    } else {
+                        console.warn(`❌ ${cityName} API failed with status:`, response.status);
                     }
                 } catch (error) {
                     console.warn(`API failed for ${cityName}:`, error.message);
@@ -1109,7 +1192,12 @@ export const AppProvider = ({ children }) => {
         toggleQuickSearch,
         connectionStatus,
         notificationCount,
-        updateNotificationCount
+        updateNotificationCount,
+        // Real Crowd Data Features
+        realCrowdData,
+        getRealCrowdData,
+        initializeRealCrowdData,
+        crowdDataService
     };
 
     return (
