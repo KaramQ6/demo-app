@@ -4,7 +4,7 @@ export const destinations = [
   {
     id: 1,
     name: { ar: 'البتراء', en: 'Petra' },
-    image: 'https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://cdn.britannica.com/24/153524-050-BA9D084B/Al-Dayr-Petra-Jordan.jpg',
     description: {
       ar: 'المدينة الوردية الساحرة وإحدى عجائب الدنيا السبع',
       en: 'The enchanting Rose City and one of the Seven Wonders of the World'
@@ -26,7 +26,7 @@ export const destinations = [
   {
     id: 2,
     name: { ar: 'وادي رم', en: 'Wadi Rum' },
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Mountain_in_Wadi_Rum%2C_Jordan.jpg/1200px-Mountain_in_Wadi_Rum%2C_Jordan.jpg',
     description: {
       ar: 'وادي القمر الساحر بصحرائه الحمراء وجباله الشامخة',
       en: 'The Valley of the Moon with its red desert and towering mountains'
@@ -49,7 +49,7 @@ export const destinations = [
   {
     id: 3,
     name: { ar: 'وادي الريان - إربد', en: 'Wadi Al-Rayyan - Irbid' },
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://i0.wp.com/livinginjordanasexpat.com/wp-content/uploads/2019/03/Living-in-Jordan-as-Expat-Hiking-Wadi-Al-Rayan-OIive-Trees.jpg?resize=2000%2C1200&ssl=1',
     description: {
       ar: 'وادٍ ساحر في شمال الأردن يشتهر بشلالاته وخضرته وإنتاج الرمان المميز',
       en: 'A charming valley in northern Jordan famous for its waterfalls, greenery, and distinctive pomegranate production'
@@ -71,7 +71,7 @@ export const destinations = [
   {
     id: 4,
     name: { ar: 'غابات برقش - عجلون', en: 'Barqash Forests - Ajloun' },
-    image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://iresizer.devops.arabiaweather.com/resize?url=http://adminassets.devops.arabiaweather.com/sites/default/files/field/image/Barqash%20Forest..a%20distinctive%20nature%20in%20northern%20Jordan.jpg&size=800x450&force_webp=1',
     description: {
       ar: 'إحدى أكبر الغابات في الأردن تحيط بتل برقش الأثري وتضم حياة برية متنوعة',
       en: 'One of Jordan\'s largest forests surrounding the historic Barqash hill with diverse wildlife'
@@ -93,7 +93,7 @@ export const destinations = [
   {
     id: 5,
     name: { ar: 'عين البستان - كفرنجة', en: 'Ain Al-Bustan - Kufr Anja' },
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.pexels.com/photos/709552/pexels-photo-709552.jpeg?auto=compress&cs=tinysrgb&w=1200&q=80',
     description: {
       ar: 'نبع ماء طبيعي في عجلون محاط بالأشجار والطبيعة الخلابة',
       en: 'A natural water spring in Ajloun surrounded by trees and stunning nature'
@@ -115,7 +115,7 @@ export const destinations = [
   {
     id: 6,
     name: { ar: 'بركة العرائس - إربد', en: 'Bride\'s Pool - Irbid' },
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://i.pinimg.com/1200x/cf/ad/24/cfad24dcbcb0ccbcf5aa33a4c10f2e7f.jpg',
     description: {
       ar: 'بحيرة طبيعية نادرة في إربد تضم حيوانات مهددة بالانقراض',
       en: 'A rare natural lake in Irbid home to endangered species'
@@ -138,7 +138,7 @@ export const destinations = [
   {
     id: 7,
     name: { ar: 'وادي شعيب - السلط', en: 'Wadi Shuaib - As-Salt' },
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://www.dainst.org/_assets/8/8/csm_HEADER_WSAS_Foto_A_Ahrens_ASDam_a390475002.jpg',
     description: {
       ar: 'وادٍ مقدس يُنسب للنبي شعيب عليه السلام مع ينابيع المياه العذبة',
       en: 'A sacred valley attributed to Prophet Shuaib with fresh water springs'
@@ -160,7 +160,7 @@ export const destinations = [
   {
     id: 8,
     name: { ar: 'كهف لوط - الأغوار الجنوبية', en: 'Lot\'s Cave - Southern Ghors' },
-    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://dannythedigger.com/wp-content/uploads/lots-cave.jpg',
     description: {
       ar: 'موقع أثري وديني يُنسب للنبي لوط عليه السلام مع إطلالة على البحر الميت',
       en: 'Archaeological and religious site attributed to Prophet Lot overlooking the Dead Sea'
@@ -183,7 +183,7 @@ export const destinations = [
   {
     id: 9,
     name: { ar: 'حمامات عفرا - الطفيلة', en: 'Afra Hot Springs - Tafilah' },
-    image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://afra-hot-springs-chalets.jordan-all-hotels.com/data/Pics/OriginalPhoto/12974/1297402/1297402084/at-tafilah-pic-4.JPEG',
     description: {
       ar: 'ينابيع مياه حارة طبيعية غنية بالمعادن للعلاج الطبيعي',
       en: 'Natural hot springs rich in minerals for natural healing'
@@ -205,7 +205,7 @@ export const destinations = [
   {
     id: 10,
     name: { ar: 'قرية ضانا التراثية', en: 'Dana Heritage Village' },
-    image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://images.pexels.com/photos/2901209/pexels-photo-2901209.jpeg?auto=compress&cs=tinysrgb&w=1200&q=80',
     description: {
       ar: 'قرية تراثية عثمانية تطل على وادي ضانا ومحمية طبيعية',
       en: 'Ottoman heritage village overlooking Dana Valley and nature reserve'
@@ -227,7 +227,7 @@ export const destinations = [
   {
     id: 11,
     name: { ar: 'وادي الغوير - الكرك', en: 'Wadi Al-Ghuweir - Karak' },
-    image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/00/f3/d8/oasis-fabuleuse.jpg?w=1400&h=-1&s=1',
     description: {
       ar: 'وادٍ مائي خلاب بين الصخور الرملية الملونة والجدران العالية',
       en: 'Spectacular water valley between colorful sandstone rocks and high walls'
@@ -250,7 +250,7 @@ export const destinations = [
   {
     id: 12,
     name: { ar: 'حي السلط القديم', en: 'Old As-Salt District' },
-    image: 'https://images.unsplash.com/photo-1578582727169-ce5be2c1bf7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+    image: 'https://instagram.famm13-1.fna.fbcdn.net/v/t51.2885-15/357358973_792252495906273_7802957138289162305_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm13-1.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2QFo6SDL5nQAlWn12eVgIBf6jDdJu4hgOJYF_bpzkAgwMFYJ7H6NQHhAPF5eGMW_ZC8&_nc_ohc=TmeUK5j_KFsQ7kNvwGPqnZH&_nc_gid=gqvOtLmnUr649pA2ImiT_A&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzEzODg3OTQ0ODE0OTIxNjY4Mw%3D%3D.3-ccb7-5&oh=00_AfWXpE2xggwbjihTZG7TgzYePpeUcZfhJmKO6qfqdpuGuA&oe=689EBAA7&_nc_sid=10d13b',
     description: {
       ar: 'حي تراثي عثماني مدرج في قائمة التراث العالمي لليونسكو',
       en: 'Ottoman heritage district listed in UNESCO World Heritage'
@@ -267,6 +267,51 @@ export const destinations = [
       { ar: 'العمارة العثمانية', en: 'Ottoman Architecture' },
       { ar: 'التعايش الديني', en: 'Religious Coexistence' },
       { ar: 'الأسواق التراثية', en: 'Heritage Markets' }
+    ]
+  },
+  // المعالم الإضافية الجديدة
+  {
+    id: 13,
+    name: { ar: 'البحر الميت', en: 'Dead Sea' },
+    image: 'https://instagram.famm6-1.fna.fbcdn.net/v/t51.2885-15/448412594_1472156103670672_5260656377973232615_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm6-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QE0d7Q-bbbsjAsgrvcCafwPwX2OiqjDSSU5P6MkEJBts3R5i_5Zomobx4N4KJ3dviY&_nc_ohc=1HBYHluLPBIQ7kNvwFdjvT7&_nc_gid=gulPpzehSMopYqO9709pYA&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzM4OTUzMDY1MjM0ODI0Mjk4Mw%3D%3D.3-ccb7-5&oh=00_AfWHhYT9eKITev5zQ0WDoCv1_VyohtN79Ua9PmLvnw4qpg&oe=689ED388&_nc_sid=22de04',
+    description: {
+      ar: 'أخفض نقطة في العالم وأحد أكثر البحار ملوحة، يشتهر بخصائصه العلاجية المميزة',
+      en: 'The lowest point on Earth and one of the saltiest bodies of water, famous for its unique therapeutic properties'
+    },
+    shortDescription: {
+      ar: 'بحر داخلي مالح يقع على عمق 430 متر تحت سطح البحر، يشتهر بطوفان الإنسان وطينه العلاجي',
+      en: 'Inland salt lake 430 meters below sea level, famous for human flotation and therapeutic mud'
+    },
+    location: 'Dead Sea',
+    rating: 4.8,
+    category: 'nature',
+    crowdLevel: 'high',
+    highlights: [
+      { ar: 'الطوفان الطبيعي', en: 'Natural Flotation' },
+      { ar: 'الطين العلاجي', en: 'Therapeutic Mud' },
+      { ar: 'أخفض نقطة في العالم', en: 'Lowest Point on Earth' }
+    ]
+  },
+  {
+    id: 14,
+    name: { ar: 'وادي الموجب', en: 'Wadi Mujib' },
+    image: 'https://instagram.famm13-1.fna.fbcdn.net/v/t51.2885-15/460162668_402193632919992_1836053095382667639_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTA4MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm13-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QH0_BRekojV9VbjWqyoGBDoqOZi2r9TFZHP3ePkd6eY8N9-a-hL8VjxowsaN_F93A4&_nc_ohc=ZkFOf7znZGoQ7kNvwGzID86&_nc_gid=P3hiKJ3pgqTf2T66mAB6BQ&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzQ1NzU1MTY5ODkwNDQwOTIyMw%3D%3D.3-ccb7-5&oh=00_AfV5-JjSmolEekz2Qahjv1MjQxQgfEkRjtkBFu4F4BU-pA&oe=689EDEBF&_nc_sid=22de04',
+    description: {
+      ar: 'وادٍ مذهل يُلقب بالغراند كانيون الأردني، يوفر مغامرات المشي المائي والسباحة في الأحواض الطبيعية',
+      en: 'A stunning valley nicknamed Jordan\'s Grand Canyon, offering water hiking adventures and swimming in natural pools'
+    },
+    shortDescription: {
+      ar: 'محمية طبيعية تضم أعمق وادي في الأردن مع نظام بيئي فريد وأنشطة مغامرات مائية مثيرة',
+      en: 'Nature reserve featuring Jordan\'s deepest valley with unique ecosystem and exciting water adventure activities'
+    },
+    location: 'Karak',
+    rating: 4.9,
+    category: 'adventure',
+    crowdLevel: 'medium',
+    highlights: [
+      { ar: 'المشي المائي', en: 'Water Hiking' },
+      { ar: 'الأحواض الطبيعية', en: 'Natural Pools' },
+      { ar: 'الغراند كانيون الأردني', en: 'Jordan\'s Grand Canyon' }
     ]
   }
 ];
@@ -415,9 +460,9 @@ export const crowdData = {
 
 // Hero images for the homepage carousel
 export const heroImages = [
-  'https://images.unsplash.com/photo-1539650116574-75c0c6d73c6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-  'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80',
-  'https://images.unsplash.com/photo-1547036967-23d11aacaee0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'
+  'https://cdn.britannica.com/24/153524-050-BA9D084B/Al-Dayr-Petra-Jordan.jpg',
+  'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Mountain_in_Wadi_Rum%2C_Jordan.jpg/1200px-Mountain_in_Wadi_Rum%2C_Jordan.jpg',
+  'https://instagram.famm6-1.fna.fbcdn.net/v/t51.2885-15/505783801_18502913035037323_2252341969039868058_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjc1NzYxLmRlZmF1bHRfaW1hZ2UuYzIifQ&_nc_ht=instagram.famm6-1.fna.fbcdn.net&_nc_cat=107&_nc_oc=Q6cZ2QHgzPyhKbPo05FqpTcCm7W01erg-OKLgA8YOsMldgE_PEsXy_AhR7JDyF-BfliUNos&_nc_ohc=Ho84DgEGlc4Q7kNvwHcnICh&_nc_gid=NQlCkvMXkURCO97T_Fltrg&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzY1MjY0NzA0Njk4MjA5ODQ3MA%3D%3D.3-ccb7-5&oh=00_AfVdX7y9X74aU3_vfn34zqlyd85KnrtZq6o96AmjVw0oSg&oe=689EB828&_nc_sid=22de04'
 ];
 
 // Make sure we export both named exports and default export for compatibility

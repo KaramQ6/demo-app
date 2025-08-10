@@ -64,9 +64,9 @@ const DestinationDetail = () => {
   // Mock image gallery (in real app, would come from destination data)
   const imageGallery = [
     destination.image,
-    'https://images.pexels.com/photos/33280395/pexels-photo-33280395.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    'https://images.pexels.com/photos/4388167/pexels-photo-4388167.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-    'https://images.pexels.com/photos/720254/pexels-photo-720254.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
+    'https://instagram.famm13-1.fna.fbcdn.net/v/t51.2885-15/473023756_458411074012548_522496253386996261_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm13-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QGTDv26wYtyeRmR8HMd85Hte0UjSvQeNI4T6EFBHsUSQapkJR6FkQtBZLQtx3tmuRY&_nc_ohc=-vkRfLRaVicQ7kNvwHxTGz7&_nc_gid=RKlcm70j-9CVhq0aRFMEvw&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzU0NDY2MzIxMDQ4NDE4Nzg1Nw%3D%3D.3-ccb7-5&oh=00_AfXEj_zimRhqrh5SAUen-bHbTqnwbcEHps1U_GsMtQuB-Q&oe=689EB747&_nc_sid=22de04',
+    'https://www.reflectionsenroute.com/wp-content/uploads/2014/05/Jordan-8.jpg.webp',
+    'https://instagram.famm10-1.fna.fbcdn.net/v/t51.2885-15/463364185_912462524097380_7758625016692203577_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm10-1.fna.fbcdn.net&_nc_cat=108&_nc_oc=Q6cZ2QH0_BRekojV9VbjWqyoGBDoqOZi2r9TFZHP3ePkd6eY8N9-a-hL8VjxowsaN_F93A4&_nc_ohc=TBQMaBh9x5IQ7kNvwEzsIST&_nc_gid=P3hiKJ3pgqTf2T66mAB6BQ&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzQ4MDEyNzk3MDIyNTc3NjM3OA%3D%3D.3-ccb7-5&oh=00_AfWPxO6laeZi8rJurpTvqdzAfPNShiLM84ymi-zP1D2Xig&oe=689ED150&_nc_sid=22de04'
   ];
 
   const handleCrowdFeedback = (level) => {
@@ -245,15 +245,15 @@ const DestinationDetail = () => {
                       {t(destination.description)}
                     </p>
 
-                    {/* Features */}
+                    {/* Highlights */}
                     <div className="mb-6">
                       <h3 className="text-lg font-semibold font-['Montserrat'] text-white mb-4">
-                        {t({ ar: 'المميزات', en: 'Features' })}
+                        {t({ ar: 'أبرز المعالم', en: 'Highlights' })}
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {destination.features.map((feature) => (
-                          <Badge key={feature} variant="secondary" className="glass">
-                            {feature.replace('-', ' ')}
+                        {destination.highlights && destination.highlights.map((highlight, index) => (
+                          <Badge key={index} variant="secondary" className="glass">
+                            {t(highlight)}
                           </Badge>
                         ))}
                       </div>

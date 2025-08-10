@@ -30,7 +30,7 @@ const DataHub = () => {
         <div className="relative min-h-screen pt-20">
             <div className="absolute inset-0 w-full h-full">
                 <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-indigo-900/60 to-black/80 z-10"></div>
-                <img src="https://images.pexels.com/photos/11042712/pexels-photo-11042712.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Background" className="w-full h-full object-cover" />
+                <img src="https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Background" className="w-full h-full object-cover" />
             </div>
 
             <div className="relative z-20 container mx-auto p-4 md:p-8">
