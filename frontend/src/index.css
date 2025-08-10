@@ -303,9 +303,12 @@ div {
 
 /* Glow Animation for Header */
 @keyframes glow {
-  0%, 100% {
+
+  0%,
+  100% {
     text-shadow: 0 0 5px rgba(168, 85, 247, 0.4), 0 0 10px rgba(168, 85, 247, 0.3);
   }
+
   50% {
     text-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.3);
   }
@@ -344,7 +347,7 @@ body {
   margin-right: 0.25rem;
 }
 
-.rtl .space-x-2 > * + * {
+.rtl .space-x-2>*+* {
   margin-left: 0;
   margin-right: 0.5rem;
 }

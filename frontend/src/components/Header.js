@@ -57,23 +57,23 @@ const Header = () => {
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-white hover:text-purple-400 transition-all duration-300 cursor-pointer font-poppins tracking-tight transform hover:scale-105" onClick={() => scrollToSection('home')}>
               <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent animate-glow">Smart</span>
-                <span className="text-white ml-1">Tour.jo</span>
-              </h1>
-            </div>
+              <span className="text-white ml-1">Tour.jo</span>
+            </h1>
+          </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                const active = isActive(item.path);
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
 
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={`flex items-center space-x-2 rtl:space-x-reverse px-3 py-2 rounded-lg transition-colors ${active
-                      ? 'text-white bg-white/10'
-                      : 'text-gray-300 hover:text-white hover:bg-white/5'
+                    ? 'text-white bg-white/10'
+                    : 'text-gray-300 hover:text-white hover:bg-white/5'
                     }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -120,8 +120,8 @@ const Header = () => {
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
                     className={`flex items-center space-x-3 rtl:space-x-reverse px-4 py-3 rounded-lg transition-colors ${active
-                        ? 'text-white bg-white/10'
-                        : 'text-gray-300 hover:text-white hover:bg-white/5'
+                      ? 'text-white bg-white/10'
+                      : 'text-gray-300 hover:text-white hover:bg-white/5'
                       }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -129,7 +129,7 @@ const Header = () => {
                   </Link>
                 );
               })}
-              
+
               {/* Language Toggle in Mobile Menu */}
               <button
                 onClick={toggleLanguage}
