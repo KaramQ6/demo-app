@@ -100,24 +100,8 @@ class AlternativeCrowdDataService {
     }
 
     async getWeatherData(lat, lon) {
-        try {
-            const response = await fetch(
-                `${this.dataSources.openWeatherMap}?lat=${lat}&lon=${lon}&appid=demo&units=metric`
-            );
-
-            if (response.ok) {
-                const data = await response.json();
-                return {
-                    temperature: Math.round(data.main?.temp || 25),
-                    weather: data.weather?.[0]?.main || 'Clear',
-                    humidity: data.main?.humidity || 60,
-                    windSpeed: data.wind?.speed || 5
-                };
-            }
-        } catch (error) {
-            console.warn('Weather API unavailable, using estimates');
-        }
-
+        // Skip actual API call and use estimated weather instead
+        console.log('Using estimated weather data instead of API call');
         return this.getEstimatedWeather(lat, lon);
     }
 

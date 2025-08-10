@@ -32,7 +32,7 @@ const DestinationDetail = () => {
   const [crowdFeedback, setCrowdFeedback] = useState(null);
   const [hasGivenFeedback, setHasGivenFeedback] = useState(false);
 
-  const destination = destinations.find(dest => dest.id === id);
+  const destination = destinations.find(dest => dest.id === parseInt(id));
 
   useEffect(() => {
     // Check if user has already given feedback for this destination
