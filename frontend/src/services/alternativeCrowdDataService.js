@@ -1,10 +1,10 @@
 class AlternativeCrowdDataService {
     constructor() {
         this.dataSources = {
-            openWeatherMap: 'http://api.openweathermap.org/data/2.5/weather',
+            openWeatherMap: 'https://api.openweathermap.org/data/2.5/weather',
             nominatim: 'https://nominatim.openstreetmap.org/search',
             overpass: 'https://overpass-api.de/api/interpreter',
-            worldTimeApi: 'http://worldtimeapi.org/api/timezone/Asia/Amman'
+            worldTimeApi: 'https://worldtimeapi.org/api/timezone/Asia/Amman'
         };
 
         this.jordanPlaces = {

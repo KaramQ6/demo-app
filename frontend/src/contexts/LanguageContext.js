@@ -27,11 +27,16 @@ export const LanguageProvider = ({ children }) => {
     return '';
   };
 
+  const toggleLanguage = () => {
+    setLanguage(prevLang => prevLang === 'en' ? 'ar' : 'en');
+  };
+
   const value = {
     language,
     setLanguage,
     isRTL: language === 'ar',
     t,
+    toggleLanguage,
   };
 
   return (

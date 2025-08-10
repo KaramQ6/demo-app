@@ -300,3 +300,51 @@ span,
 div {
   font-family: 'Open Sans', sans-serif;
 }
+
+/* Glow Animation for Header */
+@keyframes glow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(168, 85, 247, 0.4), 0 0 10px rgba(168, 85, 247, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.4), 0 0 30px rgba(168, 85, 247, 0.3);
+  }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+.font-poppins {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* RTL Support */
+body.rtl {
+  font-family: 'Tajawal', sans-serif;
+  text-align: right;
+}
+
+body.rtl * {
+  letter-spacing: 0;
+}
+
+/* Language transition */
+body {
+  transition: all 0.3s ease;
+}
+
+.rtl .ml-1 {
+  margin-left: 0;
+  margin-right: 0.25rem;
+}
+
+.rtl .space-x-2 > * + * {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}

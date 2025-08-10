@@ -47,7 +47,18 @@ const AlternativeCrowdSettings = React.lazy(() => import('./pages/AlternativeCro
 // Internal component to handle layout based on route
 function AppContent() {
   const location = useLocation();
-  const { language } = useLanguage();
+  const { language, isRTL } = useLanguage();
+
+  // Set app-wide RTL styling
+  React.useEffect(() => {
+    if (isRTL) {
+      document.body.classList.add('rtl');
+      document.body.dir = 'rtl';
+    } else {
+      document.body.classList.remove('rtl');
+      document.body.dir = 'ltr';
+    }
+  }, [isRTL]);
   const isArPage = location.pathname === '/ar';
   const isVoiceAssistantPage = location.pathname === '/VoiceAgentPage';
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register' || location.pathname === '/reset-password' || location.pathname === '/reset-password-confirm';
