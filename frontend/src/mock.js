@@ -26,7 +26,7 @@ export const destinations = [
   {
     id: 2,
     name: { ar: 'وادي رم', en: 'Wadi Rum' },
-    image: 'https://drive.google.com/uc?export=view&id=1w1s8jQLQ_rdXMFiA9U5X-IddcHkVkDam',
+    image: '/images/destinations/wadi-rum.jpg',
     description: {
       ar: 'وادي القمر الساحر بصحرائه الحمراء وجباله الشامخة',
       en: 'The Valley of the Moon with its red desert and towering mountains'
@@ -250,7 +250,7 @@ export const destinations = [
   {
     id: 12,
     name: { ar: 'حي السلط القديم', en: 'Old As-Salt District' },
-    image: 'https://drive.google.com/uc?export=view&id=1kMdtn9-xkSTWpcYVnhHbh-373X5At6YI',
+    image: '/images/destinations/as-salt.jpg',
     description: {
       ar: 'حي تراثي عثماني مدرج في قائمة التراث العالمي لليونسكو',
       en: 'Ottoman heritage district listed in UNESCO World Heritage'
@@ -273,7 +273,7 @@ export const destinations = [
   {
     id: 13,
     name: { ar: 'البحر الميت', en: 'Dead Sea' },
-    image: 'https://drive.google.com/uc?export=view&id=1hI09WSoY_lzcm-84rmIvlZmwWiGrMlZB',
+    image: '/images/destinations/dead-sea.jpg',
     description: {
       ar: 'أخفض نقطة في العالم وأحد أكثر البحار ملوحة، يشتهر بخصائصه العلاجية المميزة',
       en: 'The lowest point on Earth and one of the saltiest bodies of water, famous for its unique therapeutic properties'
@@ -295,7 +295,7 @@ export const destinations = [
   {
     id: 14,
     name: { ar: 'وادي الموجب', en: 'Wadi Mujib' },
-    image: 'https://drive.google.com/uc?export=view&id=1dkFDa-aFFDi2P4l1GSTynPSOmlAIWK2K',
+    image: '/images/destinations/wadi-mujib.jpg',
     description: {
       ar: 'وادٍ مذهل يُلقب بالغراند كانيون الأردني، يوفر مغامرات المشي المائي والسباحة في الأحواض الطبيعية',
       en: 'A stunning valley nicknamed Jordan\'s Grand Canyon, offering water hiking adventures and swimming in natural pools'
