@@ -26,7 +26,7 @@ export const destinations = [
   {
     id: 2,
     name: { ar: 'وادي رم', en: 'Wadi Rum' },
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Mountain_in_Wadi_Rum%2C_Jordan.jpg/1200px-Mountain_in_Wadi_Rum%2C_Jordan.jpg',
+    image: 'https://drive.google.com/uc?export=view&id=1w1s8jQLQ_rdXMFiA9U5X-IddcHkVkDam',
     description: {
       ar: 'وادي القمر الساحر بصحرائه الحمراء وجباله الشامخة',
       en: 'The Valley of the Moon with its red desert and towering mountains'
@@ -205,7 +205,7 @@ export const destinations = [
   {
     id: 10,
     name: { ar: 'قرية ضانا التراثية', en: 'Dana Heritage Village' },
-    image: 'https://images.pexels.com/photos/2901209/pexels-photo-2901209.jpeg?auto=compress&cs=tinysrgb&w=1200&q=80',
+    image: 'https://international.visitjordan.com/uploads/attractions/2f2d9d3a-3a78-42e6-8b2c-f4ed89c6c575.png',
     description: {
       ar: 'قرية تراثية عثمانية تطل على وادي ضانا ومحمية طبيعية',
       en: 'Ottoman heritage village overlooking Dana Valley and nature reserve'
@@ -250,7 +250,7 @@ export const destinations = [
   {
     id: 12,
     name: { ar: 'حي السلط القديم', en: 'Old As-Salt District' },
-    image: 'https://instagram.famm13-1.fna.fbcdn.net/v/t51.2885-15/357358973_792252495906273_7802957138289162305_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm13-1.fna.fbcdn.net&_nc_cat=109&_nc_oc=Q6cZ2QFo6SDL5nQAlWn12eVgIBf6jDdJu4hgOJYF_bpzkAgwMFYJ7H6NQHhAPF5eGMW_ZC8&_nc_ohc=TmeUK5j_KFsQ7kNvwGPqnZH&_nc_gid=gqvOtLmnUr649pA2ImiT_A&edm=APs17CUBAAAA&ccb=7-5&ig_cache_key=MzEzODg3OTQ0ODE0OTIxNjY4Mw%3D%3D.3-ccb7-5&oh=00_AfWXpE2xggwbjihTZG7TgzYePpeUcZfhJmKO6qfqdpuGuA&oe=689EBAA7&_nc_sid=10d13b',
+    image: 'https://drive.google.com/uc?export=view&id=1kMdtn9-xkSTWpcYVnhHbh-373X5At6YI',
     description: {
       ar: 'حي تراثي عثماني مدرج في قائمة التراث العالمي لليونسكو',
       en: 'Ottoman heritage district listed in UNESCO World Heritage'
@@ -273,7 +273,7 @@ export const destinations = [
   {
     id: 13,
     name: { ar: 'البحر الميت', en: 'Dead Sea' },
-    image: 'https://instagram.famm6-1.fna.fbcdn.net/v/t51.2885-15/448412594_1472156103670672_5260656377973232615_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTM1MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm6-1.fna.fbcdn.net&_nc_cat=104&_nc_oc=Q6cZ2QE0d7Q-bbbsjAsgrvcCafwPwX2OiqjDSSU5P6MkEJBts3R5i_5Zomobx4N4KJ3dviY&_nc_ohc=1HBYHluLPBIQ7kNvwFdjvT7&_nc_gid=gulPpzehSMopYqO9709pYA&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzM4OTUzMDY1MjM0ODI0Mjk4Mw%3D%3D.3-ccb7-5&oh=00_AfWHhYT9eKITev5zQ0WDoCv1_VyohtN79Ua9PmLvnw4qpg&oe=689ED388&_nc_sid=22de04',
+    image: 'https://drive.google.com/uc?export=view&id=1hI09WSoY_lzcm-84rmIvlZmwWiGrMlZB',
     description: {
       ar: 'أخفض نقطة في العالم وأحد أكثر البحار ملوحة، يشتهر بخصائصه العلاجية المميزة',
       en: 'The lowest point on Earth and one of the saltiest bodies of water, famous for its unique therapeutic properties'
@@ -295,7 +295,7 @@ export const destinations = [
   {
     id: 14,
     name: { ar: 'وادي الموجب', en: 'Wadi Mujib' },
-    image: 'https://instagram.famm13-1.fna.fbcdn.net/v/t51.2885-15/460162668_402193632919992_1836053095382667639_n.jpg?stp=dst-jpg_e35_tt6&efg=eyJ2ZW5jb2RlX3RhZyI6IkZFRUQuaW1hZ2VfdXJsZ2VuLjEwODB4MTA4MC5zZHIuZjI4ODUuZGVmYXVsdF9pbWFnZS5jMiJ9&_nc_ht=instagram.famm13-1.fna.fbcdn.net&_nc_cat=100&_nc_oc=Q6cZ2QH0_BRekojV9VbjWqyoGBDoqOZi2r9TFZHP3ePkd6eY8N9-a-hL8VjxowsaN_F93A4&_nc_ohc=ZkFOf7znZGoQ7kNvwGzID86&_nc_gid=P3hiKJ3pgqTf2T66mAB6BQ&edm=APoiHPcBAAAA&ccb=7-5&ig_cache_key=MzQ1NzU1MTY5ODkwNDQwOTIyMw%3D%3D.3-ccb7-5&oh=00_AfV5-JjSmolEekz2Qahjv1MjQxQgfEkRjtkBFu4F4BU-pA&oe=689EDEBF&_nc_sid=22de04',
+    image: 'https://drive.google.com/uc?export=view&id=1dkFDa-aFFDi2P4l1GSTynPSOmlAIWK2K',
     description: {
       ar: 'وادٍ مذهل يُلقب بالغراند كانيون الأردني، يوفر مغامرات المشي المائي والسباحة في الأحواض الطبيعية',
       en: 'A stunning valley nicknamed Jordan\'s Grand Canyon, offering water hiking adventures and swimming in natural pools'
