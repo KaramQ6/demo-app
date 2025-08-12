@@ -1,9 +1,10 @@
 import React from 'react';
 import { AdvancedImage } from '@cloudinary/react';
 import { Cloudinary } from '@cloudinary/url-gen';
-import { auto } from '@cloudinary/url-gen/actions/resize';
+import { fill } from '@cloudinary/url-gen/actions/resize';
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity';
-import { format, quality } from '@cloudinary/url-gen/actions/delivery';
+import { auto } from '@cloudinary/url-gen/qualifiers/format';
+import { auto as qualityAuto } from '@cloudinary/url-gen/qualifiers/quality';
 
 // إنشاء instance من Cloudinary
 const cld = new Cloudinary({
@@ -43,9 +44,9 @@ const SmartImage = ({
     // إنشاء الصورة مع التحسينات من Cloudinary
     const myImage = cld
       .image(cloudinaryId)
-      .format(format.auto())
-      .quality(quality.auto())
-      .resize(auto().gravity(autoGravity()).width(width).height(height));
+      .format(auto())
+      .quality(qualityAuto())
+      .resize(fill().width(width).height(height).gravity(autoGravity()));
 
     return (
       <AdvancedImage
