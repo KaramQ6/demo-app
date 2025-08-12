@@ -30,10 +30,10 @@ const DataHub = () => {
         <div className="relative min-h-screen pt-20">
             <div className="absolute inset-0 w-full h-full">
                 <div className="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
-                <img 
-                    src="https://jordantraveler.com/wp-content/uploads/2023/06/Facts-about-Jordan-Hero-1024x683.png" 
-                    alt="Jordan Background" 
-                    className="w-full h-full object-cover" 
+                <img
+                    src="https://jordantraveler.com/wp-content/uploads/2023/06/Facts-about-Jordan-Hero-1024x683.png"
+                    alt="Jordan Background"
+                    className="w-full h-full object-cover"
                 />
             </div>
 

@@ -20,7 +20,7 @@ const IoTHub = () => {
         return (
             <div className="min-h-screen relative">
                 {/* Background Image */}
-                <div 
+                <div
                     className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                     style={{
                         backgroundImage: 'url(https://jordantraveler.com/wp-content/uploads/2023/06/Facts-about-Jordan-Hero-1024x683.png)'
@@ -28,7 +28,7 @@ const IoTHub = () => {
                 >
                     <div className="absolute inset-0 bg-black bg-opacity-60"></div>
                 </div>
-                
+
                 {/* Loading Content */}
                 <div className="relative z-10 flex items-center justify-center min-h-screen">
                     <div className="text-center">
@@ -47,7 +47,7 @@ const IoTHub = () => {
     return (
         <div className="min-h-screen relative">
             {/* Background Image */}
-            <div 
+            <div
                 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
                 style={{
                     backgroundImage: 'url(https://jordantraveler.com/wp-content/uploads/2023/06/Facts-about-Jordan-Hero-1024x683.png)'
@@ -55,7 +55,7 @@ const IoTHub = () => {
             >
                 <div className="absolute inset-0 bg-black bg-opacity-50"></div>
             </div>
-            
+
             {/* Content */}
             <div className="relative z-10 container mx-auto px-6 py-12">
                 {/* Header Section */}
@@ -68,11 +68,7 @@ const IoTHub = () => {
                     <p className="text-gray-200 text-lg max-w-2xl mx-auto drop-shadow-md">
                         Real-time monitoring of crowd levels and weather conditions across Jordan's top destinations
                     </p>
-                    <div className="mt-4">
-                        <span className="inline-block px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-white text-sm border border-white/20">
-                            🌐 smart-tour.app/data
-                        </span>
-                    </div>
+                
                 </div>
 
                 {/* Crowd Level Section */}
@@ -91,8 +87,8 @@ const IoTHub = () => {
                                             {location}
                                         </h3>
                                         <div className={`w-3 h-3 rounded-full ${data.percentage > 70 ? 'bg-red-400 shadow-red-400/50' :
-                                                data.percentage > 40 ? 'bg-yellow-400 shadow-yellow-400/50' :
-                                                    'bg-green-400 shadow-green-400/50'
+                                            data.percentage > 40 ? 'bg-yellow-400 shadow-yellow-400/50' :
+                                                'bg-green-400 shadow-green-400/50'
                                             } shadow-lg animate-pulse`}></div>
                                     </div>
 
@@ -100,14 +96,14 @@ const IoTHub = () => {
                                         <div className="flex justify-between items-center mb-2">
                                             <span className="text-gray-200 text-sm">Crowd Level</span>
                                             <span className={`font-bold ${data.percentage > 70 ? 'text-red-400' :
-                                                    data.percentage > 40 ? 'text-yellow-400' :
-                                                        'text-green-400'
+                                                data.percentage > 40 ? 'text-yellow-400' :
+                                                    'text-green-400'
                                                 }`}>{data.percentage}%</span>
                                         </div>
                                         <div className="w-full bg-gray-700/50 rounded-full h-2 overflow-hidden backdrop-blur">
                                             <div className={`h-2 rounded-full transition-all duration-1000 ${data.percentage > 70 ? 'bg-gradient-to-r from-red-500 to-red-400' :
-                                                    data.percentage > 40 ? 'bg-gradient-to-r from-yellow-500 to-yellow-400' :
-                                                        'bg-gradient-to-r from-green-500 to-green-400'
+                                                data.percentage > 40 ? 'bg-gradient-to-r from-yellow-500 to-yellow-400' :
+                                                    'bg-gradient-to-r from-green-500 to-green-400'
                                                 }`} style={{ width: `${data.percentage}%` }}></div>
                                         </div>
                                     </div>
