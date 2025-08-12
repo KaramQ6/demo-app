@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import RealCrowdDisplay from '../components/RealCrowdDisplay';
+import SmartImage from '../components/CloudinaryImage';
 import {
   ArrowLeft,
   ArrowRight,
@@ -149,9 +150,11 @@ const DestinationDetail = () => {
       {/* Hero Section with Image Gallery */}
       <div className="container mx-auto px-6 mb-12 relative z-10">
         <div className="relative h-96 md:h-[32rem] rounded-2xl overflow-hidden glass-card animate-fade-in-up">
-          <img
+          <SmartImage
             src={imageGallery[currentImageIndex]}
             alt={t(destination.name)}
+            width={1200}
+            height={600}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>

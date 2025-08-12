@@ -6,6 +6,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { ArrowRight, ArrowLeft, MapPin, Clock, Bot, Brain, Zap, Star, Thermometer, Loader2, Calendar, Users } from 'lucide-react';
 import { destinations } from '../mock';
+import SmartImage from '../components/SmartImage';
 
 const Homepage = () => {
   const { t, language, isRTL } = useLanguage();
@@ -203,9 +204,11 @@ const Homepage = () => {
               >
                 <Card className="glass-card interactive-card h-full overflow-hidden border-white/10">
                   <div className="relative h-48 md:h-56 overflow-hidden">
-                    <img
+                    <SmartImage
                       src={destination.image}
                       alt={t(destination.name)}
+                      width={400}
+                      height={240}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
