@@ -4,17 +4,17 @@ import CloudinaryImage from './CloudinaryImage';
 /**
  * مكون ذكي للصور يتعامل مع صور Cloudinary والصور العادية
  */
-const SmartImage = ({ 
-  src, 
-  alt, 
-  className = '', 
+const SmartImage = ({
+  src,
+  alt,
+  className = '',
   width = 800,
   height = 600,
-  ...props 
+  ...props
 }) => {
   // التحقق من نوع الصورة
   const isCloudinaryImage = src && src.startsWith('smarttour/');
-  
+
   if (isCloudinaryImage) {
     return (
       <CloudinaryImage
@@ -27,7 +27,7 @@ const SmartImage = ({
       />
     );
   }
-  
+
   // صورة عادية
   return (
     <img

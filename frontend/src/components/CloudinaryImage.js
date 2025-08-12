@@ -15,7 +15,7 @@ const cld = new Cloudinary({
 // قائمة الصور المتاحة على Cloudinary مع أسماءها الحقيقية
 const cloudinaryImages = {
   'smarttour/destinations/wadi-rum': 'وادي_رم_z7dxau',
-  'smarttour/destinations/as-salt': 'السلط_rgdgzg', 
+  'smarttour/destinations/as-salt': 'السلط_rgdgzg',
   'smarttour/destinations/dead-sea': 'البحر_الميت_okmqdh',
   'smarttour/destinations/wadi-mujib': 'وادي_الموجب_diemut'
 };
@@ -28,17 +28,17 @@ const fallbackImages = {
   'smarttour/destinations/wadi-mujib': 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2a/00/f3/d8/oasis-fabuleuse.jpg?w=1400&h=-1&s=1'
 };
 
-const SmartImage = ({ 
-  src, 
-  alt, 
-  className = '', 
+const SmartImage = ({
+  src,
+  alt,
+  className = '',
   width = 800,
   height = 600
 }) => {
   // التحقق من وجود صورة Cloudinary
   const cloudinaryId = cloudinaryImages[src];
   const fallbackSrc = fallbackImages[src];
-  
+
   if (cloudinaryId) {
     // إنشاء الصورة مع التحسينات من Cloudinary
     const myImage = cld
@@ -48,8 +48,8 @@ const SmartImage = ({
       .resize(auto().gravity(autoGravity()).width(width).height(height));
 
     return (
-      <AdvancedImage 
-        cldImg={myImage} 
+      <AdvancedImage
+        cldImg={myImage}
         alt={alt}
         className={className}
         loading="lazy"
@@ -72,7 +72,6 @@ const SmartImage = ({
       loading="lazy"
     />
   );
-};
 };
 
 export default SmartImage;

@@ -3,7 +3,7 @@ export const cloudinaryConfig = {
   cloudName: 'dn0vfbcmu',
   destinations: {
     'wadi-rum': 'smarttour/destinations/wadi-rum',
-    'as-salt': 'smarttour/destinations/as-salt', 
+    'as-salt': 'smarttour/destinations/as-salt',
     'dead-sea': 'smarttour/destinations/dead-sea',
     'wadi-mujib': 'smarttour/destinations/wadi-mujib'
   }
