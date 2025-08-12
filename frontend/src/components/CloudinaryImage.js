@@ -41,27 +41,40 @@ const SmartImage = ({
   const fallbackSrc = fallbackImages[src];
 
   if (cloudinaryId) {
-    // إنشاء الصورة مع التحسينات من Cloudinary
-    const myImage = cld
-      .image(cloudinaryId)
-      .format(auto())
-      .quality(qualityAuto())
-      .resize(fill().width(width).height(height).gravity(autoGravity()));
+    try {
+      // إنشاء الصورة مع التحسينات من Cloudinary
+      const myImage = cld
+        .image(cloudinaryId)
+        .format(auto())
+        .quality(qualityAuto())
+        .resize(fill().width(width).height(height).gravity(autoGravity()));
 
-    return (
-      <AdvancedImage
-        cldImg={myImage}
-        alt={alt}
-        className={className}
-        loading="lazy"
-        onError={(e) => {
-          // في حالة فشل تحميل الصورة من Cloudinary، استخدم الصورة البديلة
-          if (fallbackSrc) {
-            e.target.src = fallbackSrc;
-          }
-        }}
-      />
-    );
+      return (
+        <AdvancedImage
+          cldImg={myImage}
+          alt={alt}
+          className={className}
+          loading="lazy"
+          onError={(e) => {
+            // في حالة فشل تحميل الصورة من Cloudinary، استخدم الصورة البديلة
+            if (fallbackSrc) {
+              e.target.src = fallbackSrc;
+            }
+          }}
+        />
+      );
+    } catch (error) {
+      console.warn('Cloudinary error:', error);
+      // في حالة خطأ في Cloudinary، استخدم الصورة البديلة
+      return (
+        <img
+          src={fallbackSrc || src}
+          alt={alt}
+          className={className}
+          loading="lazy"
+        />
+      );
+    }
   }
 
   // في حالة عدم وجود صورة Cloudinary، استخدم الصورة العادية

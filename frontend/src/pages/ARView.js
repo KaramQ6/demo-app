@@ -57,16 +57,24 @@ const ARView = () => {
 
     const initAR = async () => {
       try {
-        await loadScript('https://aframe.io/releases/1.5.0/aframe.min.js');
-        await loadScript('https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js');
+        setStatusMessage('تحميل مكتبات الواقع المعزز...');
 
-        // Register the AR handler component after A-Frame is loaded
-        if (window.AFRAME && !window.AFRAME.components['ar-handler']) {
+        // Load A-Frame first
+        await loadScript('https://aframe.io/releases/1.5.0/aframe.min.js');
+
+        // Then load AR.js
+        await loadScript('https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js');
+
+        // Wait for A-Frame to be fully ready
+        if (window.AFRAME) {
+          console.log('A-Frame loaded successfully');
           registerARHandler();
         }
+
+        setStatusMessage('جاهز للبدء!');
       } catch (error) {
         console.error('Failed to load AR scripts:', error);
-        setStatusMessage('Failed to load AR libraries. Please refresh.');
+        setStatusMessage(`خطأ في تحميل مكتبات الواقع المعزز: ${error.message}`);
       }
     };
 
@@ -250,31 +258,54 @@ const ARView = () => {
     });
   };
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setStatusMessage(texts.requestingPermissions);
 
-    navigator.geolocation.getCurrentPosition(
-      () => {
-        setStatusMessage(texts.gpsAcquired);
-        setIsStarted(true);
+    // Check if device supports required features
+    if (!navigator.geolocation) {
+      setStatusMessage('خطأ: الجهاز لا يدعم خدمات الموقع');
+      return;
+    }
 
-        // Show AR scene after a brief delay to ensure proper initialization
-        setTimeout(() => {
-          const arScene = document.getElementById('ar-scene');
-          if (arScene) {
-            arScene.style.display = 'block';
-          }
-        }, 500);
-      },
-      (err) => {
-        setStatusMessage(`${texts.gpsError} (${err.message})`);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 0
-      }
-    );
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatusMessage('خطأ: الجهاز لا يدعم الكاميرا');
+      return;
+    }
+
+    try {
+      // Request camera permission first
+      await navigator.mediaDevices.getUserMedia({ video: true });
+      setStatusMessage('تم الحصول على إذن الكاميرا...');
+
+      // Then request location permission
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setStatusMessage(`${texts.gpsAcquired} (دقة: ${position.coords.accuracy.toFixed(0)}م)`);
+          setIsStarted(true);
+
+          // Show AR scene after initialization
+          setTimeout(() => {
+            const arScene = document.getElementById('ar-scene');
+            if (arScene) {
+              arScene.style.display = 'block';
+              console.log('AR Scene activated');
+            }
+          }, 1000);
+        },
+        (err) => {
+          console.error('GPS Error:', err);
+          setStatusMessage(`${texts.gpsError} - ${err.message}`);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 30000,
+          maximumAge: 0
+        }
+      );
+    } catch (err) {
+      console.error('Camera Error:', err);
+      setStatusMessage(`خطأ في الكاميرا: ${err.message}`);
+    }
   };
 
   if (!isStarted) {
@@ -353,12 +384,20 @@ const ARView = () => {
       <a-scene
         id="ar-scene"
         vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best;"
-        renderer="antialias: true; alpha: true"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false; trackingMethod: best; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960;"
+        renderer="antialias: true; alpha: true; precision: medium; logarithmicDepthBuffer: true; colorManagement: true;"
+        device-orientation-permission-ui="enabled: false"
+        loading-screen="enabled: false"
         style={{ display: 'none' }}
         ar-handler
+        embedded
       >
-        <a-camera gps-new-camera="gpsMinDistance: 5">
+        <a-camera
+          gps-camera="gpsMinDistance: 5; maxDistance: 5000; alert: false; simulateLatitude: 32.4841; simulateLongitude: 35.8890"
+          look-controls="enabled: false"
+          wasd-controls="enabled: false"
+          rotation-reader
+        >
           {/* Info card for close destinations */}
           <a-entity id="info-card" position="0 -0.8 -2.5" visible="false">
             <a-plane
