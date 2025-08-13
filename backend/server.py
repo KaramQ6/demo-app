@@ -446,7 +446,7 @@ async def delete_itinerary(
 ):
     """Delete an itinerary item"""
     try:
-        response = supabase.table("itineraries").delete().eq("id", itinerary_id).eq("user_id", current_user["user_id"]).execute()
+        response = supabase_admin.table("itineraries").delete().eq("id", itinerary_id).eq("user_id", current_user["user_id"]).execute()
         
         if response.data:
             return {"message": "Itinerary deleted successfully"}
