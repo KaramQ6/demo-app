@@ -392,7 +392,7 @@ async def update_itinerary(
     """Update an itinerary item"""
     try:
         # Check if itinerary belongs to user
-        existing = supabase.table("itineraries").select("*").eq("id", itinerary_id).eq("user_id", current_user["user_id"]).execute()
+        existing = supabase_admin.table("itineraries").select("*").eq("id", itinerary_id).eq("user_id", current_user["user_id"]).execute()
         
         if not existing.data:
             raise HTTPException(status_code=404, detail="Itinerary not found")
