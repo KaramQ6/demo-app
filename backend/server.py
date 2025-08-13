@@ -285,6 +285,21 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
         
         itineraries = []
         for item in response.data:
+            # Handle date parsing safely
+            visit_date = None
+            if item.get("visit_date"):
+                try:
+                    visit_date = datetime.fromisoformat(item["visit_date"].replace('Z', '+00:00'))
+                except:
+                    pass
+            
+            added_at = datetime.utcnow()
+            if item.get("added_at"):
+                try:
+                    added_at = datetime.fromisoformat(item["added_at"].replace('Z', '+00:00'))
+                except:
+                    pass
+            
             itineraries.append(ItineraryResponse(
                 id=item["id"],
                 user_id=item["user_id"],
@@ -294,9 +309,9 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
                 destination_icon=item.get("destination_icon"),
                 notes=item.get("notes"),
                 status=item["status"],
-                visit_date=datetime.fromisoformat(item["visit_date"].replace('Z', '+00:00')) if item.get("visit_date") else None,
+                visit_date=visit_date,
                 priority=item["priority"],
-                added_at=datetime.fromisoformat(item["added_at"].replace('Z', '+00:00'))
+                added_at=added_at
             ))
         
         return itineraries
