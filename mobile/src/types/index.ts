@@ -1,7 +1,7 @@
 // User Types
 export interface User {
   id: string;
-  email: string | null | undefined; // Make email compatible with Supabase User type
+  email?: string | null; // Make email compatible with Supabase User type (optional and nullable)
   full_name?: string;
   avatar_url?: string;
   created_at: string;
