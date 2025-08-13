@@ -103,8 +103,8 @@ manager = ConnectionManager()
 async def health_check():
     """Health check endpoint"""
     try:
-        # Test database connection
-        await database.execute("SELECT 1")
+        # Test MongoDB connection
+        await mongo_client.admin.command('ping')
         db_status = "healthy"
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
