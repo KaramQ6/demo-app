@@ -566,7 +566,7 @@ async def suggest_itinerary(
         
         if current_user:
             try:
-                profile_response = supabase.table("profiles").select("preferences").eq("id", current_user["user_id"]).execute()
+                profile_response = supabase_admin.table("profiles").select("preferences").eq("id", current_user["user_id"]).execute()
                 if profile_response.data:
                     preferences = profile_response.data[0].get("preferences", preferences)
                 user_data = {"email": current_user["email"]}
