@@ -340,8 +340,9 @@ async def create_itinerary(
             itinerary_data["destination_name"] = itinerary.destination_name
         if hasattr(itinerary, 'destination_type') and itinerary.destination_type:
             itinerary_data["destination_type"] = itinerary.destination_type
-        if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
-            itinerary_data["destination_icon"] = itinerary.destination_icon
+        # Skip destination_icon for now as it's not in the database schema
+        # if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
+        #     itinerary_data["destination_icon"] = itinerary.destination_icon
         if hasattr(itinerary, 'notes') and itinerary.notes:
             itinerary_data["notes"] = itinerary.notes
         if hasattr(itinerary, 'visit_date') and itinerary.visit_date:
