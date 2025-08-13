@@ -109,6 +109,8 @@ export interface ChatMessage {
   text: string;
   type: 'user' | 'bot';
   timestamp: Date;
+  synced?: boolean; // For offline sync tracking
+  count?: number; // For database count queries
 }
 
 export interface ChatResponse {
