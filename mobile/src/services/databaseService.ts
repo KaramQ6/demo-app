@@ -290,7 +290,7 @@ class DatabaseService {
     if (!this.db) throw new Error('Database not initialized');
 
     try {
-      await this.db.transaction(async (tx) => {
+      await this.db.transaction(async (tx: any) => {
         for (const destination of destinations) {
           const destinationWithCache = {
             ...destination,
