@@ -11,9 +11,9 @@ from datetime import datetime
 import json
 
 # Import our modules
-from database import database, get_database
 from models import *
 from auth import get_current_user, get_optional_user, authenticate_user, register_user, supabase
+from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 
 # Load environment variables
