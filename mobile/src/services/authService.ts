@@ -68,8 +68,8 @@ class AuthService {
 
       return {
         success: true,
-        user: data.user,
-        session: data.session,
+        user: data.user ? data.user as User : undefined,
+        session: data.session || undefined,
       };
     } catch (error) {
       return {
