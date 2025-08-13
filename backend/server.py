@@ -281,7 +281,7 @@ async def update_user_profile(
 async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_current_user)):
     """Get user's itineraries"""
     try:
-        response = supabase.table("itineraries").select("*").eq("user_id", current_user["user_id"]).execute()
+        response = supabase_admin.table("itineraries").select("*").eq("user_id", current_user["user_id"]).execute()
         
         itineraries = []
         for item in response.data:
