@@ -70,6 +70,8 @@ const typography = {
 export const lightTheme: AppTheme = {
   ...DefaultTheme,
   ...MD3LightTheme,
+  dark: false,
+  fonts: MD3LightTheme.fonts,
   colors: {
     ...MD3LightTheme.colors,
     primary: colors.primary,
@@ -92,6 +94,28 @@ export const lightTheme: AppTheme = {
     onSurfaceVariant: colors.gray600,
     outline: colors.gray300,
     shadow: colors.black,
+    
+    // Additional React Native Paper theme colors
+    onBackground: colors.gray900,
+    tertiary: colors.accent,
+    onPrimary: colors.white,
+    onSecondary: colors.white,
+    onTertiary: colors.white,
+    errorContainer: colors.error + '20',
+    onError: colors.white,
+    onErrorContainer: colors.error,
+    inverseSurface: colors.gray800,
+    inverseOnSurface: colors.white,
+    inversePrimary: colors.primaryLight,
+    scrim: colors.black + '80',
+    elevation: {
+      level0: colors.white,
+      level1: colors.gray50,
+      level2: colors.gray100,
+      level3: colors.gray200,
+      level4: colors.gray300,
+      level5: colors.gray400,
+    },
     
     // Gradient colors
     gradientStart: colors.gradientStart,
