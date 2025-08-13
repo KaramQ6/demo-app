@@ -1,6 +1,43 @@
-import {DefaultTheme, DarkTheme} from '@react-navigation/native';
-import {MD3LightTheme, MD3DarkTheme} from 'react-native-paper';
-import {AppTheme} from '@/types';
+import {DefaultTheme, DarkTheme, Theme as NavigationTheme} from '@react-navigation/native';
+import {MD3LightTheme, MD3DarkTheme, MD3Theme} from 'react-native-paper';
+
+// Create a combined theme type that merges Navigation and Paper themes
+type CombinedTheme = NavigationTheme & MD3Theme & {
+  colors: NavigationTheme['colors'] & MD3Theme['colors'] & {
+    // Custom colors for our app
+    accent: string;
+    textSecondary: string;
+    border: string;
+    success: string;
+    warning: string;
+    gradientStart: string;
+    gradientEnd: string;
+  };
+  spacing: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
+  };
+  typography: {
+    h1: {fontSize: number; fontWeight: string; lineHeight: number};
+    h2: {fontSize: number; fontWeight: string; lineHeight: number};
+    h3: {fontSize: number; fontWeight: string; lineHeight: number};
+    h4: {fontSize: number; fontWeight: string; lineHeight: number};
+    body: {fontSize: number; fontWeight: string; lineHeight: number};
+    bodySmall: {fontSize: number; fontWeight: string; lineHeight: number};
+    caption: {fontSize: number; fontWeight: string; lineHeight: number};
+    button: {fontSize: number; fontWeight: string; lineHeight: number};
+  };
+  borderRadius: number;
+  elevation: {
+    small: number;
+    medium: number;
+    large: number;
+  };
+};
 
 // Color Palette
 const colors = {
