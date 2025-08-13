@@ -171,7 +171,7 @@ class AuthService {
 
       return {
         success: true,
-        user: data.user,
+        user: data.user ? data.user as User : undefined,
       };
     } catch (error) {
       return {
