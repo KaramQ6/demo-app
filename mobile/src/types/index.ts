@@ -190,6 +190,9 @@ export interface AppTheme {
     error: string;
     success: string;
     warning: string;
+    // React Navigation theme compatibility
+    card: string;
+    notification: string;
     // Additional properties for theme compatibility
     primaryContainer: string;
     secondaryContainer: string;
