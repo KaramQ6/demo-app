@@ -99,6 +99,8 @@ export interface WeatherData {
   longitude?: number;
   source: string;
   recorded_at?: string;
+  cached_at?: string; // For offline caching
+  count?: number; // For database count queries
 }
 
 // Chat Types
