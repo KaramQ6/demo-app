@@ -3,115 +3,115 @@
     "success": true,
     "message": "Health endpoint working - Status: healthy",
     "details": null,
-    "timestamp": "2025-08-13T04:00:09.951067"
+    "timestamp": "2025-08-13T04:22:04.223421"
   },
   "Root Endpoint": {
     "success": true,
     "message": "Root endpoint working - Version: 1.0.0",
     "details": null,
-    "timestamp": "2025-08-13T04:00:09.966506"
+    "timestamp": "2025-08-13T04:22:04.237650"
   },
   "User Registration": {
     "success": false,
     "message": "Registration failed with 400",
     "details": "{\"detail\":\"Registration failed\"}",
-    "timestamp": "2025-08-13T04:00:10.487948"
+    "timestamp": "2025-08-13T04:22:05.132023"
   },
   "User Login": {
     "success": true,
     "message": "Login successful - User ID: ef61d984-e218-4b1a-9d0f-d43575dc9e07",
     "details": null,
-    "timestamp": "2025-08-13T04:00:11.007058"
+    "timestamp": "2025-08-13T04:22:05.737067"
   },
   "Token Validation": {
     "success": true,
     "message": "Token validation successful - Email: smarttour.test@example.com",
     "details": null,
-    "timestamp": "2025-08-13T04:00:11.408132"
+    "timestamp": "2025-08-13T04:22:06.145205"
   },
   "Get Profile": {
     "success": true,
     "message": "Profile retrieved successfully - ID: ef61d984-e218-4b1a-9d0f-d43575dc9e07",
     "details": null,
-    "timestamp": "2025-08-13T04:00:12.050890"
+    "timestamp": "2025-08-13T04:22:07.326846"
   },
   "Update Profile": {
     "success": true,
     "message": "Profile updated successfully",
     "details": null,
-    "timestamp": "2025-08-13T04:00:12.801510"
+    "timestamp": "2025-08-13T04:22:08.182299"
   },
   "Get Itineraries": {
     "success": true,
     "message": "Retrieved 0 itineraries",
     "details": null,
-    "timestamp": "2025-08-13T04:00:13.341184"
+    "timestamp": "2025-08-13T04:22:08.952898"
   },
   "Create Itinerary": {
     "success": false,
     "message": "Create itinerary failed with 500",
     "details": "{\"detail\":\"Error creating itinerary\"}",
-    "timestamp": "2025-08-13T04:00:14.080204"
+    "timestamp": "2025-08-13T04:22:09.733115"
   },
   "Weather Default": {
     "success": true,
     "message": "Weather data retrieved - City: \u0639\u0645\u0651\u0627\u0646, Temp: 32\u00b0C",
     "details": null,
-    "timestamp": "2025-08-13T04:00:14.674828"
+    "timestamp": "2025-08-13T04:22:10.337558"
   },
   "Weather Custom Location": {
     "success": true,
     "message": "Custom location weather retrieved - Temp: 29\u00b0C",
     "details": null,
-    "timestamp": "2025-08-13T04:00:15.225117"
+    "timestamp": "2025-08-13T04:22:10.874409"
   },
   "Chat Unauthenticated": {
     "success": true,
-    "message": "Chat response received: Ahlan wa sahlan! Jordan is full of amazing places to visit! Here are some of the best, in my humble ...",
+    "message": "Chat response received: Ahlan wa sahlan! Welcome to Jordan, my friend! That's a fantastic question, and I'm thrilled to shar...",
     "details": null,
-    "timestamp": "2025-08-13T04:00:31.208556"
+    "timestamp": "2025-08-13T04:22:27.920472"
   },
   "Chat Authenticated": {
     "success": true,
-    "message": "Authenticated chat response received: Alright, my friend! Let's plan an awesome 3-day trip to Jordan, tailored just for you! To give you t...",
+    "message": "Authenticated chat response received: Alright, habibi/habibti! To give you the best 3-day itinerary, I need a little more information abou...",
     "details": null,
-    "timestamp": "2025-08-13T04:00:58.425216"
+    "timestamp": "2025-08-13T04:22:47.930690"
   },
   "Smart Itinerary Unauthenticated": {
     "success": true,
     "message": "Itinerary suggestion received: Suggested Jordan Travel Plan:\n\n\ud83c\udf05 Day 1: Visit Downtown Amman, Explore Amman Citadel, Dinner at Rainb...",
     "details": null,
-    "timestamp": "2025-08-13T04:00:58.987217"
+    "timestamp": "2025-08-13T04:22:48.459323"
   },
   "Smart Itinerary Authenticated": {
     "success": true,
     "message": "Personalized itinerary suggestion received: Suggested Jordan Travel Plan:\n\n\ud83c\udf05 Day 1: Visit Downtown Amman, Explore Amman Citadel, Dinner at Rainb...",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.380047"
+    "timestamp": "2025-08-13T04:22:49.839779"
   },
   "WebSocket Connection": {
     "success": false,
     "message": "WebSocket failed with exception: server rejected WebSocket connection: HTTP 502",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.507318"
+    "timestamp": "2025-08-13T04:22:49.944046"
   },
   "404 Error Handling": {
     "success": true,
     "message": "404 error properly returned for invalid endpoint",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.517413"
+    "timestamp": "2025-08-13T04:22:49.953879"
   },
   "Unauthorized Access": {
     "success": false,
     "message": "Expected 401, got 403",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.570043"
+    "timestamp": "2025-08-13T04:22:50.005179"
   },
   "Invalid Token": {
     "success": true,
     "message": "401 error properly returned for invalid token",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.934633"
+    "timestamp": "2025-08-13T04:22:50.432657"
   },
   "CORS Headers": {
     "success": false,
@@ -120,23 +120,23 @@
       "allow": "GET",
       "content-length": "31",
       "content-type": "application/json",
-      "date": "Wed, 13 Aug 2025 04:00:58 GMT",
+      "date": "Wed, 13 Aug 2025 04:22:49 GMT",
       "server": "uvicorn",
       "via": "1.1 google",
       "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
     },
-    "timestamp": "2025-08-13T04:01:00.985809"
+    "timestamp": "2025-08-13T04:22:50.441828"
   },
   "Legacy Status Create": {
     "success": true,
     "message": "Legacy status creation successful",
     "details": null,
-    "timestamp": "2025-08-13T04:01:00.997199"
+    "timestamp": "2025-08-13T04:22:50.457053"
   },
   "Legacy Status Get": {
     "success": true,
-    "message": "Legacy status retrieval successful - 3 records",
+    "message": "Legacy status retrieval successful - 4 records",
     "details": null,
-    "timestamp": "2025-08-13T04:01:01.009276"
+    "timestamp": "2025-08-13T04:22:50.508733"
   }
 }
