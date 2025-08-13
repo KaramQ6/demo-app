@@ -403,7 +403,7 @@ class DatabaseService {
   }
 
   async markSyncItemCompleted(id: string): Promise<void> {
-    await this.update('sync_queue', {synced: 1}, 'id = ?', [id]);
+    await this.update('sync_queue', {synced: true}, 'id = ?', [id]); // Use boolean instead of number
   }
 
   async clearCompletedSyncItems(): Promise<void> {
