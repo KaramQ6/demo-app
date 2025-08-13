@@ -332,12 +332,15 @@ async def create_itinerary(
             "destination_id": itinerary.destination_id,
             "destination_name": itinerary.destination_name,
             "destination_type": itinerary.destination_type,
-            "destination_icon": itinerary.destination_icon,
             "notes": itinerary.notes,
             "status": itinerary.status,
             "visit_date": itinerary.visit_date.isoformat() if itinerary.visit_date else None,
             "priority": itinerary.priority
         }
+        
+        # Add destination_icon only if it's provided
+        if itinerary.destination_icon:
+            itinerary_data["destination_icon"] = itinerary.destination_icon
         
         response = supabase.table("itineraries").insert(itinerary_data).execute()
         
