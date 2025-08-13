@@ -358,7 +358,7 @@ async def create_itinerary(
             itinerary_data["visit_date"] = itinerary.visit_date.isoformat()
         
         logger.info(f"Creating itinerary with data: {itinerary_data}")
-        response = user_supabase.table("itineraries").insert(itinerary_data).execute()
+        response = supabase_admin.table("itineraries").insert(itinerary_data).execute()
         logger.info(f"Supabase response: {response}")
         
         if response.data:
