@@ -3,85 +3,115 @@
     "success": true,
     "message": "Health endpoint working - Status: healthy",
     "details": null,
-    "timestamp": "2025-08-13T03:54:03.753845"
+    "timestamp": "2025-08-13T03:54:44.973238"
   },
   "Root Endpoint": {
     "success": true,
     "message": "Root endpoint working - Version: 1.0.0",
     "details": null,
-    "timestamp": "2025-08-13T03:54:03.803503"
+    "timestamp": "2025-08-13T03:54:45.025213"
   },
   "User Registration": {
-    "success": false,
-    "message": "Registration failed with 422",
-    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"email\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"password\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
-    "timestamp": "2025-08-13T03:54:03.854152"
+    "success": true,
+    "message": "User registration successful",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:46.093071"
   },
   "User Login": {
-    "success": false,
-    "message": "Login failed with 422",
-    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"email\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"password\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
-    "timestamp": "2025-08-13T03:54:03.866604"
-  },
-  "Profile Tests": {
-    "success": false,
-    "message": "No auth token available - skipping profile tests",
+    "success": true,
+    "message": "Login successful - User ID: ef61d984-e218-4b1a-9d0f-d43575dc9e07",
     "details": null,
-    "timestamp": "2025-08-13T03:54:03.866621"
+    "timestamp": "2025-08-13T03:54:46.587942"
   },
-  "Itinerary Tests": {
-    "success": false,
-    "message": "No auth token available - skipping itinerary tests",
+  "Token Validation": {
+    "success": true,
+    "message": "Token validation successful - Email: smarttour.test@example.com",
     "details": null,
-    "timestamp": "2025-08-13T03:54:03.866630"
+    "timestamp": "2025-08-13T03:54:46.994096"
+  },
+  "Get Profile": {
+    "success": false,
+    "message": "Get profile failed with 500",
+    "details": "{\"detail\":\"Error fetching user profile\"}",
+    "timestamp": "2025-08-13T03:54:48.291589"
+  },
+  "Update Profile": {
+    "success": false,
+    "message": "Update profile failed with 500",
+    "details": "{\"detail\":\"Error updating user profile\"}",
+    "timestamp": "2025-08-13T03:54:49.155711"
+  },
+  "Get Itineraries": {
+    "success": true,
+    "message": "Retrieved 0 itineraries",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:49.948834"
+  },
+  "Create Itinerary": {
+    "success": false,
+    "message": "Create itinerary failed with 500",
+    "details": "{\"detail\":\"Error creating itinerary\"}",
+    "timestamp": "2025-08-13T03:54:50.717042"
   },
   "Weather Default": {
     "success": true,
     "message": "Weather data retrieved - City: \u0639\u0645\u0651\u0627\u0646, Temp: 32\u00b0C",
     "details": null,
-    "timestamp": "2025-08-13T03:54:04.509549"
+    "timestamp": "2025-08-13T03:54:51.271488"
   },
   "Weather Custom Location": {
     "success": true,
     "message": "Custom location weather retrieved - Temp: 29\u00b0C",
     "details": null,
-    "timestamp": "2025-08-13T03:54:05.003215"
+    "timestamp": "2025-08-13T03:54:51.799783"
   },
   "Chat Unauthenticated": {
-    "success": false,
-    "message": "Chat API failed with 422",
-    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"message\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
-    "timestamp": "2025-08-13T03:54:05.053983"
+    "success": true,
+    "message": "Chat response received: Ahlan wa sahlan! Welcome to Jordan, my friend! You've come to the right place. Jordan is full of ama...",
+    "details": null,
+    "timestamp": "2025-08-13T03:55:12.139689"
+  },
+  "Chat Authenticated": {
+    "success": true,
+    "message": "Authenticated chat response received: Alright, habibi! Give me your preferences and I'll craft you a 3-day Jordanian adventure tailored ju...",
+    "details": null,
+    "timestamp": "2025-08-13T03:55:23.942233"
   },
   "Smart Itinerary Unauthenticated": {
     "success": true,
     "message": "Itinerary suggestion received: Suggested Jordan Travel Plan:\n\n\ud83c\udf05 Day 1: Visit Downtown Amman, Explore Amman Citadel, Dinner at Rainb...",
     "details": null,
-    "timestamp": "2025-08-13T03:54:05.582784"
+    "timestamp": "2025-08-13T03:55:24.465853"
+  },
+  "Smart Itinerary Authenticated": {
+    "success": true,
+    "message": "Personalized itinerary suggestion received: Suggested Jordan Travel Plan:\n\n\ud83c\udf05 Day 1: Visit Downtown Amman, Explore Amman Citadel, Dinner at Rainb...",
+    "details": null,
+    "timestamp": "2025-08-13T03:55:25.816500"
   },
   "WebSocket Connection": {
     "success": false,
-    "message": "WebSocket failed with exception: BaseEventLoop.create_connection() got an unexpected keyword argument 'timeout'",
+    "message": "WebSocket failed with exception: server rejected WebSocket connection: HTTP 502",
     "details": null,
-    "timestamp": "2025-08-13T03:54:05.596100"
+    "timestamp": "2025-08-13T03:55:25.918791"
   },
   "404 Error Handling": {
     "success": true,
     "message": "404 error properly returned for invalid endpoint",
     "details": null,
-    "timestamp": "2025-08-13T03:54:05.645330"
+    "timestamp": "2025-08-13T03:55:25.930817"
   },
   "Unauthorized Access": {
     "success": false,
     "message": "Expected 401, got 403",
     "details": null,
-    "timestamp": "2025-08-13T03:54:05.695221"
+    "timestamp": "2025-08-13T03:55:25.940735"
   },
   "Invalid Token": {
     "success": true,
     "message": "401 error properly returned for invalid token",
     "details": null,
-    "timestamp": "2025-08-13T03:54:06.701098"
+    "timestamp": "2025-08-13T03:55:26.371297"
   },
   "CORS Headers": {
     "success": false,
@@ -90,23 +120,23 @@
       "allow": "GET",
       "content-length": "31",
       "content-type": "application/json",
-      "date": "Wed, 13 Aug 2025 03:54:04 GMT",
+      "date": "Wed, 13 Aug 2025 03:55:25 GMT",
       "server": "uvicorn",
       "via": "1.1 google",
       "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
     },
-    "timestamp": "2025-08-13T03:54:06.751516"
+    "timestamp": "2025-08-13T03:55:26.421943"
   },
   "Legacy Status Create": {
     "success": true,
     "message": "Legacy status creation successful",
     "details": null,
-    "timestamp": "2025-08-13T03:54:06.773782"
+    "timestamp": "2025-08-13T03:55:26.433221"
   },
   "Legacy Status Get": {
     "success": true,
-    "message": "Legacy status retrieval successful - 1 records",
+    "message": "Legacy status retrieval successful - 2 records",
     "details": null,
-    "timestamp": "2025-08-13T03:54:06.823970"
+    "timestamp": "2025-08-13T03:55:26.445804"
   }
 }
