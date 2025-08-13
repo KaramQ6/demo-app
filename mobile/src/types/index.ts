@@ -130,6 +130,7 @@ export type RootStackParamList = {
   Splash: undefined;
   Auth: undefined;
   Main: undefined;
+  MainTabs: undefined;
   Login: undefined;
   Register: undefined;
   Home: undefined;
@@ -140,6 +141,7 @@ export type RootStackParamList = {
   Weather: undefined;
   Chat: undefined;
   Settings: undefined;
+  More: undefined;
   OfflineData: undefined;
 };
 
