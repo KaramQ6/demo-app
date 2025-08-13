@@ -369,8 +369,8 @@ async def update_itinerary(
         
         # For the current schema, we can only update destination_id
         update_data = {}
-        # Since the schema is minimal, we'll just update the updated_at timestamp
-        # In a real implementation, you'd extend the schema to support more fields
+        # Since the schema is minimal, we'll just trigger an update to update the updated_at timestamp
+        # The actual update data is empty since we can't update most fields in the current schema
         
         response = supabase_admin.table("itineraries").update(update_data).eq("id", itinerary_id).execute()
         
