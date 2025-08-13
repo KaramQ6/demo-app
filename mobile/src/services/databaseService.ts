@@ -379,7 +379,7 @@ class DatabaseService {
   async saveChatMessage(message: ChatMessage): Promise<void> {
     const messageWithSync = {
       ...message,
-      synced: 0,
+      synced: false, // Use boolean instead of number
     };
     await this.insert('chat_messages', messageWithSync);
   }
