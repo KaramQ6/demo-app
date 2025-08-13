@@ -88,6 +88,7 @@ export interface CreateItineraryItem {
 export interface WeatherData {
   temperature: number;
   cityName: string;
+  city_name?: string; // Alternative field name for compatibility
   description: string;
   humidity?: number;
   pressure?: number;
@@ -95,6 +96,7 @@ export interface WeatherData {
   latitude?: number;
   longitude?: number;
   source: string;
+  recorded_at?: string;
 }
 
 // Chat Types
