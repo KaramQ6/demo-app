@@ -186,6 +186,16 @@ export interface AppTheme {
     error: string;
     success: string;
     warning: string;
+    // Additional properties for theme compatibility
+    primaryContainer: string;
+    secondaryContainer: string;
+    surfaceVariant: string;
+    onSurface: string;
+    onSurfaceVariant: string;
+    outline: string;
+    shadow: string;
+    gradientStart: string;
+    gradientEnd: string;
   };
   spacing: {
     xs: number;
@@ -202,6 +212,11 @@ export interface AppTheme {
     caption: {fontSize: number; fontWeight: string};
   };
   borderRadius: number;
+  elevation?: {
+    small: number;
+    medium: number;
+    large: number;
+  };
 }
 
 // Language Types
