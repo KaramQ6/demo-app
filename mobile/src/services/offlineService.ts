@@ -244,7 +244,7 @@ class OfflineService {
       if (itinerariesResponse.data) {
         // Cache itineraries in local database
         for (const itinerary of itinerariesResponse.data) {
-          await databaseService.addToItinerary({...itinerary, synced: 1});
+          await databaseService.addToItinerary({...itinerary, synced: true});
         }
         console.log('Itineraries cached for offline use');
       }
