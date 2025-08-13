@@ -86,6 +86,10 @@ export const lightTheme: AppTheme = {
     success: colors.success,
     warning: colors.warning,
     
+    // React Navigation theme compatibility
+    card: colors.gray50,
+    notification: colors.primary,
+    
     // Custom colors for our app
     primaryContainer: colors.primaryLight,
     secondaryContainer: colors.secondaryLight,
