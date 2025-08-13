@@ -327,9 +327,6 @@ async def create_itinerary(
 ):
     """Create a new itinerary item"""
     try:
-        # Use service role client to bypass RLS for now
-        user_supabase = get_user_supabase_client(current_user)
-        
         # Start with minimal required fields
         itinerary_data = {
             "user_id": current_user["user_id"],
