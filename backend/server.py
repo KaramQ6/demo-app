@@ -26,6 +26,11 @@ APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 N8N_WEBHOOK_BASE_URL = os.getenv("N8N_WEBHOOK_BASE_URL", "https://n8n.smart-tour.app/webhook")
 
+# MongoDB connection (temporary - will migrate to PostgreSQL)
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
+mongo_client = AsyncIOMotorClient(mongo_url)
+db = mongo_client[os.environ.get('DB_NAME', 'smarttour_db')]
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO if not DEBUG else logging.DEBUG,
