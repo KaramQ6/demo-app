@@ -320,7 +320,7 @@ class DatabaseService {
   async addToItinerary(itinerary: ItineraryItem): Promise<void> {
     const itineraryWithSync = {
       ...itinerary,
-      synced: 0,
+      synced: false, // Use boolean instead of number
     };
     await this.insert('itineraries', itineraryWithSync);
     
