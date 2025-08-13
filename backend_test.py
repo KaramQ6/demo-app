@@ -120,12 +120,12 @@ class BackendTester:
         
         # Test user login
         try:
-            login_data = {
+            params = {
                 "email": TEST_USER_EMAIL,
                 "password": TEST_USER_PASSWORD
             }
             
-            response = await self.client.post(f"{API_BASE_URL}/auth/login", data=login_data)
+            response = await self.client.post(f"{API_BASE_URL}/auth/login", params=params)
             
             if response.status_code == 200:
                 data = response.json()
