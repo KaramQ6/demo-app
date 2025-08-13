@@ -331,7 +331,7 @@ class DatabaseService {
   async updateItinerary(id: string, updates: Partial<ItineraryItem>): Promise<void> {
     const updatesWithSync = {
       ...updates,
-      synced: 0,
+      synced: false, // Use boolean instead of number
     };
     await this.update('itineraries', updatesWithSync, 'id = ?', [id]);
     
