@@ -1,4 +1,4 @@
-import {OfflineAction} from '@/types';
+import {OfflineAction, DatabaseCountResult} from '@/types';
 import {apiService} from './apiService';
 import {databaseService} from './databaseService';
 import {storageService} from './storageService';
