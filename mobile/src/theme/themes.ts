@@ -1,5 +1,6 @@
 import {DefaultTheme, DarkTheme, Theme as NavigationTheme} from '@react-navigation/native';
 import {MD3LightTheme, MD3DarkTheme, MD3Theme} from 'react-native-paper';
+import {AppTheme} from '@/types';
 
 // Create a combined theme type that merges Navigation and Paper themes
 type CombinedTheme = NavigationTheme & MD3Theme & {
