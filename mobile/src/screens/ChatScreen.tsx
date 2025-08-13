@@ -302,10 +302,6 @@ const ChatScreen: React.FC = () => {
               icon="send"
               onPress={() => sendMessage(inputText)}
               disabled={!inputText.trim() || loading || (!isOnline && !!inputText.trim())}
-              iconColor={inputText.trim() && !loading && (isOnline || !inputText.trim()) 
-                ? theme.colors.primary 
-                : theme.colors.onSurfaceVariant
-              }
             />
           }
         />
