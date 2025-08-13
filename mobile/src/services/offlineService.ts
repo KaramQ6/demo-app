@@ -331,10 +331,10 @@ class OfflineService {
   }> {
     try {
       const [destinations, itineraries, weatherCache, chatMessages, pendingActions] = await Promise.all([
-        databaseService.select('destinations', 'COUNT(*) as count'),
-        databaseService.select('itineraries', 'COUNT(*) as count'),
-        databaseService.select('weather_cache', 'COUNT(*) as count'),
-        databaseService.select('chat_messages', 'COUNT(*) as count'),
+        databaseService.select('destinations', 'COUNT(*) as count') as Promise<DatabaseCountResult[]>,
+        databaseService.select('itineraries', 'COUNT(*) as count') as Promise<DatabaseCountResult[]>,
+        databaseService.select('weather_cache', 'COUNT(*) as count') as Promise<DatabaseCountResult[]>,
+        databaseService.select('chat_messages', 'COUNT(*) as count') as Promise<DatabaseCountResult[]>,
         this.getPendingActions(),
       ]);
 
