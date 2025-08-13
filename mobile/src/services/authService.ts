@@ -101,7 +101,7 @@ class AuthService {
   async getCurrentUser(): Promise<User | null> {
     try {
       const {data} = await this.supabase.auth.getUser();
-      return data.user;
+      return data.user as User; // Type assertion for compatibility
     } catch (error) {
       console.error('Get user error:', error);
       return null;
