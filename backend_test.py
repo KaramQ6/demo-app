@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/frontend/.env')
 
 # Configuration
-BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://b460b936-2f95-45df-a335-9461bc0b1fb5.preview.emergentagent.com')
+BACKEND_URL = os.getenv('REACT_APP_BACKEND_URL', 'https://smarttour-hybrid.preview.emergentagent.com')
 API_BASE_URL = f"{BACKEND_URL}/api"
 WS_BASE_URL = BACKEND_URL.replace('https://', 'wss://').replace('http://', 'ws://')
 
