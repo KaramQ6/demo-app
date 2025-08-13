@@ -439,7 +439,7 @@ class BackendTester:
             client_id = str(uuid.uuid4())
             ws_url = f"{WS_BASE_URL}/ws/{client_id}"
             
-            async with websockets.connect(ws_url, timeout=10) as websocket:
+            async with websockets.connect(ws_url) as websocket:
                 # Test echo message
                 test_message = {
                     "type": "test",
