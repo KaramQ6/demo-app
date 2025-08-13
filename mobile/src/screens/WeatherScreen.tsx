@@ -64,8 +64,8 @@ const WeatherScreen: React.FC = () => {
       if (!weather) {
         // Use fallback weather data
         weather = {
-          id: 'fallback',
           city_name: location.name,
+          cityName: location.name,
           temperature: 25,
           humidity: 60,
           pressure: 1013,
