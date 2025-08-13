@@ -165,6 +165,11 @@ export type MainTabParamList = {
   More: undefined;
 };
 
+// Database Query Result Types
+export interface DatabaseCountResult {
+  count: number;
+}
+
 // Offline Types
 export interface OfflineAction {
   id: string;
