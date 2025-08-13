@@ -8,6 +8,7 @@ asyncpg>=0.29.0
 databases>=0.8.0
 sqlalchemy>=2.0.0
 alembic>=1.13.0
+motor>=3.3.1
 
 # Authentication and Security  
 pyjwt>=2.10.1
