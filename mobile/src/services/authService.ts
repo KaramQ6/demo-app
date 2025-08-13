@@ -123,7 +123,7 @@ class AuthService {
 
       return {
         success: true,
-        user: data.user,
+        user: data.user as User, // Type assertion for compatibility
         session: data.session,
       };
     } catch (error) {
