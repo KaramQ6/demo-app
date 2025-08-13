@@ -183,7 +183,7 @@ async def get_user_profile(current_user: Dict[str, Any] = Depends(get_current_us
     """Get user profile and preferences"""
     try:
         # Get profile from Supabase
-        profile_response = supabase.table("profiles").select("*").eq("id", current_user["user_id"]).execute()
+        profile_response = supabase_admin.table("profiles").select("*").eq("id", current_user["user_id"]).execute()
         
         if profile_response.data:
             profile_data = profile_response.data[0]
