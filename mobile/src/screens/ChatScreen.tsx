@@ -301,7 +301,7 @@ const ChatScreen: React.FC = () => {
             <TextInput.Icon
               icon="send"
               onPress={() => sendMessage(inputText)}
-              disabled={!inputText.trim() || loading || (!isOnline && inputText.trim())}
+              disabled={!inputText.trim() || loading || (!isOnline && !!inputText.trim())}
               iconColor={inputText.trim() && !loading && (isOnline || !inputText.trim()) 
                 ? theme.colors.primary 
                 : theme.colors.onSurfaceVariant
