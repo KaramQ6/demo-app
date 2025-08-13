@@ -240,7 +240,7 @@ async def update_user_profile(
             "updated_at": datetime.utcnow().isoformat()
         }
         
-        response = supabase.table("profiles").upsert({
+        response = supabase_admin.table("profiles").upsert({
             "id": current_user["user_id"],
             **update_data
         }).execute()
