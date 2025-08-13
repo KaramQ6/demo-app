@@ -23,7 +23,7 @@ interface DatabaseTables {
     action: 'INSERT' | 'UPDATE' | 'DELETE';
     data: string;
     created_at: string;
-    synced: boolean;
+    synced: boolean; // Changed from number to boolean
   };
 }
 
