@@ -43,7 +43,7 @@
     "axios": "^1.7.9",
     "react-native-url-polyfill": "^2.0.0",
     "react-native-keychain": "^8.2.0",
-    "react-native-date-picker": "^5.1.2",
+    "react-native-date-picker": "^5.0.13",
     "react-native-modal": "^13.0.1",
     "react-native-fast-image": "^8.6.3",
     "react-native-webview": "^13.12.2",
