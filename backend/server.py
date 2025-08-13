@@ -327,6 +327,17 @@ async def create_itinerary(
 ):
     """Create a new itinerary item"""
     try:
+        # Create user-specific supabase client if we have the user token
+        user_supabase = supabase
+        if current_user.get("user") and hasattr(current_user["user"], "access_token"):
+            # Use user's token for RLS policies
+            from supabase import create_client
+            user_supabase = create_client(
+                os.getenv("SUPABASE_URL"), 
+                os.getenv("SUPABASE_ANON_KEY")
+            )
+            user_supabase.auth.set_session(current_user["user"].access_token, current_user["user"].refresh_token)
+        
         # Start with minimal required fields
         itinerary_data = {
             "user_id": current_user["user_id"],
@@ -340,16 +351,15 @@ async def create_itinerary(
             itinerary_data["destination_name"] = itinerary.destination_name
         if hasattr(itinerary, 'destination_type') and itinerary.destination_type:
             itinerary_data["destination_type"] = itinerary.destination_type
-        # Skip destination_icon for now as it's not in the database schema
-        # if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
-        #     itinerary_data["destination_icon"] = itinerary.destination_icon
+        if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
+            itinerary_data["destination_icon"] = itinerary.destination_icon
         if hasattr(itinerary, 'notes') and itinerary.notes:
             itinerary_data["notes"] = itinerary.notes
         if hasattr(itinerary, 'visit_date') and itinerary.visit_date:
             itinerary_data["visit_date"] = itinerary.visit_date.isoformat()
         
         logger.info(f"Creating itinerary with data: {itinerary_data}")
-        response = supabase.table("itineraries").insert(itinerary_data).execute()
+        response = user_supabase.table("itineraries").insert(itinerary_data).execute()
         logger.info(f"Supabase response: {response}")
         
         if response.data:
