@@ -43,13 +43,12 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting up SmartTour.Jo API...")
-    await database.connect()
-    logger.info("Database connected successfully")
+    logger.info("MongoDB and Supabase connections ready")
     yield
     # Shutdown
     logger.info("Shutting down SmartTour.Jo API...")
-    await database.disconnect()
-    logger.info("Database disconnected")
+    mongo_client.close()
+    logger.info("Database connections closed")
 
 # Create FastAPI app
 app = FastAPI(
