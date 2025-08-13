@@ -67,7 +67,8 @@ class StorageService {
 
   async multiGet(keys: string[]): Promise<[string, string | null][]> {
     try {
-      return await AsyncStorage.multiGet(keys);
+      const result = await AsyncStorage.multiGet(keys);
+      return [...result]; // Convert readonly array to mutable array
     } catch (error) {
       console.error('Failed to get multiple items:', error);
       return [];
