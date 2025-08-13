@@ -1,6 +1,7 @@
-import {createClient, SupabaseClient, Session, User} from '@supabase/supabase-js';
+import {createClient, SupabaseClient, Session} from '@supabase/supabase-js';
+import {User as SupabaseUser} from '@supabase/supabase-js';
 import {SUPABASE_CONFIG} from '@/config/constants';
-import {LoginCredentials, RegisterCredentials} from '@/types';
+import {LoginCredentials, RegisterCredentials, User} from '@/types';
 
 interface AuthResult {
   success: boolean;
