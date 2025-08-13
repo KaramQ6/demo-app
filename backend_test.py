@@ -378,11 +378,11 @@ class BackendTester:
         if self.auth_token:
             try:
                 headers = {"Authorization": f"Bearer {self.auth_token}"}
-                chat_data = {
+                params = {
                     "message": "Recommend a 3-day itinerary for Jordan based on my preferences"
                 }
                 
-                response = await self.client.post(f"{API_BASE_URL}/chat/message", headers=headers, data=chat_data)
+                response = await self.client.post(f"{API_BASE_URL}/chat/message", headers=headers, params=params)
                 
                 if response.status_code == 200:
                     data = response.json()
