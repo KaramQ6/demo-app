@@ -155,6 +155,10 @@ export const darkTheme: AppTheme = {
     success: colors.success,
     warning: colors.warning,
     
+    // React Navigation theme compatibility
+    card: colors.gray800,
+    notification: colors.primaryLight,
+    
     // Custom colors for dark mode
     primaryContainer: colors.primaryDark,
     secondaryContainer: colors.secondaryDark,
