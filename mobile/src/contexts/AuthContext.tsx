@@ -115,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
       
       if (result.success && result.user) {
         setAuthState({
-          user: result.user,
+          user: result.user as User, // Type assertion to handle Supabase User compatibility
           session: result.session || null,
           loading: false,
           error: null,
