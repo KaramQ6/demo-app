@@ -96,14 +96,14 @@ class BackendTester:
         
         # Test user registration
         try:
-            # Use form data for registration
-            registration_data = {
+            # Use query parameters for registration
+            params = {
                 "email": TEST_USER_EMAIL,
                 "password": TEST_USER_PASSWORD,
                 "full_name": TEST_USER_NAME
             }
             
-            response = await self.client.post(f"{API_BASE_URL}/auth/register", data=registration_data)
+            response = await self.client.post(f"{API_BASE_URL}/auth/register", params=params)
             
             if response.status_code == 200:
                 data = response.json()
