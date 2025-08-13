@@ -323,16 +323,9 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
 # Helper function to get authenticated Supabase client
 def get_user_supabase_client(current_user: Dict[str, Any]):
     """Get Supabase client authenticated with user's token for RLS policies"""
-    try:
-        # Try to get the user's access token from the request
-        # For now, use service role key to bypass RLS for testing
-        from supabase import create_client
-        return create_client(
-            os.getenv("SUPABASE_URL"), 
-            os.getenv("SUPABASE_SERVICE_ROLE_KEY", os.getenv("SUPABASE_ANON_KEY"))
-        )
-    except:
-        return supabase
+    # For now, return the global supabase client
+    # TODO: Implement proper user token authentication for RLS
+    return supabase
 
 @api_router.post("/itineraries", response_model=ItineraryResponse)
 async def create_itinerary(
