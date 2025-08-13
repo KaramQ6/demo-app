@@ -187,11 +187,27 @@ async def get_user_profile(current_user: Dict[str, Any] = Depends(get_current_us
         
         if profile_response.data:
             profile_data = profile_response.data[0]
+            # Handle created_at and updated_at safely
+            created_at = datetime.utcnow()
+            updated_at = datetime.utcnow()
+            
+            if profile_data.get("created_at"):
+                try:
+                    created_at = datetime.fromisoformat(profile_data["created_at"].replace('Z', '+00:00'))
+                except:
+                    pass
+            
+            if profile_data.get("updated_at"):
+                try:
+                    updated_at = datetime.fromisoformat(profile_data["updated_at"].replace('Z', '+00:00'))
+                except:
+                    pass
+            
             return UserProfileResponse(
                 id=profile_data["id"],
                 preferences=profile_data.get("preferences", {}),
-                created_at=datetime.fromisoformat(profile_data["created_at"].replace('Z', '+00:00')),
-                updated_at=datetime.fromisoformat(profile_data["updated_at"].replace('Z', '+00:00'))
+                created_at=created_at,
+                updated_at=updated_at
             )
         else:
             # Create default profile
