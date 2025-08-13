@@ -56,6 +56,7 @@ export interface Destination {
   rating: number;
   is_active: boolean;
   created_at: string;
+  count?: number; // For database count queries
 }
 
 // Itinerary Types
