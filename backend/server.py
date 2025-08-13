@@ -320,13 +320,6 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
         logger.error(f"Error fetching itineraries: {e}")
         raise HTTPException(status_code=500, detail="Error fetching itineraries")
 
-# Helper function to get authenticated Supabase client
-def get_user_supabase_client(current_user: Dict[str, Any]):
-    """Get Supabase client authenticated with user's token for RLS policies"""
-    # For now, return the global supabase client
-    # TODO: Implement proper user token authentication for RLS
-    return supabase
-
 @api_router.post("/itineraries", response_model=ItineraryResponse)
 async def create_itinerary(
     itinerary: ItineraryCreate,
