@@ -357,11 +357,11 @@ class BackendTester:
         
         # Test chat without authentication
         try:
-            chat_data = {
+            params = {
                 "message": "What are the best places to visit in Jordan?"
             }
             
-            response = await self.client.post(f"{API_BASE_URL}/chat/message", data=chat_data)
+            response = await self.client.post(f"{API_BASE_URL}/chat/message", params=params)
             
             if response.status_code == 200:
                 data = response.json()
