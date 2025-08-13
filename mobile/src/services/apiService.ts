@@ -58,7 +58,7 @@ class ApiService {
         return response;
       },
       async (error: AxiosError) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as any; // Type assertion to handle _retry property
 
         // Handle 401 unauthorized - token might be expired
         if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
