@@ -327,22 +327,29 @@ async def create_itinerary(
 ):
     """Create a new itinerary item"""
     try:
+        # Start with minimal required fields
         itinerary_data = {
             "user_id": current_user["user_id"],
             "destination_id": itinerary.destination_id,
-            "destination_name": itinerary.destination_name,
-            "destination_type": itinerary.destination_type,
-            "notes": itinerary.notes,
-            "status": itinerary.status,
-            "visit_date": itinerary.visit_date.isoformat() if itinerary.visit_date else None,
-            "priority": itinerary.priority
+            "status": itinerary.status or "planned",
+            "priority": itinerary.priority or 1
         }
         
-        # Add destination_icon only if it's provided
-        if itinerary.destination_icon:
+        # Add optional fields only if they exist and are provided
+        if hasattr(itinerary, 'destination_name') and itinerary.destination_name:
+            itinerary_data["destination_name"] = itinerary.destination_name
+        if hasattr(itinerary, 'destination_type') and itinerary.destination_type:
+            itinerary_data["destination_type"] = itinerary.destination_type
+        if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
             itinerary_data["destination_icon"] = itinerary.destination_icon
+        if hasattr(itinerary, 'notes') and itinerary.notes:
+            itinerary_data["notes"] = itinerary.notes
+        if hasattr(itinerary, 'visit_date') and itinerary.visit_date:
+            itinerary_data["visit_date"] = itinerary.visit_date.isoformat()
         
+        logger.info(f"Creating itinerary with data: {itinerary_data}")
         response = supabase.table("itineraries").insert(itinerary_data).execute()
+        logger.info(f"Supabase response: {response}")
         
         if response.data:
             item = response.data[0]
