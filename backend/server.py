@@ -215,7 +215,7 @@ async def get_user_profile(current_user: Dict[str, Any] = Depends(get_current_us
                 "id": current_user["user_id"],
                 "preferences": {"interests": [], "budget": "medium", "travelsWith": "Solo"}
             }
-            supabase.table("profiles").insert(default_profile).execute()
+            supabase_admin.table("profiles").insert(default_profile).execute()
             
             return UserProfileResponse(
                 id=current_user["user_id"],
