@@ -413,7 +413,7 @@ async def update_itinerary(
         if itinerary_update.priority is not None:
             update_data["priority"] = itinerary_update.priority
         
-        response = supabase.table("itineraries").update(update_data).eq("id", itinerary_id).execute()
+        response = supabase_admin.table("itineraries").update(update_data).eq("id", itinerary_id).execute()
         
         if response.data:
             item = response.data[0]
