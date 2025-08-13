@@ -71,6 +71,7 @@ export interface ItineraryItem {
   visit_date?: string;
   priority: number;
   added_at: string;
+  synced?: boolean; // For offline sync tracking
 }
 
 export interface CreateItineraryItem {
