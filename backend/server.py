@@ -327,25 +327,11 @@ async def create_itinerary(
 ):
     """Create a new itinerary item"""
     try:
-        # Start with minimal required fields
+        # Use only fields that exist in the actual Supabase schema
         itinerary_data = {
             "user_id": current_user["user_id"],
-            "destination_id": itinerary.destination_id,
-            "status": itinerary.status or "planned",
-            "priority": itinerary.priority or 1
+            "destination_id": itinerary.destination_id
         }
-        
-        # Add optional fields only if they exist and are provided
-        if hasattr(itinerary, 'destination_name') and itinerary.destination_name:
-            itinerary_data["destination_name"] = itinerary.destination_name
-        if hasattr(itinerary, 'destination_type') and itinerary.destination_type:
-            itinerary_data["destination_type"] = itinerary.destination_type
-        if hasattr(itinerary, 'destination_icon') and itinerary.destination_icon:
-            itinerary_data["destination_icon"] = itinerary.destination_icon
-        if hasattr(itinerary, 'notes') and itinerary.notes:
-            itinerary_data["notes"] = itinerary.notes
-        if hasattr(itinerary, 'visit_date') and itinerary.visit_date:
-            itinerary_data["visit_date"] = itinerary.visit_date.isoformat()
         
         logger.info(f"Creating itinerary with data: {itinerary_data}")
         response = supabase_admin.table("itineraries").insert(itinerary_data).execute()
@@ -353,18 +339,19 @@ async def create_itinerary(
         
         if response.data:
             item = response.data[0]
+            # Return response with available fields and defaults for missing ones
             return ItineraryResponse(
                 id=item["id"],
                 user_id=item["user_id"],
                 destination_id=item["destination_id"],
-                destination_name=item["destination_name"],
-                destination_type=item.get("destination_type"),
-                destination_icon=item.get("destination_icon"),
-                notes=item.get("notes"),
-                status=item["status"],
-                visit_date=datetime.fromisoformat(item["visit_date"].replace('Z', '+00:00')) if item.get("visit_date") else None,
-                priority=item["priority"],
-                added_at=datetime.fromisoformat(item["added_at"].replace('Z', '+00:00'))
+                destination_name=itinerary.destination_name or f"Destination {item['destination_id']}",
+                destination_type=itinerary.destination_type,
+                destination_icon=itinerary.destination_icon,
+                notes=itinerary.notes,
+                status=itinerary.status or "planned",
+                visit_date=itinerary.visit_date,
+                priority=itinerary.priority or 1,
+                added_at=datetime.fromisoformat(item["created_at"].replace('Z', '+00:00'))
             )
         else:
             raise HTTPException(status_code=500, detail="Failed to create itinerary")
