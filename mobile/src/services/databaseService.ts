@@ -28,7 +28,7 @@ interface DatabaseTables {
 }
 
 class DatabaseService {
-  private db: SQLite.SQLiteDatabase | null = null;
+  private db: SQLite.Database | null = null;
   private initialized = false;
 
   async initialize(): Promise<void> {
