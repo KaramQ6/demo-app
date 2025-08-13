@@ -81,7 +81,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
         await storageService.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(result.user));
         
         setAuthState({
-          user: result.user,
+          user: result.user as User, // Type assertion to handle Supabase User compatibility
           session: result.session,
           loading: false,
           error: null,
