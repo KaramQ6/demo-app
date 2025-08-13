@@ -135,6 +135,8 @@ export const lightTheme: AppTheme = {
 export const darkTheme: AppTheme = {
   ...DarkTheme,
   ...MD3DarkTheme,
+  dark: true,
+  fonts: MD3DarkTheme.fonts,
   colors: {
     ...MD3DarkTheme.colors,
     primary: colors.primaryLight,
@@ -157,6 +159,28 @@ export const darkTheme: AppTheme = {
     onSurfaceVariant: colors.gray300,
     outline: colors.gray600,
     shadow: colors.black,
+    
+    // Additional React Native Paper theme colors
+    onBackground: colors.white,
+    tertiary: colors.accentLight,
+    onPrimary: colors.black,
+    onSecondary: colors.black,
+    onTertiary: colors.black,
+    errorContainer: colors.error + '20',
+    onError: colors.white,
+    onErrorContainer: colors.error,
+    inverseSurface: colors.gray200,
+    inverseOnSurface: colors.gray900,
+    inversePrimary: colors.primaryDark,
+    scrim: colors.black + '80',
+    elevation: {
+      level0: colors.gray900,
+      level1: colors.gray800,
+      level2: colors.gray700,
+      level3: colors.gray600,
+      level4: colors.gray500,
+      level5: colors.gray400,
+    },
     
     // Gradient colors
     gradientStart: colors.gradientStart,
