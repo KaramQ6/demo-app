@@ -1,7 +1,8 @@
 // Centralized API utility file for SmartTour.Jo
 // All API calls should be managed through this file
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
+// السطر الجديد والصحيح
+const API_BASE_URL = 'http://46.101.127.177:8001/api';
 
 // Generic API request helper
 const apiRequest = async (endpoint, options = {}) => {
