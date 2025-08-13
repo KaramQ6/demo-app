@@ -176,6 +176,8 @@ export interface SyncStatus {
 
 // Theme Types
 export interface AppTheme {
+  dark: boolean;
+  fonts: any;
   colors: {
     primary: string;
     secondary: string;
@@ -198,6 +200,27 @@ export interface AppTheme {
     shadow: string;
     gradientStart: string;
     gradientEnd: string;
+    // React Native Paper theme compatibility
+    onBackground: string;
+    tertiary: string;
+    onPrimary: string;
+    onSecondary: string;
+    onTertiary: string;
+    errorContainer: string;
+    onError: string;
+    onErrorContainer: string;
+    inverseSurface: string;
+    inverseOnSurface: string;
+    inversePrimary: string;
+    scrim: string;
+    elevation: {
+      level0: string;
+      level1: string;
+      level2: string;
+      level3: string;
+      level4: string;
+      level5: string;
+    };
   };
   spacing: {
     xs: number;
@@ -212,6 +235,8 @@ export interface AppTheme {
     h3: {fontSize: number; fontWeight: string};
     body: {fontSize: number; fontWeight: string};
     caption: {fontSize: number; fontWeight: string};
+    button: {fontSize: number; fontWeight: string};
+    bodySmall: {fontSize: number; fontWeight: string};
   };
   borderRadius: number;
   elevation?: {
