@@ -585,20 +585,27 @@ async def websocket_endpoint(websocket: WebSocket, client_id: str):
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     """Legacy status check endpoint for backward compatibility"""
-    return StatusCheck(
+    status_obj = StatusCheck(
         client_name=input.client_name,
         timestamp=datetime.utcnow()
     )
+    # Store in MongoDB for compatibility
+    await db.status_checks.insert_one(status_obj.dict())
+    return status_obj
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
     """Legacy status check endpoint for backward compatibility"""
-    return [
-        StatusCheck(
-            client_name="SmartTour.Jo API",
-            timestamp=datetime.utcnow()
-        )
-    ]
+    try:
+        status_checks = await db.status_checks.find().to_list(1000)
+        return [StatusCheck(**status_check) for status_check in status_checks]
+    except:
+        return [
+            StatusCheck(
+                client_name="SmartTour.Jo API",
+                timestamp=datetime.utcnow()
+            )
+        ]
 
 # Include router in main app
 app.include_router(api_router)
