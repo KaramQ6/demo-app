@@ -285,18 +285,11 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
         
         itineraries = []
         for item in response.data:
-            # Handle date parsing safely
-            visit_date = None
-            if item.get("visit_date"):
-                try:
-                    visit_date = datetime.fromisoformat(item["visit_date"].replace('Z', '+00:00'))
-                except:
-                    pass
-            
+            # Handle the actual schema fields and provide defaults for missing ones
             added_at = datetime.utcnow()
-            if item.get("added_at"):
+            if item.get("created_at"):
                 try:
-                    added_at = datetime.fromisoformat(item["added_at"].replace('Z', '+00:00'))
+                    added_at = datetime.fromisoformat(item["created_at"].replace('Z', '+00:00'))
                 except:
                     pass
             
@@ -304,13 +297,13 @@ async def get_user_itineraries(current_user: Dict[str, Any] = Depends(get_curren
                 id=item["id"],
                 user_id=item["user_id"],
                 destination_id=item["destination_id"],
-                destination_name=item["destination_name"],
-                destination_type=item.get("destination_type"),
-                destination_icon=item.get("destination_icon"),
-                notes=item.get("notes"),
-                status=item["status"],
-                visit_date=visit_date,
-                priority=item["priority"],
+                destination_name=f"Destination {item['destination_id']}",  # Default name
+                destination_type="attraction",  # Default type
+                destination_icon="📍",  # Default icon
+                notes="",  # Default empty notes
+                status="planned",  # Default status
+                visit_date=None,  # No visit date in schema
+                priority=1,  # Default priority
                 added_at=added_at
             ))
         
