@@ -12,7 +12,7 @@ import json
 
 # Import our modules
 from models import *
-from auth import get_current_user, get_optional_user, authenticate_user, register_user, supabase
+from auth import get_current_user, get_optional_user, authenticate_user, register_user, supabase, supabase_admin
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 
