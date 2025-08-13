@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: smarttour-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: smarttour2025
+      MONGO_INITDB_DATABASE: smarttour_db
+    volumes:
+      - mongodb_data:/data/db
+      - ./scripts/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - smarttour-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # FastAPI Backend
+  backend:
+    build: .
+    container_name: smarttour-backend
+    restart: unless-stopped
+    environment:
+      - MONGO_URL=mongodb://admin:smarttour2025@mongodb:27017/smarttour_db?authSource=admin
+      - SUPABASE_URL=${SUPABASE_URL:-https://shhmlmejukbvtotgjule.supabase.co}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-smarttour-jo-super-secret-key-2025}
+      - JWT_ALGORITHM=HS256
+      - JWT_ACCESS_TOKEN_EXPIRE_MINUTES=30
+      - N8N_WEBHOOK_BASE_URL=https://n8n.smart-tour.app/webhook
+      - APP_NAME=SmartTour.Jo API
+      - APP_VERSION=1.0.0
+      - DEBUG=false
+    ports:
+      - "8001:8001"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - smarttour-network
+    volumes:
+      - ./backend:/app:ro
+      - backend_cache:/tmp
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # React Frontend (Development)
+  frontend:
+    image: node:18-alpine
+    container_name: smarttour-frontend
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8001
+      - REACT_APP_SUPABASE_URL=${SUPABASE_URL:-https://shhmlmejukbvtotgjule.supabase.co}
+      - REACT_APP_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - GENERATE_SOURCEMAP=false
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app:cached
+      - /app/node_modules
+    command: sh -c "yarn install && yarn start"
+    depends_on:
+      - backend
+    networks:
+      - smarttour-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Nginx Reverse Proxy (Production)
+  nginx:
+    image: nginx:alpine
+    container_name: smarttour-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - smarttour-network
+    profiles:
+      - production
+
+  # Redis Cache (Optional)
+  redis:
+    image: redis:7-alpine
+    container_name: smarttour-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass smarttour2025
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - smarttour-network
+    profiles:
+      - cache
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_cache:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  smarttour-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
