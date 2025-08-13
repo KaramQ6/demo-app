@@ -189,7 +189,7 @@ const WeatherScreen: React.FC = () => {
           </View>
 
           <Text style={[styles.lastUpdated, {color: theme.colors.surface}]}>
-            {t('weather.lastUpdated') || 'Last updated'}: {new Date(weatherData.recorded_at).toLocaleTimeString()}
+            {t('weather.lastUpdated') || 'Last updated'}: {weatherData.recorded_at ? new Date(weatherData.recorded_at).toLocaleTimeString() : 'Unknown'}
           </Text>
         </LinearGradient>
 
