@@ -1,0 +1,112 @@
+{
+  "Health Check": {
+    "success": true,
+    "message": "Health endpoint working - Status: healthy",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:03.753845"
+  },
+  "Root Endpoint": {
+    "success": true,
+    "message": "Root endpoint working - Version: 1.0.0",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:03.803503"
+  },
+  "User Registration": {
+    "success": false,
+    "message": "Registration failed with 422",
+    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"email\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"password\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
+    "timestamp": "2025-08-13T03:54:03.854152"
+  },
+  "User Login": {
+    "success": false,
+    "message": "Login failed with 422",
+    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"email\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"},{\"type\":\"missing\",\"loc\":[\"query\",\"password\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
+    "timestamp": "2025-08-13T03:54:03.866604"
+  },
+  "Profile Tests": {
+    "success": false,
+    "message": "No auth token available - skipping profile tests",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:03.866621"
+  },
+  "Itinerary Tests": {
+    "success": false,
+    "message": "No auth token available - skipping itinerary tests",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:03.866630"
+  },
+  "Weather Default": {
+    "success": true,
+    "message": "Weather data retrieved - City: \u0639\u0645\u0651\u0627\u0646, Temp: 32\u00b0C",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:04.509549"
+  },
+  "Weather Custom Location": {
+    "success": true,
+    "message": "Custom location weather retrieved - Temp: 29\u00b0C",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:05.003215"
+  },
+  "Chat Unauthenticated": {
+    "success": false,
+    "message": "Chat API failed with 422",
+    "details": "{\"detail\":[{\"type\":\"missing\",\"loc\":[\"query\",\"message\"],\"msg\":\"Field required\",\"input\":null,\"url\":\"https://errors.pydantic.dev/2.11/v/missing\"}]}",
+    "timestamp": "2025-08-13T03:54:05.053983"
+  },
+  "Smart Itinerary Unauthenticated": {
+    "success": true,
+    "message": "Itinerary suggestion received: Suggested Jordan Travel Plan:\n\n\ud83c\udf05 Day 1: Visit Downtown Amman, Explore Amman Citadel, Dinner at Rainb...",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:05.582784"
+  },
+  "WebSocket Connection": {
+    "success": false,
+    "message": "WebSocket failed with exception: BaseEventLoop.create_connection() got an unexpected keyword argument 'timeout'",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:05.596100"
+  },
+  "404 Error Handling": {
+    "success": true,
+    "message": "404 error properly returned for invalid endpoint",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:05.645330"
+  },
+  "Unauthorized Access": {
+    "success": false,
+    "message": "Expected 401, got 403",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:05.695221"
+  },
+  "Invalid Token": {
+    "success": true,
+    "message": "401 error properly returned for invalid token",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:06.701098"
+  },
+  "CORS Headers": {
+    "success": false,
+    "message": "CORS headers missing",
+    "details": {
+      "allow": "GET",
+      "content-length": "31",
+      "content-type": "application/json",
+      "date": "Wed, 13 Aug 2025 03:54:04 GMT",
+      "server": "uvicorn",
+      "via": "1.1 google",
+      "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000"
+    },
+    "timestamp": "2025-08-13T03:54:06.751516"
+  },
+  "Legacy Status Create": {
+    "success": true,
+    "message": "Legacy status creation successful",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:06.773782"
+  },
+  "Legacy Status Get": {
+    "success": true,
+    "message": "Legacy status retrieval successful - 1 records",
+    "details": null,
+    "timestamp": "2025-08-13T03:54:06.823970"
+  }
+}
