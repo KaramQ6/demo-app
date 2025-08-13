@@ -392,7 +392,7 @@ class DatabaseService {
       action,
       data: JSON.stringify(data),
       created_at: new Date().toISOString(),
-      synced: 0,
+      synced: false, // Use boolean instead of number
     };
     
     await this.insert('sync_queue', syncItem);
