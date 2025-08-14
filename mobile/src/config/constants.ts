@@ -1,6 +1,6 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'https://smarttour-hybrid.preview.emergentagent.com',
+  BASE_URL: 'http://46.101.127.177:8001',
   API_PREFIX: '/api',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
